@@ -8,8 +8,11 @@ import {
   CheckCircle2,
   Search,
   X,
+  ChevronDown,
+  Plus,
+  Clock,
 } from 'lucide-react';
-import { useDonationStore } from '../lib/store';
+import { useAppStore } from '../lib/store';
 import type {
   Fish as FishType,
   BugItem,
@@ -38,9 +41,14 @@ const CATEGORY_META: Record<CategoryId, {
 
 const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
 
+// Stable empty fallbacks so Zustand selectors don't return new {} references
+const EMPTY_DONATED: Record<string, boolean> = {};
+const EMPTY_DONATED_AT: Record<string, string> = {};
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
+type ViewId = CategoryId | 'activity';
 
 interface AllData {
   fish: FishType[];
@@ -51,7 +59,6 @@ interface AllData {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Display name — fossils include the part in the name string. */
 function displayName(item: AnyItem, category: CategoryId): string {
   if (category === 'fossils') {
     const f = item as FossilItem;
@@ -60,10 +67,9 @@ function displayName(item: AnyItem, category: CategoryId): string {
   return item.name;
 }
 
-/** Secondary label shown in the row / detail sheet. */
 function rowSubtitle(item: AnyItem, category: CategoryId): string | null {
   if (category === 'fish')    return (item as FishType).habitat;
-  if (category === 'fossils') return null; // part is already in displayName
+  if (category === 'fossils') return null;
   if (category === 'art')     return (item as ArtPiece).basedOn;
   return null;
 }
@@ -90,14 +96,179 @@ function formatTimestamp(iso: string): string {
   });
 }
 
+// ─── CreateTownModal ──────────────────────────────────────────────────────────
+
+function CreateTownModal({
+  onClose,
+  required,
+}: {
+  onClose: () => void;
+  required: boolean; // true = no towns exist yet, can't dismiss
+}) {
+  const createTown = useAppStore(s => s.createTown);
+  const [name, setName] = useState('');
+  const [playerName, setPlayerName] = useState('');
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !playerName.trim()) return;
+    createTown(name.trim(), playerName.trim());
+    onClose();
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
+      onClick={required ? undefined : onClose}
+    >
+      <div
+        className="w-full max-w-sm mx-4 rounded-[20px] overflow-hidden"
+        style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div
+          className="px-6 py-4 flex items-center justify-between"
+          style={{ background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)' }}
+        >
+          <h2 className="text-base font-semibold" style={{ color: '#F5E9D4' }}>
+            New Town
+          </h2>
+          {!required && (
+            <button onClick={onClose} style={{ color: '#F5E9D4', opacity: 0.7 }}>
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+              Town Name
+            </label>
+            <input
+              autoFocus
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="e.g. Plumeria"
+              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
+              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+              Your Name
+            </label>
+            <input
+              type="text"
+              value={playerName}
+              onChange={e => setPlayerName(e.target.value)}
+              placeholder="e.g. Brock"
+              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
+              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={!name.trim() || !playerName.trim()}
+            className="w-full py-3 rounded-[12px] text-sm font-semibold transition"
+            style={{
+              backgroundColor: name.trim() && playerName.trim() ? '#3CA370' : '#D9CCBA',
+              color: '#fff',
+            }}
+          >
+            Create Town
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── TownSwitcher ─────────────────────────────────────────────────────────────
+
+function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
+  const towns = useAppStore(s => s.towns);
+  const activeTownId = useAppStore(s => s.activeTownId);
+  const setActiveTown = useAppStore(s => s.setActiveTown);
+  const [open, setOpen] = useState(false);
+
+  const activeTown = towns.find(t => t.id === activeTownId);
+  if (!activeTown) return null;
+
+  return (
+    <div className="relative">
+      <div className="flex items-center gap-2">
+        {/* Town name button — only tappable if multiple towns */}
+        {towns.length > 1 ? (
+          <button
+            onClick={() => setOpen(o => !o)}
+            className="flex items-center gap-1.5 rounded-[10px] px-3 py-1.5 text-sm font-medium transition"
+            style={{ backgroundColor: '#EDE3D0', color: '#2A2A2A', border: '1px solid #E7DAC4' }}
+          >
+            {activeTown.name}
+            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+          </button>
+        ) : (
+          <span className="text-sm font-medium px-1" style={{ color: '#2A2A2A' }}>
+            {activeTown.name}
+          </span>
+        )}
+
+        {/* New town button */}
+        <button
+          onClick={onCreateNew}
+          className="flex items-center justify-center rounded-[10px] p-1.5 transition"
+          style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+          aria-label="Add town"
+        >
+          <Plus className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
+        </button>
+      </div>
+
+      {/* Dropdown */}
+      {open && towns.length > 1 && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div
+            className="absolute left-0 top-full mt-1.5 z-20 rounded-[12px] overflow-hidden shadow-lg"
+            style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4', minWidth: '160px' }}
+          >
+            {towns.map((town, i) => (
+              <button
+                key={town.id}
+                onClick={() => { setActiveTown(town.id); setOpen(false); }}
+                className="w-full text-left px-4 py-2.5 text-sm transition"
+                style={{
+                  backgroundColor: town.id === activeTownId ? '#F5E9D4' : 'transparent',
+                  color: '#2A2A2A',
+                  borderTop: i > 0 ? '1px solid #E7DAC4' : 'none',
+                  fontWeight: town.id === activeTownId ? '600' : '400',
+                }}
+              >
+                <div>{town.name}</div>
+                <div className="text-[11px] opacity-60">{town.playerName}</div>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── MuseumHeader ─────────────────────────────────────────────────────────────
 
 function MuseumHeader({
   donatedCount,
   totalCount,
+  onCreateTown,
 }: {
   donatedCount: number;
   totalCount: number;
+  onCreateTown: () => void;
 }) {
   const pct = totalCount ? Math.round((donatedCount / totalCount) * 100) : 0;
   return (
@@ -117,8 +288,8 @@ function MuseumHeader({
           <h1 className="text-2xl font-semibold" style={{ letterSpacing: '0.2px' }}>
             Museum Tracker
           </h1>
-          <div className="text-[13px] opacity-80 pb-0.5">
-            {donatedCount} / {totalCount} items
+          <div className="flex items-center gap-2">
+            <TownSwitcher onCreateNew={onCreateTown} />
           </div>
         </div>
       </div>
@@ -128,7 +299,7 @@ function MuseumHeader({
           style={{ color: '#2A2A2A' }}
         >
           <span>Overall progress</span>
-          <span>{pct}% complete</span>
+          <span>{donatedCount} / {totalCount} · {pct}% complete</span>
         </div>
         <div
           className="h-2 w-full rounded-full overflow-hidden"
@@ -152,8 +323,8 @@ function TabBar({
   catCounts,
   data,
 }: {
-  active: CategoryId;
-  onChange: (c: CategoryId) => void;
+  active: ViewId;
+  onChange: (c: ViewId) => void;
   catCounts: Record<CategoryId, number>;
   data: AllData;
 }) {
@@ -162,7 +333,7 @@ function TabBar({
       className="flex rounded-[14px] overflow-hidden border"
       style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4' }}
     >
-      {CATEGORY_ORDER.map((cat, i) => {
+      {CATEGORY_ORDER.map((cat) => {
         const { label, Icon } = CATEGORY_META[cat];
         const isActive = cat === active;
         const total = data[cat].length;
@@ -175,7 +346,7 @@ function TabBar({
             style={{
               backgroundColor: isActive ? '#7B5E3B' : 'transparent',
               color: isActive ? '#F5E9D4' : '#7B5E3B',
-              borderRight: i < CATEGORY_ORDER.length - 1 ? '1px solid #E7DAC4' : 'none',
+              borderRight: '1px solid #E7DAC4',
             }}
           >
             <Icon className="w-4 h-4" />
@@ -186,40 +357,37 @@ function TabBar({
           </button>
         );
       })}
+      {/* Activity tab */}
+      <button
+        onClick={() => onChange('activity')}
+        className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+        style={{
+          backgroundColor: active === 'activity' ? '#5a4a35' : 'transparent',
+          color: active === 'activity' ? '#F5E9D4' : '#7B5E3B',
+        }}
+      >
+        <Clock className="w-4 h-4" />
+        <span>Log</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+      </button>
     </div>
   );
 }
 
 // ─── CategoryProgress ─────────────────────────────────────────────────────────
 
-function CategoryProgress({
-  donated,
-  total,
-  label,
-}: {
-  donated: number;
-  total: number;
-  label: string;
-}) {
+function CategoryProgress({ donated, total, label }: { donated: number; total: number; label: string }) {
   const pct = total ? Math.round((donated / total) * 100) : 0;
   return (
     <div
       className="rounded-[12px] border px-4 py-3"
       style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
     >
-      <div
-        className="flex items-center justify-between text-sm mb-1.5"
-        style={{ color: '#2A2A2A' }}
-      >
+      <div className="flex items-center justify-between text-sm mb-1.5" style={{ color: '#2A2A2A' }}>
         <span className="font-medium">{label} Collection</span>
-        <span>
-          {donated} / {total} donated · {pct}%
-        </span>
+        <span>{donated} / {total} donated · {pct}%</span>
       </div>
-      <div
-        className="h-1.5 w-full rounded-full overflow-hidden"
-        style={{ backgroundColor: '#e9dcc3' }}
-      >
+      <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: '#e9dcc3' }}>
         <div
           className="h-full transition-all duration-500"
           style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
@@ -231,15 +399,7 @@ function CategoryProgress({
 
 // ─── SearchBar ────────────────────────────────────────────────────────────────
 
-function SearchBar({
-  query,
-  setQuery,
-  placeholder,
-}: {
-  query: string;
-  setQuery: (v: string) => void;
-  placeholder: string;
-}) {
+function SearchBar({ query, setQuery, placeholder }: { query: string; setQuery: (v: string) => void; placeholder: string }) {
   return (
     <div
       className="flex items-center gap-2 rounded-[14px] border px-3 py-2"
@@ -277,19 +437,10 @@ function HabitatChip({ label }: { label: string }) {
 
 // ─── DonateToggle ─────────────────────────────────────────────────────────────
 
-function DonateToggle({
-  checked,
-  onToggle,
-}: {
-  checked: boolean;
-  onToggle: () => void;
-}) {
+function DonateToggle({ checked, onToggle }: { checked: boolean; onToggle: () => void }) {
   return (
     <button
-      onClick={e => {
-        e.stopPropagation();
-        onToggle();
-      }}
+      onClick={e => { e.stopPropagation(); onToggle(); }}
       aria-pressed={checked}
       aria-label={checked ? 'Mark as not donated' : 'Mark as donated'}
       className="shrink-0 inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs transition select-none"
@@ -308,17 +459,9 @@ function DonateToggle({
 // ─── CollectibleRow ───────────────────────────────────────────────────────────
 
 function CollectibleRow({
-  item,
-  category,
-  checked,
-  onToggle,
-  onClick,
+  item, category, checked, onToggle, onClick,
 }: {
-  item: AnyItem;
-  category: CategoryId;
-  checked: boolean;
-  onToggle: () => void;
-  onClick: () => void;
+  item: AnyItem; category: CategoryId; checked: boolean; onToggle: () => void; onClick: () => void;
 }) {
   const { Icon } = CATEGORY_META[category];
   const name = displayName(item, category);
@@ -337,7 +480,6 @@ function CollectibleRow({
         boxShadow: '0 1px 0 rgba(0,0,0,0.03)',
       }}
     >
-      {/* Icon badge */}
       <div
         className="shrink-0 rounded-xl p-2"
         style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
@@ -345,41 +487,24 @@ function CollectibleRow({
       >
         <Icon className="w-4 h-4" />
       </div>
-
-      {/* Text */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="truncate font-medium text-sm" style={{ color: '#2A2A2A' }}>
-            {name}
-          </span>
+          <span className="truncate font-medium text-sm" style={{ color: '#2A2A2A' }}>{name}</span>
           {category === 'fish' && subtitle && <HabitatChip label={subtitle} />}
         </div>
         <div className="text-[12px] mt-0.5 truncate" style={{ color: '#5a4a35' }}>
-          {/* Bells */}
-          {bells != null
-            ? `${bells.toLocaleString()} Bells`
-            : category === 'art'
-              ? 'Painting'
-              : '—'}
-          {/* Season */}
+          {bells != null ? `${bells.toLocaleString()} Bells` : category === 'art' ? 'Painting' : '—'}
           {category !== 'fossils' && category !== 'art' && (
             <span className="ml-2 opacity-60">
               {months && months.length > 0 ? `${months.length} months` : 'Year-round'}
             </span>
           )}
-          {/* Art: basedOn truncated */}
           {category === 'art' && subtitle && (
-            <span className="ml-1 opacity-70">
-              · {subtitle.length > 38 ? subtitle.slice(0, 38) + '…' : subtitle}
-            </span>
+            <span className="ml-1 opacity-70">· {subtitle.length > 38 ? subtitle.slice(0, 38) + '…' : subtitle}</span>
           )}
-          {/* Notes */}
-          {notes && (
-            <span className="ml-2 italic opacity-70">{notes}</span>
-          )}
+          {notes && <span className="ml-2 italic opacity-70">{notes}</span>}
         </div>
       </div>
-
       <DonateToggle checked={checked} onToggle={onToggle} />
     </button>
   );
@@ -396,15 +521,9 @@ function MonthGrid({ months }: { months?: number[] }) {
           <div
             key={m}
             className="flex items-center justify-center rounded-[6px] py-1.5"
-            style={{
-              backgroundColor: active ? '#3CA370' : '#EDE3D0',
-              opacity: active ? 1 : 0.45,
-            }}
+            style={{ backgroundColor: active ? '#3CA370' : '#EDE3D0', opacity: active ? 1 : 0.45 }}
           >
-            <span
-              className="text-[10px] font-semibold"
-              style={{ color: active ? '#fff' : '#5a4a35' }}
-            >
+            <span className="text-[10px] font-semibold" style={{ color: active ? '#fff' : '#5a4a35' }}>
               {m}
             </span>
           </div>
@@ -417,19 +536,9 @@ function MonthGrid({ months }: { months?: number[] }) {
 // ─── DetailModal ──────────────────────────────────────────────────────────────
 
 function DetailModal({
-  item,
-  category,
-  checked,
-  donatedAt,
-  onToggle,
-  onClose,
+  item, category, checked, donatedAt, onToggle, onClose,
 }: {
-  item: AnyItem;
-  category: CategoryId;
-  checked: boolean;
-  donatedAt?: string;
-  onToggle: () => void;
-  onClose: () => void;
+  item: AnyItem; category: CategoryId; checked: boolean; donatedAt?: string; onToggle: () => void; onClose: () => void;
 }) {
   const { Icon, label } = CATEGORY_META[category];
   const name = displayName(item, category);
@@ -446,22 +555,12 @@ function DetailModal({
     >
       <div
         className="w-full max-w-3xl rounded-t-[20px] overflow-hidden"
-        style={{
-          backgroundColor: '#FDF9F1',
-          maxHeight: '88vh',
-          overflowY: 'auto',
-        }}
+        style={{ backgroundColor: '#FDF9F1', maxHeight: '88vh', overflowY: 'auto' }}
         onClick={e => e.stopPropagation()}
       >
-        {/* drag handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div
-            className="w-10 h-1 rounded-full"
-            style={{ backgroundColor: '#D9CCBA' }}
-          />
+          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: '#D9CCBA' }} />
         </div>
-
-        {/* close button */}
         <div className="flex justify-end px-4 pt-1 pb-2">
           <button
             onClick={onClose}
@@ -472,9 +571,7 @@ function DetailModal({
             <X className="w-4 h-4" style={{ color: '#5a4a35' }} />
           </button>
         </div>
-
         <div className="px-6 pb-8 space-y-5">
-          {/* Icon + name */}
           <div className="flex items-start gap-4">
             <div
               className="rounded-2xl p-3.5 shrink-0"
@@ -483,92 +580,49 @@ function DetailModal({
               <Icon className="w-7 h-7" />
             </div>
             <div className="pt-1">
-              <div
-                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
-                style={{ color: '#5a4a35' }}
-              >
+              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5" style={{ color: '#5a4a35' }}>
                 {label}
               </div>
-              <h2 className="text-xl font-semibold leading-snug" style={{ color: '#2A2A2A' }}>
-                {name}
-              </h2>
-              {subtitle && (
-                <p className="text-sm mt-1" style={{ color: '#5a4a35' }}>
-                  {subtitle}
-                </p>
-              )}
+              <h2 className="text-xl font-semibold leading-snug" style={{ color: '#2A2A2A' }}>{name}</h2>
+              {subtitle && <p className="text-sm mt-1" style={{ color: '#5a4a35' }}>{subtitle}</p>}
             </div>
           </div>
 
-          {/* Bell value */}
           {bells != null && (
-            <div
-              className="rounded-[12px] px-4 py-3"
-              style={{ backgroundColor: '#F5E9D4', border: '1px solid #E7DAC4' }}
-            >
-              <div
-                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
-                style={{ color: '#5a4a35' }}
-              >
-                Value
-              </div>
-              <div className="font-semibold text-base" style={{ color: '#2A2A2A' }}>
-                {bells.toLocaleString()} Bells
-              </div>
+            <div className="rounded-[12px] px-4 py-3" style={{ backgroundColor: '#F5E9D4', border: '1px solid #E7DAC4' }}>
+              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5" style={{ color: '#5a4a35' }}>Value</div>
+              <div className="font-semibold text-base" style={{ color: '#2A2A2A' }}>{bells.toLocaleString()} Bells</div>
             </div>
           )}
 
-          {/* Season grid */}
           {category !== 'fossils' && category !== 'art' && (
             <div>
-              <div
-                className="text-[11px] uppercase tracking-wider opacity-60 mb-2"
-                style={{ color: '#5a4a35' }}
-              >
+              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-2" style={{ color: '#5a4a35' }}>
                 Availability
               </div>
               <MonthGrid months={months} />
               {(!months || months.length === 0) && (
-                <p className="text-xs mt-1.5 opacity-60" style={{ color: '#5a4a35' }}>
-                  Active all year
-                </p>
+                <p className="text-xs mt-1.5 opacity-60" style={{ color: '#5a4a35' }}>Active all year</p>
               )}
             </div>
           )}
 
-          {/* Notes */}
           {notes && (
             <div
               className="rounded-[12px] px-4 py-3 italic text-sm"
-              style={{
-                backgroundColor: '#fff8ee',
-                border: '1px solid #E7DAC4',
-                color: '#5a4a35',
-              }}
+              style={{ backgroundColor: '#fff8ee', border: '1px solid #E7DAC4', color: '#5a4a35' }}
             >
               {notes}
             </div>
           )}
 
-          {/* Donated timestamp */}
           {checked && donatedAt && (
-            <div
-              className="rounded-[12px] px-4 py-3"
-              style={{ backgroundColor: '#f2faf6', border: '1px solid #b8dfc8' }}
-            >
-              <div
-                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
-                style={{ color: '#2A7A52' }}
-              >
-                Donated
-              </div>
-              <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>
-                {formatTimestamp(donatedAt)}
-              </div>
+            <div className="rounded-[12px] px-4 py-3" style={{ backgroundColor: '#f2faf6', border: '1px solid #b8dfc8' }}>
+              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5" style={{ color: '#2A7A52' }}>Donated</div>
+              <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>{formatTimestamp(donatedAt)}</div>
             </div>
           )}
 
-          {/* Donate / Remove action */}
           <button
             onClick={onToggle}
             className="w-full flex items-center justify-center gap-2 py-3.5 rounded-[14px] font-medium text-sm transition"
@@ -583,6 +637,131 @@ function DetailModal({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── ActivityFeed ─────────────────────────────────────────────────────────────
+
+interface ActivityEntry {
+  itemId: string;
+  name: string;
+  category: CategoryId;
+  ts: string;
+}
+
+function formatRelativeDate(iso: string): string {
+  const date = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  if (sameDay(date, today)) return 'Today';
+  if (sameDay(date, yesterday)) return 'Yesterday';
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function ActivityFeed({
+  donatedAt,
+  data,
+}: {
+  donatedAt: Record<string, string>;
+  data: AllData;
+}) {
+  const allItems = useMemo(() => {
+    const map: Record<string, { name: string; category: CategoryId }> = {};
+    for (const cat of CATEGORY_ORDER) {
+      for (const item of data[cat] as AnyItem[]) {
+        map[item.id] = { name: displayName(item, cat), category: cat };
+      }
+    }
+    return map;
+  }, [data]);
+
+  const entries: ActivityEntry[] = useMemo(() => {
+    return Object.entries(donatedAt)
+      .map(([itemId, ts]) => {
+        const info = allItems[itemId];
+        if (!info) return null;
+        return { itemId, ts, name: info.name, category: info.category };
+      })
+      .filter((e): e is ActivityEntry => e !== null)
+      .sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
+  }, [donatedAt, allItems]);
+
+  if (entries.length === 0) {
+    return (
+      <EmptyState message="No donations yet. Head to the museum tabs to start donating!" />
+    );
+  }
+
+  // Group entries by day label
+  const groups: { label: string; items: ActivityEntry[] }[] = [];
+  for (const entry of entries) {
+    const label = formatRelativeDate(entry.ts);
+    const last = groups[groups.length - 1];
+    if (last && last.label === label) {
+      last.items.push(entry);
+    } else {
+      groups.push({ label, items: [entry] });
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {groups.map(group => (
+        <div key={group.label}>
+          <div
+            className="text-[11px] uppercase tracking-wider font-semibold mb-2 px-1"
+            style={{ color: '#5a4a35', opacity: 0.65 }}
+          >
+            {group.label}
+          </div>
+          <div className="space-y-2">
+            {group.items.map(entry => {
+              const { Icon } = CATEGORY_META[entry.category];
+              return (
+                <div
+                  key={`${entry.itemId}-${entry.ts}`}
+                  className="flex items-center gap-3 rounded-[14px] border px-4 py-3"
+                  style={{ borderColor: '#b8dfc8', backgroundColor: '#f2faf6' }}
+                >
+                  <div
+                    className="shrink-0 rounded-xl p-2"
+                    style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+                    aria-hidden
+                  >
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm truncate" style={{ color: '#2A2A2A' }}>
+                      {entry.name}
+                    </div>
+                    <div className="text-[12px] mt-0.5" style={{ color: '#2A7A52' }}>
+                      Donated to museum
+                    </div>
+                  </div>
+                  <div
+                    className="text-[11px] shrink-0"
+                    style={{ color: '#5a4a35', opacity: 0.7 }}
+                  >
+                    {formatTime(entry.ts)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -603,18 +782,22 @@ function EmptyState({ message }: { message: string }) {
 // ─── ACCanvas (root) ──────────────────────────────────────────────────────────
 
 export default function ACCanvas() {
-  const [activeTab, setActiveTab] = useState<CategoryId>('fish');
+  const [activeTab, setActiveTab] = useState<ViewId>('fish');
   const [query, setQuery] = useState('');
   const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<{
-    item: AnyItem;
-    category: CategoryId;
-  } | null>(null);
+  const [selected, setSelected] = useState<{ item: AnyItem; category: CategoryId } | null>(null);
+  const [showCreateTown, setShowCreateTown] = useState(false);
 
-  const { donated, donatedAt, toggle } = useDonationStore();
+  const towns = useAppStore(s => s.towns);
+  const activeTownId = useAppStore(s => s.activeTownId);
+  const activeTownDonated = useAppStore(s => s.activeTownId ? (s.donated[s.activeTownId] ?? EMPTY_DONATED) : EMPTY_DONATED);
+  const activeTownDonatedAt = useAppStore(s => s.activeTownId ? (s.donatedAt[s.activeTownId] ?? EMPTY_DONATED_AT) : EMPTY_DONATED_AT);
+  const toggle = useAppStore(s => s.toggle);
 
-  // Load all four datasets in parallel on mount
+  // Show create town modal on first load if no towns exist
+  const noTowns = towns.length === 0;
+
   useEffect(() => {
     Promise.all(
       CATEGORY_ORDER.map(cat =>
@@ -631,31 +814,30 @@ export default function ACCanvas() {
       });
   }, []);
 
-  // Items for the active tab
-  const activeItems = data[activeTab] as AnyItem[];
+  const activeCat = activeTab !== 'activity' ? activeTab : null;
+  const activeItems = activeCat ? data[activeCat] as AnyItem[] : [];
 
-  // Filtered by search query
   const filtered = useMemo(() => {
+    if (!activeCat) return [];
     const q = query.trim().toLowerCase();
     if (!q) return activeItems;
     return activeItems.filter(item =>
-      displayName(item, activeTab).toLowerCase().includes(q)
+      displayName(item, activeCat).toLowerCase().includes(q)
     );
-  }, [activeItems, activeTab, query]);
+  }, [activeItems, activeCat, query]);
 
-  // Per-category donation counts (based on actually loaded items)
   const catCounts = useMemo(() => {
     const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
     for (const cat of CATEGORY_ORDER) {
-      counts[cat] = (data[cat] as AnyItem[]).filter(item => donated[item.id]).length;
+      counts[cat] = (data[cat] as AnyItem[]).filter(item => !!activeTownDonated[item.id]).length;
     }
     return counts;
-  }, [data, donated]);
+  }, [data, activeTownDonated]);
 
   const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
   const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
 
-  const handleTabChange = (cat: CategoryId) => {
+  const handleTabChange = (cat: ViewId) => {
     setActiveTab(cat);
     setQuery('');
   };
@@ -664,27 +846,19 @@ export default function ACCanvas() {
     return (
       <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg font-medium" style={{ color: '#2A2A2A' }}>
-            Loading museum data…
-          </div>
-          <div className="text-sm mt-1" style={{ color: '#5a4a35', opacity: 0.7 }}>
-            Preparing your collection
-          </div>
+          <div className="text-lg font-medium" style={{ color: '#2A2A2A' }}>Loading museum data…</div>
+          <div className="text-sm mt-1" style={{ color: '#5a4a35', opacity: 0.7 }}>Preparing your collection</div>
         </div>
       </div>
     );
   }
 
-  const { label: catLabel } = CATEGORY_META[activeTab];
+  const catLabel = activeCat ? CATEGORY_META[activeCat].label : '';
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
       {/* Parchment background */}
-      <div
-        className="absolute inset-0"
-        style={{ background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)' }}
-      />
-      {/* Subtle checker grain */}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)' }} />
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none"
         style={{
@@ -695,56 +869,79 @@ export default function ACCanvas() {
       />
 
       <div className="relative mx-auto max-w-3xl px-4 py-8 space-y-4">
-        <MuseumHeader donatedCount={totalDonated} totalCount={totalItems} />
-
-        <TabBar
-          active={activeTab}
-          onChange={handleTabChange}
-          catCounts={catCounts}
-          data={data}
+        <MuseumHeader
+          donatedCount={totalDonated}
+          totalCount={totalItems}
+          onCreateTown={() => setShowCreateTown(true)}
         />
 
-        <CategoryProgress
-          donated={catCounts[activeTab]}
-          total={activeItems.length}
-          label={catLabel}
-        />
-
-        <SearchBar
-          query={query}
-          setQuery={setQuery}
-          placeholder={`Search ${catLabel.toLowerCase()}…`}
-        />
-
-        <div className="space-y-3">
-          {filtered.map(item => (
-            <CollectibleRow
-              key={item.id}
-              item={item}
-              category={activeTab}
-              checked={!!donated[item.id]}
-              onToggle={() => toggle(item.id)}
-              onClick={() => setSelected({ item, category: activeTab })}
+        {noTowns ? (
+          <EmptyState message="Create a town to start tracking your museum donations." />
+        ) : (
+          <>
+            <TabBar
+              active={activeTab}
+              onChange={handleTabChange}
+              catCounts={catCounts}
+              data={data}
             />
-          ))}
-          {filtered.length === 0 && (
-            <EmptyState
-              message={
-                query
-                  ? `No ${catLabel.toLowerCase()} match "${query}".`
-                  : `No ${catLabel.toLowerCase()} found.`
-              }
-            />
-          )}
-        </div>
+
+            {activeTab === 'activity' ? (
+              <ActivityFeed
+                donatedAt={activeTownDonatedAt}
+                data={data}
+              />
+            ) : (
+              <>
+                <CategoryProgress
+                  donated={catCounts[activeCat!]}
+                  total={activeItems.length}
+                  label={catLabel}
+                />
+
+                <SearchBar
+                  query={query}
+                  setQuery={setQuery}
+                  placeholder={`Search ${catLabel.toLowerCase()}…`}
+                />
+
+                <div className="space-y-3">
+                  {filtered.map(item => (
+                    <CollectibleRow
+                      key={item.id}
+                      item={item}
+                      category={activeCat!}
+                      checked={!!activeTownDonated[item.id]}
+                      onToggle={() => toggle(item.id)}
+                      onClick={() => setSelected({ item, category: activeCat! })}
+                    />
+                  ))}
+                  {filtered.length === 0 && (
+                    <EmptyState
+                      message={query ? `No ${catLabel.toLowerCase()} match "${query}".` : `No ${catLabel.toLowerCase()} found.`}
+                    />
+                  )}
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
 
-      {selected && (
+      {/* Create town modal — required on first load, optional after */}
+      {(noTowns || showCreateTown) && (
+        <CreateTownModal
+          required={noTowns}
+          onClose={() => setShowCreateTown(false)}
+        />
+      )}
+
+      {selected && !noTowns && (
         <DetailModal
           item={selected.item}
           category={selected.category}
-          checked={!!donated[selected.item.id]}
-          donatedAt={donatedAt[selected.item.id]}
+          checked={!!activeTownDonated[selected.item.id]}
+          donatedAt={activeTownDonatedAt[selected.item.id]}
           onToggle={() => toggle(selected.item.id)}
           onClose={() => setSelected(null)}
         />
