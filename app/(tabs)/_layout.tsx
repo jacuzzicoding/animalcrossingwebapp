@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
+import { TownSwitcher } from '@/components/ui/TownSwitcher';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -23,7 +24,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        header: () => <TownSwitcher />,
         tabBarStyle: styles.tabBar,
         tabBarActiveTintColor: Colors.green,
         tabBarInactiveTintColor: Colors.textMuted,
