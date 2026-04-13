@@ -10,6 +10,7 @@ import {
   X,
   ChevronDown,
   Plus,
+  Clock,
 } from 'lucide-react';
 import { useAppStore } from '../lib/store';
 import type {
@@ -47,6 +48,7 @@ const EMPTY_DONATED_AT: Record<string, string> = {};
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
+type ViewId = CategoryId | 'activity';
 
 interface AllData {
   fish: FishType[];
@@ -321,8 +323,8 @@ function TabBar({
   catCounts,
   data,
 }: {
-  active: CategoryId;
-  onChange: (c: CategoryId) => void;
+  active: ViewId;
+  onChange: (c: ViewId) => void;
   catCounts: Record<CategoryId, number>;
   data: AllData;
 }) {
@@ -331,7 +333,7 @@ function TabBar({
       className="flex rounded-[14px] overflow-hidden border"
       style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4' }}
     >
-      {CATEGORY_ORDER.map((cat, i) => {
+      {CATEGORY_ORDER.map((cat) => {
         const { label, Icon } = CATEGORY_META[cat];
         const isActive = cat === active;
         const total = data[cat].length;
@@ -344,7 +346,7 @@ function TabBar({
             style={{
               backgroundColor: isActive ? '#7B5E3B' : 'transparent',
               color: isActive ? '#F5E9D4' : '#7B5E3B',
-              borderRight: i < CATEGORY_ORDER.length - 1 ? '1px solid #E7DAC4' : 'none',
+              borderRight: '1px solid #E7DAC4',
             }}
           >
             <Icon className="w-4 h-4" />
@@ -355,6 +357,19 @@ function TabBar({
           </button>
         );
       })}
+      {/* Activity tab */}
+      <button
+        onClick={() => onChange('activity')}
+        className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+        style={{
+          backgroundColor: active === 'activity' ? '#5a4a35' : 'transparent',
+          color: active === 'activity' ? '#F5E9D4' : '#7B5E3B',
+        }}
+      >
+        <Clock className="w-4 h-4" />
+        <span>Log</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+      </button>
     </div>
   );
 }
@@ -626,6 +641,131 @@ function DetailModal({
   );
 }
 
+// ─── ActivityFeed ─────────────────────────────────────────────────────────────
+
+interface ActivityEntry {
+  itemId: string;
+  name: string;
+  category: CategoryId;
+  ts: string;
+}
+
+function formatRelativeDate(iso: string): string {
+  const date = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  if (sameDay(date, today)) return 'Today';
+  if (sameDay(date, yesterday)) return 'Yesterday';
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function ActivityFeed({
+  donatedAt,
+  data,
+}: {
+  donatedAt: Record<string, string>;
+  data: AllData;
+}) {
+  const allItems = useMemo(() => {
+    const map: Record<string, { name: string; category: CategoryId }> = {};
+    for (const cat of CATEGORY_ORDER) {
+      for (const item of data[cat] as AnyItem[]) {
+        map[item.id] = { name: displayName(item, cat), category: cat };
+      }
+    }
+    return map;
+  }, [data]);
+
+  const entries: ActivityEntry[] = useMemo(() => {
+    return Object.entries(donatedAt)
+      .map(([itemId, ts]) => {
+        const info = allItems[itemId];
+        if (!info) return null;
+        return { itemId, ts, name: info.name, category: info.category };
+      })
+      .filter((e): e is ActivityEntry => e !== null)
+      .sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
+  }, [donatedAt, allItems]);
+
+  if (entries.length === 0) {
+    return (
+      <EmptyState message="No donations yet. Head to the museum tabs to start donating!" />
+    );
+  }
+
+  // Group entries by day label
+  const groups: { label: string; items: ActivityEntry[] }[] = [];
+  for (const entry of entries) {
+    const label = formatRelativeDate(entry.ts);
+    const last = groups[groups.length - 1];
+    if (last && last.label === label) {
+      last.items.push(entry);
+    } else {
+      groups.push({ label, items: [entry] });
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {groups.map(group => (
+        <div key={group.label}>
+          <div
+            className="text-[11px] uppercase tracking-wider font-semibold mb-2 px-1"
+            style={{ color: '#5a4a35', opacity: 0.65 }}
+          >
+            {group.label}
+          </div>
+          <div className="space-y-2">
+            {group.items.map(entry => {
+              const { Icon } = CATEGORY_META[entry.category];
+              return (
+                <div
+                  key={`${entry.itemId}-${entry.ts}`}
+                  className="flex items-center gap-3 rounded-[14px] border px-4 py-3"
+                  style={{ borderColor: '#b8dfc8', backgroundColor: '#f2faf6' }}
+                >
+                  <div
+                    className="shrink-0 rounded-xl p-2"
+                    style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+                    aria-hidden
+                  >
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm truncate" style={{ color: '#2A2A2A' }}>
+                      {entry.name}
+                    </div>
+                    <div className="text-[12px] mt-0.5" style={{ color: '#2A7A52' }}>
+                      Donated to museum
+                    </div>
+                  </div>
+                  <div
+                    className="text-[11px] shrink-0"
+                    style={{ color: '#5a4a35', opacity: 0.7 }}
+                  >
+                    {formatTime(entry.ts)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── EmptyState ───────────────────────────────────────────────────────────────
 
 function EmptyState({ message }: { message: string }) {
@@ -642,7 +782,7 @@ function EmptyState({ message }: { message: string }) {
 // ─── ACCanvas (root) ──────────────────────────────────────────────────────────
 
 export default function ACCanvas() {
-  const [activeTab, setActiveTab] = useState<CategoryId>('fish');
+  const [activeTab, setActiveTab] = useState<ViewId>('fish');
   const [query, setQuery] = useState('');
   const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
   const [loading, setLoading] = useState(true);
@@ -674,15 +814,17 @@ export default function ACCanvas() {
       });
   }, []);
 
-  const activeItems = data[activeTab] as AnyItem[];
+  const activeCat = activeTab !== 'activity' ? activeTab : null;
+  const activeItems = activeCat ? data[activeCat] as AnyItem[] : [];
 
   const filtered = useMemo(() => {
+    if (!activeCat) return [];
     const q = query.trim().toLowerCase();
     if (!q) return activeItems;
     return activeItems.filter(item =>
-      displayName(item, activeTab).toLowerCase().includes(q)
+      displayName(item, activeCat).toLowerCase().includes(q)
     );
-  }, [activeItems, activeTab, query]);
+  }, [activeItems, activeCat, query]);
 
   const catCounts = useMemo(() => {
     const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
@@ -695,7 +837,7 @@ export default function ACCanvas() {
   const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
   const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
 
-  const handleTabChange = (cat: CategoryId) => {
+  const handleTabChange = (cat: ViewId) => {
     setActiveTab(cat);
     setQuery('');
   };
@@ -711,7 +853,7 @@ export default function ACCanvas() {
     );
   }
 
-  const { label: catLabel } = CATEGORY_META[activeTab];
+  const catLabel = activeCat ? CATEGORY_META[activeCat].label : '';
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
@@ -744,35 +886,44 @@ export default function ACCanvas() {
               data={data}
             />
 
-            <CategoryProgress
-              donated={catCounts[activeTab]}
-              total={activeItems.length}
-              label={catLabel}
-            />
-
-            <SearchBar
-              query={query}
-              setQuery={setQuery}
-              placeholder={`Search ${catLabel.toLowerCase()}…`}
-            />
-
-            <div className="space-y-3">
-              {filtered.map(item => (
-                <CollectibleRow
-                  key={item.id}
-                  item={item}
-                  category={activeTab}
-                  checked={!!activeTownDonated[item.id]}
-                  onToggle={() => toggle(item.id)}
-                  onClick={() => setSelected({ item, category: activeTab })}
+            {activeTab === 'activity' ? (
+              <ActivityFeed
+                donatedAt={activeTownDonatedAt}
+                data={data}
+              />
+            ) : (
+              <>
+                <CategoryProgress
+                  donated={catCounts[activeCat!]}
+                  total={activeItems.length}
+                  label={catLabel}
                 />
-              ))}
-              {filtered.length === 0 && (
-                <EmptyState
-                  message={query ? `No ${catLabel.toLowerCase()} match "${query}".` : `No ${catLabel.toLowerCase()} found.`}
+
+                <SearchBar
+                  query={query}
+                  setQuery={setQuery}
+                  placeholder={`Search ${catLabel.toLowerCase()}…`}
                 />
-              )}
-            </div>
+
+                <div className="space-y-3">
+                  {filtered.map(item => (
+                    <CollectibleRow
+                      key={item.id}
+                      item={item}
+                      category={activeCat!}
+                      checked={!!activeTownDonated[item.id]}
+                      onToggle={() => toggle(item.id)}
+                      onClick={() => setSelected({ item, category: activeCat! })}
+                    />
+                  ))}
+                  {filtered.length === 0 && (
+                    <EmptyState
+                      message={query ? `No ${catLabel.toLowerCase()} match "${query}".` : `No ${catLabel.toLowerCase()} found.`}
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
