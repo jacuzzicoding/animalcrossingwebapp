@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Fish as FishIcon,
   Bug,
@@ -48,7 +48,7 @@ const EMPTY_DONATED_AT: Record<string, string> = {};
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
-type ViewId = CategoryId | 'activity';
+type ViewId = CategoryId | 'activity' | 'search';
 
 interface AllData {
   fish: FishType[];
@@ -364,10 +364,25 @@ function TabBar({
         style={{
           backgroundColor: active === 'activity' ? '#5a4a35' : 'transparent',
           color: active === 'activity' ? '#F5E9D4' : '#7B5E3B',
+          borderLeft: '1px solid #E7DAC4',
         }}
       >
         <Clock className="w-4 h-4" />
         <span>Log</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+      </button>
+      {/* Search tab */}
+      <button
+        onClick={() => onChange('search')}
+        className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+        style={{
+          backgroundColor: active === 'search' ? '#3CA370' : 'transparent',
+          color: active === 'search' ? '#fff' : '#7B5E3B',
+          borderLeft: '1px solid #E7DAC4',
+        }}
+      >
+        <Search className="w-4 h-4" />
+        <span>Search</span>
         <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
       </button>
     </div>
@@ -779,11 +794,200 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
+// ─── SearchHistoryPopover ─────────────────────────────────────────────────────
+
+function SearchHistoryPopover({
+  searches,
+  onSelect,
+  onClear,
+}: {
+  searches: string[];
+  onSelect: (s: string) => void;
+  onClear: () => void;
+}) {
+  return (
+    <div
+      className="absolute top-full left-0 right-0 mt-1.5 z-30 rounded-[14px] overflow-hidden shadow-lg"
+      style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4' }}
+    >
+      <div
+        className="flex items-center justify-between px-4 py-2.5"
+        style={{ borderBottom: '1px solid #E7DAC4' }}
+      >
+        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a4a35' }}>
+          Recent Searches
+        </span>
+        <button
+          onClick={onClear}
+          className="text-xs font-medium"
+          style={{ color: '#3CA370' }}
+        >
+          Clear
+        </button>
+      </div>
+      {searches.length === 0 ? (
+        <div className="px-4 py-3 text-sm" style={{ color: '#5a4a35', opacity: 0.6 }}>
+          No recent searches.
+        </div>
+      ) : (
+        searches.map(s => (
+          <button
+            key={s}
+            onClick={() => onSelect(s)}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition"
+            style={{ color: '#2A2A2A', borderTop: '1px solid #E7DAC4' }}
+          >
+            <Clock className="w-3.5 h-3.5 shrink-0 opacity-50" />
+            {s}
+          </button>
+        ))
+      )}
+    </div>
+  );
+}
+
+// ─── GlobalSearchBar ──────────────────────────────────────────────────────────
+
+function GlobalSearchBar({
+  query,
+  setQuery,
+  onSubmit,
+  historyOpen,
+  setHistoryOpen,
+  recentSearches,
+  onSelectHistory,
+  onClearHistory,
+  wrapperRef,
+}: {
+  query: string;
+  setQuery: (v: string) => void;
+  onSubmit: (q: string) => void;
+  historyOpen: boolean;
+  setHistoryOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  recentSearches: string[];
+  onSelectHistory: (s: string) => void;
+  onClearHistory: () => void;
+  wrapperRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  return (
+    <div ref={wrapperRef} className="relative">
+      <div
+        className="flex items-center gap-2 rounded-[14px] border px-3 py-2"
+        style={{ borderColor: '#E7DAC4', backgroundColor: '#FDF9F1' }}
+      >
+        <Search className="w-4 h-4 opacity-50 shrink-0" />
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter' && query.trim()) onSubmit(query.trim()); }}
+          placeholder="Search all categories…"
+          className="w-full bg-transparent outline-none text-sm"
+          style={{ color: '#2A2A2A' }}
+        />
+        {query && (
+          <button onClick={() => setQuery('')} className="opacity-40 hover:opacity-70 shrink-0">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+        <button
+          onClick={() => setHistoryOpen(o => !o)}
+          className="shrink-0 opacity-50 hover:opacity-80"
+          aria-label="Recent searches"
+        >
+          <Clock className="w-4 h-4" />
+        </button>
+      </div>
+
+      {historyOpen && (
+        <SearchHistoryPopover
+          searches={recentSearches}
+          onSelect={s => { onSelectHistory(s); setHistoryOpen(false); }}
+          onClear={onClearHistory}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── GlobalSearchResults ──────────────────────────────────────────────────────
+
+function GlobalSearchResults({
+  results,
+  query,
+  donated,
+  onToggle,
+  onSelect,
+}: {
+  results: Record<CategoryId, AnyItem[]> | null;
+  query: string;
+  donated: Record<string, boolean>;
+  onToggle: (id: string) => void;
+  onSelect: (item: AnyItem, category: CategoryId) => void;
+}) {
+  if (!results) {
+    return (
+      <EmptyState message="Type above to search fish, bugs, fossils, and art at once." />
+    );
+  }
+
+  const hasAny = CATEGORY_ORDER.some(cat => results[cat].length > 0);
+
+  if (!hasAny) {
+    return <EmptyState message={`No items match "${query}".`} />;
+  }
+
+  return (
+    <div className="space-y-5">
+      {CATEGORY_ORDER.map(cat => {
+        const items = results[cat];
+        if (items.length === 0) return null;
+        const { label, Icon } = CATEGORY_META[cat];
+        return (
+          <div key={cat}>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Icon className="w-3.5 h-3.5" style={{ color: '#7B5E3B' }} />
+              <span
+                className="text-xs font-semibold uppercase tracking-wider"
+                style={{ color: '#7B5E3B' }}
+              >
+                {label}
+              </span>
+              <span
+                className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                style={{ backgroundColor: '#EDE3D0', color: '#5a4a35' }}
+              >
+                {items.length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {items.map(item => (
+                <CollectibleRow
+                  key={item.id}
+                  item={item}
+                  category={cat}
+                  checked={!!donated[item.id]}
+                  onToggle={() => onToggle(item.id)}
+                  onClick={() => onSelect(item, cat)}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── ACCanvas (root) ──────────────────────────────────────────────────────────
 
 export default function ACCanvas() {
   const [activeTab, setActiveTab] = useState<ViewId>('fish');
   const [query, setQuery] = useState('');
+  const [globalQuery, setGlobalQuery] = useState('');
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const historyRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<{ item: AnyItem; category: CategoryId } | null>(null);
@@ -814,7 +1018,7 @@ export default function ACCanvas() {
       });
   }, []);
 
-  const activeCat = activeTab !== 'activity' ? activeTab : null;
+  const activeCat: CategoryId | null = (activeTab !== 'activity' && activeTab !== 'search') ? activeTab : null;
   const activeItems = activeCat ? data[activeCat] as AnyItem[] : [];
 
   const filtered = useMemo(() => {
@@ -825,6 +1029,38 @@ export default function ACCanvas() {
       displayName(item, activeCat).toLowerCase().includes(q)
     );
   }, [activeItems, activeCat, query]);
+
+  const globalResults = useMemo(() => {
+    const q = globalQuery.trim().toLowerCase();
+    if (!q) return null;
+    const results = {} as Record<CategoryId, AnyItem[]>;
+    for (const cat of CATEGORY_ORDER) {
+      results[cat] = (data[cat] as AnyItem[]).filter(item =>
+        displayName(item, cat).toLowerCase().includes(q)
+      );
+    }
+    return results;
+  }, [globalQuery, data]);
+
+  function pushRecentSearch(term: string) {
+    const trimmed = term.trim();
+    if (!trimmed) return;
+    setRecentSearches(prev => {
+      const deduped = prev.filter(s => s !== trimmed);
+      return [trimmed, ...deduped].slice(0, 10);
+    });
+  }
+
+  useEffect(() => {
+    if (!historyOpen) return;
+    function handleOutside(e: MouseEvent) {
+      if (historyRef.current && !historyRef.current.contains(e.target as Node)) {
+        setHistoryOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [historyOpen]);
 
   const catCounts = useMemo(() => {
     const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
@@ -891,6 +1127,30 @@ export default function ACCanvas() {
                 donatedAt={activeTownDonatedAt}
                 data={data}
               />
+            ) : activeTab === 'search' ? (
+              <>
+                <GlobalSearchBar
+                  query={globalQuery}
+                  setQuery={setGlobalQuery}
+                  onSubmit={pushRecentSearch}
+                  historyOpen={historyOpen}
+                  setHistoryOpen={setHistoryOpen}
+                  recentSearches={recentSearches}
+                  onSelectHistory={s => { setGlobalQuery(s); pushRecentSearch(s); }}
+                  onClearHistory={() => { setRecentSearches([]); setHistoryOpen(false); }}
+                  wrapperRef={historyRef}
+                />
+                <GlobalSearchResults
+                  results={globalResults}
+                  query={globalQuery}
+                  donated={activeTownDonated}
+                  onToggle={id => toggle(id)}
+                  onSelect={(item, category) => {
+                    if (globalQuery.trim()) pushRecentSearch(globalQuery.trim());
+                    setSelected({ item, category });
+                  }}
+                />
+              </>
             ) : (
               <>
                 <CategoryProgress
