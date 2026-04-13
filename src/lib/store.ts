@@ -1,36 +1,104 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface DonationState {
-  donated: Record<string, boolean>;
-  donatedAt: Record<string, string>; // ISO timestamp per item id
-  toggle: (id: string) => void;
-  clear: () => void;
+export interface Town {
+  id: string;
+  name: string;
+  playerName: string;
+  createdAt: string;
 }
 
-export const useDonationStore = create<DonationState>()(
+interface AppState {
+  towns: Town[];
+  activeTownId: string | null;
+  // donated[townId][itemId] = true
+  donated: Record<string, Record<string, boolean>>;
+  // donatedAt[townId][itemId] = ISO string
+  donatedAt: Record<string, Record<string, string>>;
+
+  createTown: (name: string, playerName: string) => Town;
+  setActiveTown: (id: string) => void;
+  deleteTown: (id: string) => void;
+  toggle: (itemId: string) => void;
+  isDonated: (itemId: string) => boolean;
+  getDonatedAt: (itemId: string) => string | undefined;
+  getActiveTown: () => Town | undefined;
+}
+
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+export const useAppStore = create<AppState>()(
   persist(
-    set => ({
+    (set, get) => ({
+      towns: [],
+      activeTownId: null,
       donated: {},
       donatedAt: {},
-      toggle: (id: string) =>
+
+      createTown: (name, playerName) => {
+        const town: Town = {
+          id: generateId(),
+          name,
+          playerName,
+          createdAt: new Date().toISOString(),
+        };
+        set(state => ({ towns: [...state.towns, town], activeTownId: town.id }));
+        return town;
+      },
+
+      setActiveTown: (id) => set({ activeTownId: id }),
+
+      deleteTown: (id) =>
         set(state => {
-          const nowDonated = !state.donated[id];
+          const towns = state.towns.filter(t => t.id !== id);
+          const donated = { ...state.donated };
           const donatedAt = { ...state.donatedAt };
+          delete donated[id];
+          delete donatedAt[id];
+          const activeTownId =
+            state.activeTownId === id ? (towns[0]?.id ?? null) : state.activeTownId;
+          return { towns, donated, donatedAt, activeTownId };
+        }),
+
+      toggle: (itemId) =>
+        set(state => {
+          const { activeTownId } = state;
+          if (!activeTownId) return state;
+          const townDonated = { ...(state.donated[activeTownId] ?? {}) };
+          const townDonatedAt = { ...(state.donatedAt[activeTownId] ?? {}) };
+          const nowDonated = !townDonated[itemId];
           if (nowDonated) {
-            donatedAt[id] = new Date().toISOString();
+            townDonated[itemId] = true;
+            townDonatedAt[itemId] = new Date().toISOString();
           } else {
-            delete donatedAt[id];
+            delete townDonated[itemId];
+            delete townDonatedAt[itemId];
           }
           return {
-            donated: { ...state.donated, [id]: nowDonated },
-            donatedAt,
+            donated: { ...state.donated, [activeTownId]: townDonated },
+            donatedAt: { ...state.donatedAt, [activeTownId]: townDonatedAt },
           };
         }),
-      clear: () => set({ donated: {}, donatedAt: {} }),
+
+      isDonated: (itemId) => {
+        const { activeTownId, donated } = get();
+        if (!activeTownId) return false;
+        return !!(donated[activeTownId]?.[itemId]);
+      },
+
+      getDonatedAt: (itemId) => {
+        const { activeTownId, donatedAt } = get();
+        if (!activeTownId) return undefined;
+        return donatedAt[activeTownId]?.[itemId];
+      },
+
+      getActiveTown: () => {
+        const { towns, activeTownId } = get();
+        return towns.find(t => t.id === activeTownId);
+      },
     }),
-    {
-      name: 'ac-web:donated:v0',
-    }
+    { name: 'ac-web:v1' }
   )
 );
