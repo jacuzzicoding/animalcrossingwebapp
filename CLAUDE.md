@@ -72,10 +72,34 @@ Key packages that must stay pinned to specific versions:
 - CI runs `npx expo export --platform web` on push to `development` and PRs to `main`
 - Tag releases: `git tag v0.X.0-alpha && git push origin v0.X.0-alpha`
 
+## Deployment
+- **Vercel project**: `animalcrossingwebapp` under `jacuzzicodings-projects`
+- **Stable prod URL**: https://animalcrossingwebapp.vercel.app
+- Deploy with `vercel --prod` from repo root (`.vercel/` is gitignored, project stays linked per machine)
+- `vercel.json` in repo root sets `buildCommand: npm run build`, `outputDirectory: dist`, `installCommand: npm install`
+
+## v0.3.0-alpha Session Notes (2026-04-13)
+
+### What was built this session
+- `TownSwitcher` component (`components/ui/TownSwitcher.tsx`) — persistent header bar on all tabs showing active town + game badge. Tappable when multiple towns exist, opens a modal picker. Always shows + button to create a new town.
+- Wired into `app/(tabs)/_layout.tsx` via `screenOptions.header` — replaces the previous `headerShown: false` config.
+
+### What was already done (no changes needed)
+- Store (`store/index.ts`) already had the correct town-keyed structure: `donations: { [townId]: { [itemId]: DonationRecord } }`. No migration needed.
+- All 4 tabs + item detail screen already used `activeTown.id` for all donate/undonate/isDonated calls.
+- `app/town/create.tsx` already existed with full form (name, player, game version).
+- `app/town/edit.tsx` already existed.
+
+### What remains for v0.3 completion
+- **Activity feed** — list of recent donations across all towns or per active town (the `getRecentDonations` store method exists, just needs a dedicated UI screen or section)
+- **Town edit screen review** — confirm edit/delete flows work correctly end-to-end
+- **Town deletion confirmation** — check `deleteTown` in store removes donations correctly (code exists, needs UX polish)
+- **Donation timestamps display** — DonationRecord already has `donatedAt`, item detail screen shows it; consider adding to category list rows too
+
 ## Roadmap (Summary)
 - **v0.1.0-alpha** ✅ App boots, Create Town, basic tab navigation
-- **v0.2.0-alpha** All four museum categories functional (fish/bugs/fossils/art with donation tracking, progress %, detail views)
-- **v0.3.0-alpha** Town management, donation timestamps, activity feed
+- **v0.2.0-alpha** ✅ All four museum categories functional (fish/bugs/fossils/art with donation tracking, progress %, detail views)
+- **v0.3.0-alpha** 🚧 Town management, donation timestamps, activity feed (TownSwitcher done; activity feed + town edit polish remaining)
 - **v0.4.0-alpha** Global search, floating category switcher
 - **v0.5.0-alpha** Analytics dashboard
 - **v0.6.0-alpha** Export/share, error handling, tests
