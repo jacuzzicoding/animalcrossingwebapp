@@ -1137,7 +1137,7 @@ export default function ACCanvas() {
                   setHistoryOpen={setHistoryOpen}
                   recentSearches={recentSearches}
                   onSelectHistory={s => { setGlobalQuery(s); pushRecentSearch(s); }}
-                  onClearHistory={() => setRecentSearches([])}
+                  onClearHistory={() => { setRecentSearches([]); setHistoryOpen(false); }}
                   wrapperRef={historyRef}
                 />
                 <GlobalSearchResults
