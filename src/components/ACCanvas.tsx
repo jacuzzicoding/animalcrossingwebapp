@@ -648,9 +648,8 @@ export default function ACCanvas() {
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
   const activeTownDonated = useAppStore(s => activeTownId ? (s.donated[activeTownId] ?? {}) : {});
+  const activeTownDonatedAt = useAppStore(s => activeTownId ? (s.donatedAt[activeTownId] ?? {}) : {});
   const toggle = useAppStore(s => s.toggle);
-  const isDonated = useAppStore(s => s.isDonated);
-  const getDonatedAt = useAppStore(s => s.getDonatedAt);
 
   // Show create town modal on first load if no towns exist
   const noTowns = towns.length === 0;
@@ -760,7 +759,7 @@ export default function ACCanvas() {
                   key={item.id}
                   item={item}
                   category={activeTab}
-                  checked={isDonated(item.id)}
+                  checked={!!activeTownDonated[item.id]}
                   onToggle={() => toggle(item.id)}
                   onClick={() => setSelected({ item, category: activeTab })}
                 />
@@ -787,8 +786,8 @@ export default function ACCanvas() {
         <DetailModal
           item={selected.item}
           category={selected.category}
-          checked={isDonated(selected.item.id)}
-          donatedAt={getDonatedAt(selected.item.id)}
+          checked={!!activeTownDonated[selected.item.id]}
+          donatedAt={activeTownDonatedAt[selected.item.id]}
           onToggle={() => toggle(selected.item.id)}
           onClose={() => setSelected(null)}
         />
