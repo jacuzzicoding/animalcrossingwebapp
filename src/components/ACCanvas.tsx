@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Plus,
   Clock,
+  BarChart2,
 } from 'lucide-react';
 import { useAppStore } from '../lib/store';
 import type {
@@ -45,10 +46,17 @@ const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
 const EMPTY_DONATED: Record<string, boolean> = {};
 const EMPTY_DONATED_AT: Record<string, string> = {};
 
+const SEASONS: { label: string; months: number[]; color: string }[] = [
+  { label: 'Spring', months: [3, 4, 5],   color: '#3CA370' },
+  { label: 'Summer', months: [6, 7, 8],   color: '#E8A838' },
+  { label: 'Fall',   months: [9, 10, 11], color: '#C8663A' },
+  { label: 'Winter', months: [12, 1, 2],  color: '#6A9EC8' },
+];
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
-type ViewId = CategoryId | 'activity' | 'search';
+type ViewId = CategoryId | 'activity' | 'search' | 'analytics';
 
 interface AllData {
   fish: FishType[];
@@ -383,6 +391,20 @@ function TabBar({
       >
         <Search className="w-4 h-4" />
         <span>Search</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+      </button>
+      {/* Analytics tab */}
+      <button
+        onClick={() => onChange('analytics')}
+        className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+        style={{
+          backgroundColor: active === 'analytics' ? '#2A7A52' : 'transparent',
+          color: active === 'analytics' ? '#F5E9D4' : '#7B5E3B',
+          borderLeft: '1px solid #E7DAC4',
+        }}
+      >
+        <BarChart2 className="w-4 h-4" />
+        <span>Stats</span>
         <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
       </button>
     </div>
@@ -781,6 +803,280 @@ function ActivityFeed({
   );
 }
 
+// ─── AnalyticsView ────────────────────────────────────────────────────────────
+
+function SectionCard({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="rounded-[14px] border"
+      style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', padding: 16 }}
+    >
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 700, color: '#2A2A2A', margin: 0 }}>{title}</h2>
+        {subtitle && (
+          <span style={{ fontSize: 11, color: '#5a4a35', opacity: 0.7 }}>{subtitle}</span>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AnalyticsView({
+  data,
+  catCounts,
+  donatedAt,
+}: {
+  data: AllData;
+  catCounts: Record<CategoryId, number>;
+  donatedAt: Record<string, string>;
+}) {
+  const monthlyBuckets = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const iso of Object.values(donatedAt)) {
+      const d = new Date(iso);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      map[key] = (map[key] ?? 0) + 1;
+    }
+    const sorted = Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
+    const maxCount = sorted.reduce((m, [, v]) => Math.max(m, v), 0);
+    return { buckets: sorted, maxCount };
+  }, [donatedAt]);
+
+  const seasonalData = useMemo(() => {
+    const counts: Record<string, number> = { Spring: 0, Summer: 0, Fall: 0, Winter: 0 };
+    for (const iso of Object.values(donatedAt)) {
+      const m = new Date(iso).getMonth() + 1;
+      if ([3, 4, 5].includes(m))     counts.Spring++;
+      else if ([6, 7, 8].includes(m))    counts.Summer++;
+      else if ([9, 10, 11].includes(m))  counts.Fall++;
+      else                                counts.Winter++;
+    }
+    return { counts, total: Object.values(donatedAt).length };
+  }, [donatedAt]);
+
+  const maxSeasonCount = Math.max(...SEASONS.map(s => seasonalData.counts[s.label]));
+  const totalDonated = Object.keys(donatedAt).length;
+
+  return (
+    <div className="space-y-4">
+      {/* Section 1: Collection Progress */}
+      <SectionCard title="Collection Progress">
+        {CATEGORY_ORDER.map((cat, i) => {
+          const { label, Icon } = CATEGORY_META[cat];
+          const donated = catCounts[cat];
+          const total = data[cat].length;
+          const pct = total ? Math.round((donated / total) * 100) : 0;
+          const complete = donated === total && total > 0;
+          return (
+            <div key={cat} style={{ marginBottom: i < CATEGORY_ORDER.length - 1 ? 14 : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div
+                  style={{
+                    backgroundColor: '#EDE3D0',
+                    border: '1px solid #E7DAC4',
+                    borderRadius: 8,
+                    padding: 5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon style={{ width: 14, height: 14, color: '#5a4a35' }} />
+                </div>
+                <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#2A2A2A' }}>
+                  {label}
+                </span>
+                <span style={{ fontSize: 12, color: '#5a4a35' }}>{donated}/{total}</span>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: complete ? '#C89A3A' : '#3CA370',
+                    minWidth: 36,
+                    textAlign: 'right',
+                  }}
+                >
+                  {pct}%
+                </span>
+              </div>
+              <div
+                style={{
+                  height: 10,
+                  backgroundColor: '#e9dcc3',
+                  borderRadius: 999,
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${pct}%`,
+                    backgroundColor: complete ? '#C89A3A' : '#3CA370',
+                    transition: 'width 0.5s ease',
+                    borderRadius: 999,
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </SectionCard>
+
+      {/* Section 2: Monthly Donation Timeline */}
+      <SectionCard
+        title="Donation Timeline"
+        subtitle={totalDonated > 0 ? `${totalDonated} donation${totalDonated !== 1 ? 's' : ''}` : undefined}
+      >
+        {monthlyBuckets.buckets.length === 0 ? (
+          <div
+            className="rounded-[10px] border px-4 py-6 text-center text-sm"
+            style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
+          >
+            No donations yet — timestamps will appear here once you start donating.
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: 4,
+              height: 120,
+              padding: '0 2px',
+            }}
+          >
+            {monthlyBuckets.buckets.map(([key, count]) => {
+              const barHeightPct = (count / monthlyBuckets.maxCount) * 100;
+              const [year, month] = key.split('-');
+              const label = `${MONTH_NAMES[Number(month) - 1]} '${year.slice(2)}`;
+              return (
+                <div
+                  key={key}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 3,
+                    minWidth: 0,
+                  }}
+                >
+                  <span
+                    style={{ fontSize: 9, color: '#5a4a35', opacity: 0.75, lineHeight: 1 }}
+                  >
+                    {count}
+                  </span>
+                  <div
+                    style={{
+                      width: '100%',
+                      height: `${Math.max(4, barHeightPct)}%`,
+                      maxHeight: 76,
+                      backgroundColor: '#3CA370',
+                      borderRadius: '3px 3px 0 0',
+                      transition: 'height 0.4s ease',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 9,
+                      color: '#5a4a35',
+                      opacity: 0.65,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: '100%',
+                      textAlign: 'center',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </SectionCard>
+
+      {/* Section 3: Seasonal Breakdown */}
+      <SectionCard title="Seasonal Breakdown">
+        {totalDonated === 0 ? (
+          <div
+            className="rounded-[10px] border px-4 py-6 text-center text-sm"
+            style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
+          >
+            Donate items to see how your activity breaks down by season.
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {SEASONS.map(season => {
+              const count = seasonalData.counts[season.label];
+              const pct = seasonalData.total > 0
+                ? Math.round((count / seasonalData.total) * 100)
+                : 0;
+              const barWidth = maxSeasonCount > 0 ? (count / maxSeasonCount) * 100 : 0;
+              return (
+                <div
+                  key={season.label}
+                  style={{
+                    backgroundColor: '#FFFDF6',
+                    border: '1px solid #E7DAC4',
+                    borderRadius: 12,
+                    padding: '12px 14px',
+                  }}
+                >
+                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 3 }}>
+                    {season.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 26,
+                      fontWeight: 700,
+                      color: '#2A2A2A',
+                      lineHeight: 1.1,
+                      marginBottom: 2,
+                    }}
+                  >
+                    {count}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 8 }}>
+                    {pct}% of total
+                  </div>
+                  <div
+                    style={{
+                      height: 4,
+                      backgroundColor: '#e9dcc3',
+                      borderRadius: 999,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${barWidth}%`,
+                        backgroundColor: season.color,
+                        transition: 'width 0.4s ease',
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </SectionCard>
+    </div>
+  );
+}
+
 // ─── EmptyState ───────────────────────────────────────────────────────────────
 
 function EmptyState({ message }: { message: string }) {
@@ -1018,7 +1314,7 @@ export default function ACCanvas() {
       });
   }, []);
 
-  const activeCat: CategoryId | null = (activeTab !== 'activity' && activeTab !== 'search') ? activeTab : null;
+  const activeCat: CategoryId | null = (activeTab !== 'activity' && activeTab !== 'search' && activeTab !== 'analytics') ? activeTab : null;
   const activeItems = activeCat ? data[activeCat] as AnyItem[] : [];
 
   const filtered = useMemo(() => {
@@ -1122,7 +1418,13 @@ export default function ACCanvas() {
               data={data}
             />
 
-            {activeTab === 'activity' ? (
+            {activeTab === 'analytics' ? (
+              <AnalyticsView
+                data={data}
+                catCounts={catCounts}
+                donatedAt={activeTownDonatedAt}
+              />
+            ) : activeTab === 'activity' ? (
               <ActivityFeed
                 donatedAt={activeTownDonatedAt}
                 data={data}
