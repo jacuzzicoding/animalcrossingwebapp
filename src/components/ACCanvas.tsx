@@ -647,6 +647,7 @@ export default function ACCanvas() {
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
+  const activeTownDonated = useAppStore(s => activeTownId ? (s.donated[activeTownId] ?? {}) : {});
   const toggle = useAppStore(s => s.toggle);
   const isDonated = useAppStore(s => s.isDonated);
   const getDonatedAt = useAppStore(s => s.getDonatedAt);
@@ -684,11 +685,10 @@ export default function ACCanvas() {
     const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
     if (!activeTownId) return counts;
     for (const cat of CATEGORY_ORDER) {
-      counts[cat] = (data[cat] as AnyItem[]).filter(item => isDonated(item.id)).length;
+      counts[cat] = (data[cat] as AnyItem[]).filter(item => !!activeTownDonated[item.id]).length;
     }
     return counts;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, activeTownId, useAppStore.getState().donated]);
+  }, [data, activeTownId, activeTownDonated]);
 
   const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
   const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
