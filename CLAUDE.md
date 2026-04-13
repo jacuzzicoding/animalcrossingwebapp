@@ -1,120 +1,86 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with code in this repository.
 
-## Commands
+## Project Overview
+Animal Crossing GCN companion web app built with **Expo + React Native + TypeScript**. Tracks museum donations (fish, bugs, fossils, art) across towns with a cozy parchment aesthetic. Current version: v0.1.0-alpha.
 
-```bash
-# Start dev server (prompts for platform)
-npm start
+## Pre-Approved Commands
+These commands can run without interactive confirmation:
+- `NODE_ENV=development npm install --legacy-peer-deps`
+- `git add`, `git commit`, `git push`, `git checkout`, `git branch`, `git log`, `git status`, `git diff`, `git tag`
+- `npm run build`
+- `npx expo export --platform web`
+- `cat`, `ls`, `find`, `grep`, `cp`, `mv` (read/copy operations)
+- `node scripts/*.js` (data extraction scripts)
+- `kill <pid>` for stuck Metro/Expo processes
+- `lsof -ti:8081` to check port usage
 
-# Run on specific platform
-npm run ios
-npm run android
-npm run web
+## Development Commands
+- `NODE_ENV=development npm start -- --clear` — Start Expo dev server (Metro)
+- `NODE_ENV=development npm install --legacy-peer-deps` — Install dependencies (**always use NODE_ENV=development**)
+- `npx expo export --platform web` — Build for web deployment
 
-# Lint
-npm run lint
-```
-
-There is no test suite configured.
+## Critical Environment Notes
+- **Always prefix installs with `NODE_ENV=development`** — if `NODE_ENV=production` is set in the shell, npm silently skips devDependencies (TypeScript, @types/react, etc.)
+- If Metro crashes on startup, kill stale processes first: `kill $(lsof -ti:8081)`
+- Start server with `--clear` flag to flush the Metro bundle cache
 
 ## Architecture
 
-This is a **React Native / Expo** app using **expo-router** (file-based routing). It tracks museum donations across multiple Animal Crossing towns.
-
-### Routing
-
-expo-router with typed routes enabled. Route tree:
-- `app/(tabs)/` — tab navigator: Home, Museum, Search, Analytics
-- `app/museum/[category].tsx` — collectible list for a category (fish/bugs/fossils/art)
-- `app/item/[category]/[id].tsx` — individual item detail
-- `app/town/create.tsx` / `app/town/edit.tsx` — modal screens
+### Framework
+- **Expo SDK 54** with expo-router for file-based navigation
+- **React Native** components (not web HTML elements)
+- **TypeScript** throughout
 
 ### State Management
+- **Zustand ^4.5.2** (must stay on v4 — v5 uses `import.meta.env` which Metro can't handle)
+- Store in `store/` directory with AsyncStorage persistence
 
-All state lives in a single **Zustand** store (`store/index.ts`) persisted to AsyncStorage under the key `ac-companion-storage`.
+### Module Resolution
+- **metro.config.js** is critical — sets resolver condition order to `['react-native', 'require', 'default']` to force CJS over ESM. Do not remove or modify this.
 
-Key state shape:
-- `towns: Town[]` — user-created towns (each tied to an `ACGame`)
-- `activeTownId` — which town's data is shown
-- `donations: Record<townId, Record<itemId, DonationRecord>>` — flat donation log per town
+### Data Files
+Located in `public/data/acgcn/` (or equivalent assets directory):
+- `fish.json` — 40 species
+- `bugs.json` — 40 species  
+- `fossils.json` — 25 items
+- `art.json` — 13 paintings
 
-Selectors (`getProgress`, `getCategoryProgress`) compute progress on the fly from the donations map.
+### Cozy Design System
+Custom Tailwind/StyleSheet palette mimicking GameCube museum aesthetic:
+- `wood`: #7B5E3B (header backgrounds)
+- `paper`: #F5E9D4 (card backgrounds)
+- `ink`: #2A2A2A (text)
+- `leaf`: #3CA370 (progress bars, success)
+- `ocean`: #1A2B4A (accent)
+- `cube`: #6E5AA3 (accent)
+- Google Fonts: Varela Round
 
-### Data
+## Dependency Notes
+Key packages that must stay pinned to specific versions:
+- `expo`: ~54.0.0
+- `expo-router`: ~6.0.23 (SDK 54 compatible, NOT v55+)
+- `expo-font`, `expo-linking`, `expo-splash-screen`, `expo-status-bar`, `expo-system-ui`: all SDK 54 versions via `npx expo install`
+- `react-native-reanimated`: ~3.16.2 (v4 requires separate worklets package)
+- `zustand`: ^4.5.2 (NOT v5)
 
-Static collectible data lives in `data/` (fish, bugs, fossils, art). Each file exports a typed array matching the interfaces in `types/index.ts`. The `data/index.ts` barrel re-exports everything and computes `TOTAL_BY_CATEGORY` / `GRAND_TOTAL` from array lengths.
+## Git Workflow
+- `main` — stable tagged releases only (never commit directly)
+- `development` — active feature work; all PRs target this branch
+- Feature branches off `development`, merged via PR
+- CI runs `npx expo export --platform web` on push to `development` and PRs to `main`
+- Tag releases: `git tag v0.X.0-alpha && git push origin v0.X.0-alpha`
 
-Adding a new game's data means adding items to those arrays with the correct `games: ACGame[]` field — the store and UI derive counts automatically.
+## Roadmap (Summary)
+- **v0.1.0-alpha** ✅ App boots, Create Town, basic tab navigation
+- **v0.2.0-alpha** All four museum categories functional (fish/bugs/fossils/art with donation tracking, progress %, detail views)
+- **v0.3.0-alpha** Town management, donation timestamps, activity feed
+- **v0.4.0-alpha** Global search, floating category switcher
+- **v0.5.0-alpha** Analytics dashboard
+- **v0.6.0-alpha** Export/share, error handling, tests
+- **v0.7.0-alpha** Villagers, donate tab
+- **v1.0.0** Full companion app
 
-### Types
-
-`types/index.ts` defines the full type system:
-- `ACGame` — union of 5 game IDs (`ACGCN` | `ACWW` | `ACCF` | `ACNL` | `ACNH`)
-- `Category` — `'fish' | 'bugs' | 'fossils' | 'art'`
-- `CollectibleData` — discriminated union of `FishData | BugData | FossilData | ArtData`
-- `Town`, `DonationRecord`, `CategoryProgress`, `OverallProgress`
-
-### Styling
-
-No styling library — plain `StyleSheet.create`. All colors come from `constants/colors.ts` (`Colors` object and `CategoryColors` map). The palette is a warm Animal Crossing GCN earth-tone theme. Never hard-code color values; always reference `Colors` or `CategoryColors`.
-
-### Path aliases
-
-`@/` maps to the repo root (configured in `tsconfig.json`).
-
-## Session Notes (April 2026)
-
-### Critical: Expo SDK Version
-**Always use SDK 54.** Bea's iPhone Expo Go is locked to SDK 54. Do NOT let expo upgrade to 55.
-`package.json` is pinned to `"expo": "~54.0.0"` — keep it that way.
-
-### Install
-```bash
-npm install --legacy-peer-deps   # plain npm install fails — peer dep conflicts
-```
-
-### Current Status (April 2026 — session 2)
-App is running and functional at http://localhost:8081. Three dependency bugs were found and fixed this session:
-
-1. **react-native-reanimated** was `~4.1.1` (required missing `react-native-worklets` → blank white screen). Fixed to `~3.16.2`.
-2. **zustand** was `^5.0.1` (ESM middleware used `import.meta` → bundle crash). Fixed to `^4.5.2`. See note below.
-3. **Metro config** — created `metro.config.js` to pin resolver conditions to `['react-native', 'require', 'default']`, preventing Metro from resolving zustand's `.mjs` files even in v4.
-
-**Create Town flow is confirmed working.** App renders, navigation works, town creation persists.
-
-Next session: UI review pass across all 4 tabs and modal screens. Then data accuracy check (118 items vs actual ACGCN content).
-
-### Deferred to v2
-- Villager tracking
-- Multi-game UI (type system supports it, UI is GCN-first)
-- App icons / splash screen
-- App Store / Play Store submission
-
-### NODE_ENV=production gotcha
-If `NODE_ENV=production` is set in the shell environment (common in some setups), npm skips devDependencies (`typescript`, `@types/react`). This causes Expo to throw a TypeScript dependency error at startup even though the packages appear in `package.json`.
-
-**Always prefix installs and `npm start` with `NODE_ENV=development`:**
-```bash
-NODE_ENV=development npm install --legacy-peer-deps
-NODE_ENV=development npm start
-```
-
-### Zustand: must stay on v4, not v5
-Zustand v5's `middleware.mjs` uses `import.meta.env` for devtools detection. Metro cannot handle `import.meta` outside a true ES module context, so importing from `zustand/middleware` (even just `persist`) crashes the whole web bundle with `SyntaxError: Cannot use 'import.meta' outside a module`. The store API is identical in v4. Keep pinned to `^4.5.2`.
-
-### Correct SDK-54 package versions (resolved April 2026)
-These are confirmed working — do not upgrade without testing:
-- `expo-router`: `~6.0.23`
-- `expo-font`: `~14.0.11`
-- `expo-linking`: `~8.0.11`
-- `expo-splash-screen`: `~31.0.13`
-- `expo-status-bar`: `~3.0.9`
-- `expo-system-ui`: `~6.0.9`
-- `react-native`: `0.81.5`
-- `react`: `19.1.0`
-- `react-native-reanimated`: `~3.16.2` ⚠️ do NOT use v4 — requires react-native-worklets
-- `zustand`: `^4.5.2` ⚠️ do NOT use v5 — ESM middleware breaks Metro web build
-- `typescript`: `~5.9.2` (devDep)
-- `@types/react`: `~19.1.10` (devDep)
+## Sister Project
+Swift/Xcode version at `../AnimalCrossingGCN-Tracker` — reference for data models, feature parity, and original design intent.

@@ -1,0 +1,754 @@
+import React from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import {
+  Fish as FishIcon,
+  Bug,
+  Bone,
+  Palette,
+  CheckCircle2,
+  Search,
+  X,
+} from 'lucide-react';
+import { useDonationStore } from '../lib/store';
+import type {
+  Fish as FishType,
+  BugItem,
+  FossilItem,
+  ArtPiece,
+  CategoryId,
+} from '../lib/types';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const MONTH_NAMES = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+const CATEGORY_META: Record<CategoryId, {
+  label: string;
+  Icon: React.ElementType;
+  file: string;
+}> = {
+  fish:    { label: 'Fish',    Icon: FishIcon, file: '/data/acgcn/fish.json'    },
+  bugs:    { label: 'Bugs',    Icon: Bug,      file: '/data/acgcn/bugs.json'    },
+  fossils: { label: 'Fossils', Icon: Bone,     file: '/data/acgcn/fossils.json' },
+  art:     { label: 'Art',     Icon: Palette,  file: '/data/acgcn/art.json'     },
+};
+
+const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
+
+interface AllData {
+  fish: FishType[];
+  bugs: BugItem[];
+  fossils: FossilItem[];
+  art: ArtPiece[];
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Display name — fossils include the part in the name string. */
+function displayName(item: AnyItem, category: CategoryId): string {
+  if (category === 'fossils') {
+    const f = item as FossilItem;
+    return f.part ? `${f.name} — ${f.part}` : f.name;
+  }
+  return item.name;
+}
+
+/** Secondary label shown in the row / detail sheet. */
+function rowSubtitle(item: AnyItem, category: CategoryId): string | null {
+  if (category === 'fish')    return (item as FishType).habitat;
+  if (category === 'fossils') return null; // part is already in displayName
+  if (category === 'art')     return (item as ArtPiece).basedOn;
+  return null;
+}
+
+function itemBells(item: AnyItem, category: CategoryId): number | null {
+  if (category === 'art') return null;
+  return (item as FishType | BugItem | FossilItem).value ?? null;
+}
+
+function itemMonths(item: AnyItem, category: CategoryId): number[] | undefined {
+  if (category === 'fossils' || category === 'art') return undefined;
+  return (item as FishType | BugItem).months;
+}
+
+function itemNotes(item: AnyItem): string | undefined {
+  return (item as FishType).notes;
+}
+
+function formatTimestamp(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+// ─── MuseumHeader ─────────────────────────────────────────────────────────────
+
+function MuseumHeader({
+  donatedCount,
+  totalCount,
+}: {
+  donatedCount: number;
+  totalCount: number;
+}) {
+  const pct = totalCount ? Math.round((donatedCount / totalCount) * 100) : 0;
+  return (
+    <div
+      className="rounded-[14px] overflow-hidden border"
+      style={{ borderColor: '#E7DAC4' }}
+    >
+      <div
+        className="px-5 py-4"
+        style={{
+          background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)',
+          color: '#F5E9D4',
+        }}
+      >
+        <div className="text-[13px] tracking-wide opacity-90">AC GCN Museum</div>
+        <div className="flex items-end justify-between">
+          <h1 className="text-2xl font-semibold" style={{ letterSpacing: '0.2px' }}>
+            Museum Tracker
+          </h1>
+          <div className="text-[13px] opacity-80 pb-0.5">
+            {donatedCount} / {totalCount} items
+          </div>
+        </div>
+      </div>
+      <div className="px-5 py-3" style={{ backgroundColor: '#F5E9D4' }}>
+        <div
+          className="flex items-center justify-between text-sm mb-1.5"
+          style={{ color: '#2A2A2A' }}
+        >
+          <span>Overall progress</span>
+          <span>{pct}% complete</span>
+        </div>
+        <div
+          className="h-2 w-full rounded-full overflow-hidden"
+          style={{ backgroundColor: '#e9dcc3' }}
+        >
+          <div
+            className="h-full transition-all duration-500"
+            style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── TabBar ───────────────────────────────────────────────────────────────────
+
+function TabBar({
+  active,
+  onChange,
+  catCounts,
+  data,
+}: {
+  active: CategoryId;
+  onChange: (c: CategoryId) => void;
+  catCounts: Record<CategoryId, number>;
+  data: AllData;
+}) {
+  return (
+    <div
+      className="flex rounded-[14px] overflow-hidden border"
+      style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4' }}
+    >
+      {CATEGORY_ORDER.map((cat, i) => {
+        const { label, Icon } = CATEGORY_META[cat];
+        const isActive = cat === active;
+        const total = data[cat].length;
+        const donated = catCounts[cat];
+        return (
+          <button
+            key={cat}
+            onClick={() => onChange(cat)}
+            className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+            style={{
+              backgroundColor: isActive ? '#7B5E3B' : 'transparent',
+              color: isActive ? '#F5E9D4' : '#7B5E3B',
+              borderRight: i < CATEGORY_ORDER.length - 1 ? '1px solid #E7DAC4' : 'none',
+            }}
+          >
+            <Icon className="w-4 h-4" />
+            <span>{label}</span>
+            <span className="opacity-70" style={{ fontSize: '10px' }}>
+              {donated}/{total}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── CategoryProgress ─────────────────────────────────────────────────────────
+
+function CategoryProgress({
+  donated,
+  total,
+  label,
+}: {
+  donated: number;
+  total: number;
+  label: string;
+}) {
+  const pct = total ? Math.round((donated / total) * 100) : 0;
+  return (
+    <div
+      className="rounded-[12px] border px-4 py-3"
+      style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
+    >
+      <div
+        className="flex items-center justify-between text-sm mb-1.5"
+        style={{ color: '#2A2A2A' }}
+      >
+        <span className="font-medium">{label} Collection</span>
+        <span>
+          {donated} / {total} donated · {pct}%
+        </span>
+      </div>
+      <div
+        className="h-1.5 w-full rounded-full overflow-hidden"
+        style={{ backgroundColor: '#e9dcc3' }}
+      >
+        <div
+          className="h-full transition-all duration-500"
+          style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── SearchBar ────────────────────────────────────────────────────────────────
+
+function SearchBar({
+  query,
+  setQuery,
+  placeholder,
+}: {
+  query: string;
+  setQuery: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div
+      className="flex items-center gap-2 rounded-[14px] border px-3 py-2"
+      style={{ borderColor: '#E7DAC4', backgroundColor: '#FDF9F1' }}
+    >
+      <Search className="w-4 h-4 opacity-50 shrink-0" />
+      <input
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder={placeholder}
+        className="w-full bg-transparent outline-none text-sm"
+      />
+      {query && (
+        <button onClick={() => setQuery('')} className="opacity-40 hover:opacity-70 shrink-0">
+          <X className="w-3.5 h-3.5" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── HabitatChip ─────────────────────────────────────────────────────────────
+
+function HabitatChip({ label }: { label: string }) {
+  return (
+    <span
+      className="inline-block px-2 py-0.5 text-[11px] rounded-[10px] shrink-0"
+      style={{ backgroundColor: '#F5E9D4', border: '1px solid #E7DAC4', color: '#5a4a35' }}
+    >
+      {label.charAt(0).toUpperCase() + label.slice(1)}
+    </span>
+  );
+}
+
+// ─── DonateToggle ─────────────────────────────────────────────────────────────
+
+function DonateToggle({
+  checked,
+  onToggle,
+}: {
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={e => {
+        e.stopPropagation();
+        onToggle();
+      }}
+      aria-pressed={checked}
+      aria-label={checked ? 'Mark as not donated' : 'Mark as donated'}
+      className="shrink-0 inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs transition select-none"
+      style={{
+        backgroundColor: checked ? '#3CA370' : '#EDE3D0',
+        color: checked ? '#fff' : '#2A2A2A',
+        border: '1px solid #E7DAC4',
+      }}
+    >
+      {checked && <CheckCircle2 className="w-3.5 h-3.5" />}
+      {checked ? 'Donated' : 'Donate'}
+    </button>
+  );
+}
+
+// ─── CollectibleRow ───────────────────────────────────────────────────────────
+
+function CollectibleRow({
+  item,
+  category,
+  checked,
+  onToggle,
+  onClick,
+}: {
+  item: AnyItem;
+  category: CategoryId;
+  checked: boolean;
+  onToggle: () => void;
+  onClick: () => void;
+}) {
+  const { Icon } = CATEGORY_META[category];
+  const name = displayName(item, category);
+  const subtitle = rowSubtitle(item, category);
+  const bells = itemBells(item, category);
+  const months = itemMonths(item, category);
+  const notes = itemNotes(item);
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full text-left flex items-center gap-3 rounded-[14px] border px-4 py-3 transition"
+      style={{
+        borderColor: checked ? '#b8dfc8' : '#E7DAC4',
+        backgroundColor: checked ? '#f2faf6' : '#FFFDF6',
+        boxShadow: '0 1px 0 rgba(0,0,0,0.03)',
+      }}
+    >
+      {/* Icon badge */}
+      <div
+        className="shrink-0 rounded-xl p-2"
+        style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+        aria-hidden
+      >
+        <Icon className="w-4 h-4" />
+      </div>
+
+      {/* Text */}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="truncate font-medium text-sm" style={{ color: '#2A2A2A' }}>
+            {name}
+          </span>
+          {category === 'fish' && subtitle && <HabitatChip label={subtitle} />}
+        </div>
+        <div className="text-[12px] mt-0.5 truncate" style={{ color: '#5a4a35' }}>
+          {/* Bells */}
+          {bells != null
+            ? `${bells.toLocaleString()} Bells`
+            : category === 'art'
+              ? 'Painting'
+              : '—'}
+          {/* Season */}
+          {category !== 'fossils' && category !== 'art' && (
+            <span className="ml-2 opacity-60">
+              {months && months.length > 0 ? `${months.length} months` : 'Year-round'}
+            </span>
+          )}
+          {/* Art: basedOn truncated */}
+          {category === 'art' && subtitle && (
+            <span className="ml-1 opacity-70">
+              · {subtitle.length > 38 ? subtitle.slice(0, 38) + '…' : subtitle}
+            </span>
+          )}
+          {/* Notes */}
+          {notes && (
+            <span className="ml-2 italic opacity-70">{notes}</span>
+          )}
+        </div>
+      </div>
+
+      <DonateToggle checked={checked} onToggle={onToggle} />
+    </button>
+  );
+}
+
+// ─── MonthGrid ────────────────────────────────────────────────────────────────
+
+function MonthGrid({ months }: { months?: number[] }) {
+  return (
+    <div className="grid grid-cols-6 gap-1.5">
+      {MONTH_NAMES.map((m, i) => {
+        const active = !months || months.includes(i + 1);
+        return (
+          <div
+            key={m}
+            className="flex items-center justify-center rounded-[6px] py-1.5"
+            style={{
+              backgroundColor: active ? '#3CA370' : '#EDE3D0',
+              opacity: active ? 1 : 0.45,
+            }}
+          >
+            <span
+              className="text-[10px] font-semibold"
+              style={{ color: active ? '#fff' : '#5a4a35' }}
+            >
+              {m}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── DetailModal ──────────────────────────────────────────────────────────────
+
+function DetailModal({
+  item,
+  category,
+  checked,
+  donatedAt,
+  onToggle,
+  onClose,
+}: {
+  item: AnyItem;
+  category: CategoryId;
+  checked: boolean;
+  donatedAt?: string;
+  onToggle: () => void;
+  onClose: () => void;
+}) {
+  const { Icon, label } = CATEGORY_META[category];
+  const name = displayName(item, category);
+  const subtitle = rowSubtitle(item, category);
+  const bells = itemBells(item, category);
+  const months = itemMonths(item, category);
+  const notes = itemNotes(item);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center"
+      style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-3xl rounded-t-[20px] overflow-hidden"
+        style={{
+          backgroundColor: '#FDF9F1',
+          maxHeight: '88vh',
+          overflowY: 'auto',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* drag handle */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div
+            className="w-10 h-1 rounded-full"
+            style={{ backgroundColor: '#D9CCBA' }}
+          />
+        </div>
+
+        {/* close button */}
+        <div className="flex justify-end px-4 pt-1 pb-2">
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full"
+            style={{ backgroundColor: '#EDE3D0' }}
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" style={{ color: '#5a4a35' }} />
+          </button>
+        </div>
+
+        <div className="px-6 pb-8 space-y-5">
+          {/* Icon + name */}
+          <div className="flex items-start gap-4">
+            <div
+              className="rounded-2xl p-3.5 shrink-0"
+              style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+            >
+              <Icon className="w-7 h-7" />
+            </div>
+            <div className="pt-1">
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
+                style={{ color: '#5a4a35' }}
+              >
+                {label}
+              </div>
+              <h2 className="text-xl font-semibold leading-snug" style={{ color: '#2A2A2A' }}>
+                {name}
+              </h2>
+              {subtitle && (
+                <p className="text-sm mt-1" style={{ color: '#5a4a35' }}>
+                  {subtitle}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Bell value */}
+          {bells != null && (
+            <div
+              className="rounded-[12px] px-4 py-3"
+              style={{ backgroundColor: '#F5E9D4', border: '1px solid #E7DAC4' }}
+            >
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
+                style={{ color: '#5a4a35' }}
+              >
+                Value
+              </div>
+              <div className="font-semibold text-base" style={{ color: '#2A2A2A' }}>
+                {bells.toLocaleString()} Bells
+              </div>
+            </div>
+          )}
+
+          {/* Season grid */}
+          {category !== 'fossils' && category !== 'art' && (
+            <div>
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-2"
+                style={{ color: '#5a4a35' }}
+              >
+                Availability
+              </div>
+              <MonthGrid months={months} />
+              {(!months || months.length === 0) && (
+                <p className="text-xs mt-1.5 opacity-60" style={{ color: '#5a4a35' }}>
+                  Active all year
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Notes */}
+          {notes && (
+            <div
+              className="rounded-[12px] px-4 py-3 italic text-sm"
+              style={{
+                backgroundColor: '#fff8ee',
+                border: '1px solid #E7DAC4',
+                color: '#5a4a35',
+              }}
+            >
+              {notes}
+            </div>
+          )}
+
+          {/* Donated timestamp */}
+          {checked && donatedAt && (
+            <div
+              className="rounded-[12px] px-4 py-3"
+              style={{ backgroundColor: '#f2faf6', border: '1px solid #b8dfc8' }}
+            >
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
+                style={{ color: '#2A7A52' }}
+              >
+                Donated
+              </div>
+              <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>
+                {formatTimestamp(donatedAt)}
+              </div>
+            </div>
+          )}
+
+          {/* Donate / Remove action */}
+          <button
+            onClick={onToggle}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-[14px] font-medium text-sm transition"
+            style={{
+              backgroundColor: checked ? '#EDE3D0' : '#3CA370',
+              color: checked ? '#2A2A2A' : '#fff',
+              border: '1px solid #E7DAC4',
+            }}
+          >
+            {checked && <CheckCircle2 className="w-4 h-4" />}
+            {checked ? 'Remove from Donated' : 'Mark as Donated'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── EmptyState ───────────────────────────────────────────────────────────────
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div
+      className="rounded-[14px] border px-4 py-8 text-center text-sm"
+      style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#5a4a35' }}
+    >
+      {message}
+    </div>
+  );
+}
+
+// ─── ACCanvas (root) ──────────────────────────────────────────────────────────
+
+export default function ACCanvas() {
+  const [activeTab, setActiveTab] = useState<CategoryId>('fish');
+  const [query, setQuery] = useState('');
+  const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<{
+    item: AnyItem;
+    category: CategoryId;
+  } | null>(null);
+
+  const { donated, donatedAt, toggle } = useDonationStore();
+
+  // Load all four datasets in parallel on mount
+  useEffect(() => {
+    Promise.all(
+      CATEGORY_ORDER.map(cat =>
+        fetch(CATEGORY_META[cat].file).then(r => r.json())
+      )
+    )
+      .then(([fish, bugs, fossils, art]) => {
+        setData({ fish, bugs, fossils, art });
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to load museum data:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Items for the active tab
+  const activeItems = data[activeTab] as AnyItem[];
+
+  // Filtered by search query
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return activeItems;
+    return activeItems.filter(item =>
+      displayName(item, activeTab).toLowerCase().includes(q)
+    );
+  }, [activeItems, activeTab, query]);
+
+  // Per-category donation counts (based on actually loaded items)
+  const catCounts = useMemo(() => {
+    const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
+    for (const cat of CATEGORY_ORDER) {
+      counts[cat] = (data[cat] as AnyItem[]).filter(item => donated[item.id]).length;
+    }
+    return counts;
+  }, [data, donated]);
+
+  const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
+  const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
+
+  const handleTabChange = (cat: CategoryId) => {
+    setActiveTab(cat);
+    setQuery('');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg font-medium" style={{ color: '#2A2A2A' }}>
+            Loading museum data…
+          </div>
+          <div className="text-sm mt-1" style={{ color: '#5a4a35', opacity: 0.7 }}>
+            Preparing your collection
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const { label: catLabel } = CATEGORY_META[activeTab];
+
+  return (
+    <div className="min-h-screen w-full relative overflow-hidden">
+      {/* Parchment background */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)' }}
+      />
+      {/* Subtle checker grain */}
+      <div
+        className="absolute inset-0 opacity-[0.06] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(90deg, rgba(0,0,0,.15) 1px, transparent 1px), linear-gradient(rgba(0,0,0,.15) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+
+      <div className="relative mx-auto max-w-3xl px-4 py-8 space-y-4">
+        <MuseumHeader donatedCount={totalDonated} totalCount={totalItems} />
+
+        <TabBar
+          active={activeTab}
+          onChange={handleTabChange}
+          catCounts={catCounts}
+          data={data}
+        />
+
+        <CategoryProgress
+          donated={catCounts[activeTab]}
+          total={activeItems.length}
+          label={catLabel}
+        />
+
+        <SearchBar
+          query={query}
+          setQuery={setQuery}
+          placeholder={`Search ${catLabel.toLowerCase()}…`}
+        />
+
+        <div className="space-y-3">
+          {filtered.map(item => (
+            <CollectibleRow
+              key={item.id}
+              item={item}
+              category={activeTab}
+              checked={!!donated[item.id]}
+              onToggle={() => toggle(item.id)}
+              onClick={() => setSelected({ item, category: activeTab })}
+            />
+          ))}
+          {filtered.length === 0 && (
+            <EmptyState
+              message={
+                query
+                  ? `No ${catLabel.toLowerCase()} match "${query}".`
+                  : `No ${catLabel.toLowerCase()} found.`
+              }
+            />
+          )}
+        </div>
+      </div>
+
+      {selected && (
+        <DetailModal
+          item={selected.item}
+          category={selected.category}
+          checked={!!donated[selected.item.id]}
+          donatedAt={donatedAt[selected.item.id]}
+          onToggle={() => toggle(selected.item.id)}
+          onClose={() => setSelected(null)}
+        />
+      )}
+    </div>
+  );
+}
