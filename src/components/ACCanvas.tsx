@@ -647,8 +647,8 @@ export default function ACCanvas() {
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
-  const activeTownDonated = useAppStore(s => activeTownId ? (s.donated[activeTownId] ?? {}) : {});
-  const activeTownDonatedAt = useAppStore(s => activeTownId ? (s.donatedAt[activeTownId] ?? {}) : {});
+  const activeTownDonated = useAppStore(s => s.activeTownId ? (s.donated[s.activeTownId] ?? {}) : {});
+  const activeTownDonatedAt = useAppStore(s => s.activeTownId ? (s.donatedAt[s.activeTownId] ?? {}) : {});
   const toggle = useAppStore(s => s.toggle);
 
   // Show create town modal on first load if no towns exist
@@ -682,12 +682,11 @@ export default function ACCanvas() {
 
   const catCounts = useMemo(() => {
     const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
-    if (!activeTownId) return counts;
     for (const cat of CATEGORY_ORDER) {
       counts[cat] = (data[cat] as AnyItem[]).filter(item => !!activeTownDonated[item.id]).length;
     }
     return counts;
-  }, [data, activeTownId, activeTownDonated]);
+  }, [data, activeTownDonated]);
 
   const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
   const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
