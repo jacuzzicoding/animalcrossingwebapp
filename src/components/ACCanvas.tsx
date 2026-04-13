@@ -40,6 +40,10 @@ const CATEGORY_META: Record<CategoryId, {
 
 const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
 
+// Stable empty fallbacks so Zustand selectors don't return new {} references
+const EMPTY_DONATED: Record<string, boolean> = {};
+const EMPTY_DONATED_AT: Record<string, string> = {};
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
@@ -647,8 +651,8 @@ export default function ACCanvas() {
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
-  const activeTownDonated = useAppStore(s => s.activeTownId ? (s.donated[s.activeTownId] ?? {}) : {});
-  const activeTownDonatedAt = useAppStore(s => s.activeTownId ? (s.donatedAt[s.activeTownId] ?? {}) : {});
+  const activeTownDonated = useAppStore(s => s.activeTownId ? (s.donated[s.activeTownId] ?? EMPTY_DONATED) : EMPTY_DONATED);
+  const activeTownDonatedAt = useAppStore(s => s.activeTownId ? (s.donatedAt[s.activeTownId] ?? EMPTY_DONATED_AT) : EMPTY_DONATED_AT);
   const toggle = useAppStore(s => s.toggle);
 
   // Show create town modal on first load if no towns exist
