@@ -1307,7 +1307,7 @@ export default function ACCanvas() {
     setLoadError(null);
     Promise.all(
       CATEGORY_ORDER.map(cat =>
-        fetch(CATEGORY_META[cat].file).then(r => r.json())
+        fetch(CATEGORY_META[cat].file).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       )
     )
       .then(([fish, bugs, fossils, art]) => {
