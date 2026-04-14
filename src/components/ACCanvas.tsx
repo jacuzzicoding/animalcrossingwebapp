@@ -12,8 +12,10 @@ import {
   Plus,
   Clock,
   BarChart2,
+  Download,
 } from 'lucide-react';
 import { useAppStore } from '../lib/store';
+import { downloadCSV } from '../lib/csvExport';
 import type {
   Fish as FishType,
   BugItem,
@@ -273,10 +275,12 @@ function MuseumHeader({
   donatedCount,
   totalCount,
   onCreateTown,
+  onExport,
 }: {
   donatedCount: number;
   totalCount: number;
   onCreateTown: () => void;
+  onExport: () => void;
 }) {
   const pct = totalCount ? Math.round((donatedCount / totalCount) * 100) : 0;
   return (
@@ -297,6 +301,21 @@ function MuseumHeader({
             Museum Tracker
           </h1>
           <div className="flex items-center gap-2">
+            <button
+              onClick={onExport}
+              title="Export CSV"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-[8px] text-[12px] font-medium transition-colors"
+              style={{
+                backgroundColor: 'rgba(245,233,212,0.15)',
+                color: '#F5E9D4',
+                border: '1px solid rgba(245,233,212,0.3)',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(245,233,212,0.25)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(245,233,212,0.15)')}
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export CSV</span>
+            </button>
             <TownSwitcher onCreateNew={onCreateTown} />
           </div>
         </div>
@@ -1298,6 +1317,13 @@ export default function ACCanvas() {
   // Show create town modal on first load if no towns exist
   const noTowns = towns.length === 0;
 
+  const activeTown = towns.find(t => t.id === activeTownId);
+
+  function handleExport() {
+    if (!activeTown) return;
+    downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name, activeTown.playerName);
+  }
+
   useEffect(() => {
     Promise.all(
       CATEGORY_ORDER.map(cat =>
@@ -1405,6 +1431,7 @@ export default function ACCanvas() {
           donatedCount={totalDonated}
           totalCount={totalItems}
           onCreateTown={() => setShowCreateTown(true)}
+          onExport={handleExport}
         />
 
         {noTowns ? (
