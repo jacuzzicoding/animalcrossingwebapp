@@ -52,7 +52,7 @@ export function downloadCSV(
   a.href = url;
   a.download = `ac-museum-${safeTown}-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 /**
