@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../lib/store';
 import { downloadCSV } from '../lib/csvExport';
+import ErrorBanner, { type AppErrorKind } from './ErrorBanner';
+import ErrorState from './ErrorState';
 import type {
   Fish as FishType,
   BugItem,
@@ -1305,6 +1307,8 @@ export default function ACCanvas() {
   const historyRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<'dataLoadFailed' | 'networkError' | null>(null);
+  const [banner, setBanner] = useState<AppErrorKind | null>(null);
   const [selected, setSelected] = useState<{ item: AnyItem; category: CategoryId } | null>(null);
   const [showCreateTown, setShowCreateTown] = useState(false);
 
@@ -1324,10 +1328,12 @@ export default function ACCanvas() {
     downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name, activeTown.playerName);
   }
 
-  useEffect(() => {
+  function loadMuseumData() {
+    setLoading(true);
+    setLoadError(null);
     Promise.all(
       CATEGORY_ORDER.map(cat =>
-        fetch(CATEGORY_META[cat].file).then(r => r.json())
+        fetch(CATEGORY_META[cat].file).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       )
     )
       .then(([fish, bugs, fossils, art]) => {
@@ -1336,8 +1342,14 @@ export default function ACCanvas() {
       })
       .catch(err => {
         console.error('Failed to load museum data:', err);
+        const isNetwork = !navigator.onLine || err instanceof TypeError;
+        setLoadError(isNetwork ? 'networkError' : 'dataLoadFailed');
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    loadMuseumData();
   }, []);
 
   const activeCat: CategoryId | null = (activeTab !== 'activity' && activeTab !== 'search' && activeTab !== 'analytics') ? activeTab : null;
@@ -1400,6 +1412,15 @@ export default function ACCanvas() {
     setQuery('');
   };
 
+  if (loadError) {
+    return (
+      <ErrorState
+        kind={loadError}
+        onRetry={loadMuseumData}
+      />
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center">
@@ -1433,6 +1454,14 @@ export default function ACCanvas() {
           onCreateTown={() => setShowCreateTown(true)}
           onExport={handleExport}
         />
+
+        {banner && (
+          <ErrorBanner
+            error={banner}
+            onDismiss={() => setBanner(null)}
+            onRetry={banner.type === 'networkError' ? () => { setBanner(null); loadMuseumData(); } : undefined}
+          />
+        )}
 
         {noTowns ? (
           <EmptyState message="Create a town to start tracking your museum donations." />
