@@ -62,12 +62,6 @@ const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
 const EMPTY_DONATED: Record<string, boolean> = {};
 const EMPTY_DONATED_AT: Record<string, string> = {};
 
-const SEASONS: { label: string; months: number[]; color: string }[] = [
-  { label: 'Spring', months: [3, 4, 5],   color: '#3CA370' },
-  { label: 'Summer', months: [6, 7, 8],   color: '#E8A838' },
-  { label: 'Fall',   months: [9, 10, 11], color: '#C8663A' },
-  { label: 'Winter', months: [12, 1, 2],  color: '#6A9EC8' },
-];
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -526,7 +520,9 @@ function CollectibleRow({
           {bells != null ? `${bells.toLocaleString()} Bells` : category === 'art' ? 'Painting' : '—'}
           {category !== 'fossils' && category !== 'art' && (
             <span className="ml-2 opacity-60">
-              {months && months.length > 0 ? `${months.length} months` : 'Year-round'}
+              {months && months.length > 0
+                ? months.length === 12 ? 'Year-round' : months.map(m => MONTH_NAMES[m - 1]).join(', ')
+                : 'Year-round'}
             </span>
           )}
           {category === 'art' && subtitle && (
@@ -824,19 +820,21 @@ function AnalyticsView({
     return { buckets: sorted, maxCount };
   }, [donatedAt]);
 
-  const seasonalData = useMemo(() => {
-    const counts: Record<string, number> = { Spring: 0, Summer: 0, Fall: 0, Winter: 0 };
-    for (const iso of Object.values(donatedAt)) {
-      const m = new Date(iso).getMonth() + 1;
-      if ([3, 4, 5].includes(m))     counts.Spring++;
-      else if ([6, 7, 8].includes(m))    counts.Summer++;
-      else if ([9, 10, 11].includes(m))  counts.Fall++;
-      else                                counts.Winter++;
+  // Build a lookup: itemId -> months[] for fish and bugs only
+  const monthAvailability = useMemo(() => {
+    const donatedIds = new Set(Object.keys(donatedAt));
+    const counts = new Array(12).fill(0);
+    for (const cat of ['fish', 'bugs'] as const) {
+      for (const item of data[cat]) {
+        if (!donatedIds.has(item.id)) continue;
+        const months: number[] | undefined = (item as FishType | BugItem).months;
+        const active = months && months.length > 0 ? months : [1,2,3,4,5,6,7,8,9,10,11,12];
+        for (const m of active) counts[m - 1]++;
+      }
     }
-    return { counts, total: Object.values(donatedAt).length };
-  }, [donatedAt]);
-
-  const maxSeasonCount = Math.max(...SEASONS.map(s => seasonalData.counts[s.label]));
+    const max = Math.max(...counts, 1);
+    return { counts, max };
+  }, [donatedAt, data]);
   const totalDonated = Object.keys(donatedAt).length;
 
   return (
@@ -979,53 +977,32 @@ function AnalyticsView({
         )}
       </SectionCard>
 
-      {/* Section 3: Seasonal Breakdown */}
-      <SectionCard title="Seasonal Breakdown">
+      {/* Section 3: Monthly Availability */}
+      <SectionCard title="Monthly Availability">
+        <div style={{ fontSize: 12, color: '#5a4a35', marginBottom: 10 }}>
+          Donated fish &amp; bugs available each month
+        </div>
         {totalDonated === 0 ? (
           <div
             className="rounded-[10px] border px-4 py-6 text-center text-sm"
             style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
           >
-            Donate items to see how your activity breaks down by season.
+            Donate fish or bugs to see monthly availability.
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {SEASONS.map(season => {
-              const count = seasonalData.counts[season.label];
-              const pct = seasonalData.total > 0
-                ? Math.round((count / seasonalData.total) * 100)
-                : 0;
-              const barWidth = maxSeasonCount > 0 ? (count / maxSeasonCount) * 100 : 0;
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {MONTH_NAMES.map((name, i) => {
+              const count = monthAvailability.counts[i];
+              const barWidth = (count / monthAvailability.max) * 100;
               return (
-                <div
-                  key={season.label}
-                  style={{
-                    backgroundColor: '#FFFDF6',
-                    border: '1px solid #E7DAC4',
-                    borderRadius: 12,
-                    padding: '12px 14px',
-                  }}
-                >
-                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 3 }}>
-                    {season.label}
+                <div key={name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 28, fontSize: 11, color: '#5a4a35', flexShrink: 0 }}>
+                    {name.slice(0, 3)}
                   </div>
                   <div
                     style={{
-                      fontSize: 26,
-                      fontWeight: 700,
-                      color: '#2A2A2A',
-                      lineHeight: 1.1,
-                      marginBottom: 2,
-                    }}
-                  >
-                    {count}
-                  </div>
-                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 8 }}>
-                    {pct}% of total
-                  </div>
-                  <div
-                    style={{
-                      height: 4,
+                      flex: 1,
+                      height: 10,
                       backgroundColor: '#e9dcc3',
                       borderRadius: 999,
                       overflow: 'hidden',
@@ -1035,10 +1012,14 @@ function AnalyticsView({
                       style={{
                         height: '100%',
                         width: `${barWidth}%`,
-                        backgroundColor: season.color,
+                        backgroundColor: '#3CA370',
                         transition: 'width 0.4s ease',
+                        borderRadius: 999,
                       }}
                     />
+                  </div>
+                  <div style={{ width: 18, fontSize: 12, fontWeight: 600, color: '#2A2A2A', textAlign: 'right', flexShrink: 0 }}>
+                    {count}
                   </div>
                 </div>
               );
