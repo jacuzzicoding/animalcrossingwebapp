@@ -13,8 +13,10 @@ import {
   Clock,
   BarChart2,
   Download,
+  Home,
 } from 'lucide-react';
 import { useAppStore } from '../lib/store';
+import HomeTab from './HomeTab';
 import { downloadCSV } from '../lib/csvExport';
 import ErrorBanner, { type AppErrorKind } from './ErrorBanner';
 import ErrorState from './ErrorState';
@@ -65,7 +67,7 @@ const EMPTY_DONATED_AT: Record<string, string> = {};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type ViewId = CategoryId | 'activity' | 'search' | 'analytics';
+type ViewId = CategoryId | 'home' | 'activity' | 'search' | 'analytics';
 
 interface AllData {
   fish: FishType[];
@@ -328,6 +330,20 @@ function TabBar({
       className="flex rounded-[14px] overflow-hidden border"
       style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4' }}
     >
+      {/* Home tab */}
+      <button
+        onClick={() => onChange('home')}
+        className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+        style={{
+          backgroundColor: active === 'home' ? '#7B5E3B' : 'transparent',
+          color: active === 'home' ? '#F5E9D4' : '#7B5E3B',
+          borderRight: '1px solid #E7DAC4',
+        }}
+      >
+        <Home className="w-4 h-4" />
+        <span>Home</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+      </button>
       {CATEGORY_ORDER.map((cat) => {
         const { label, Icon } = CATEGORY_META[cat];
         const isActive = cat === active;
@@ -1230,7 +1246,7 @@ function GlobalSearchResults({
 // ─── ACCanvas (root) ──────────────────────────────────────────────────────────
 
 export default function ACCanvas() {
-  const [activeTab, setActiveTab] = useState<ViewId>('fish');
+  const [activeTab, setActiveTab] = useState<ViewId>('home');
   const [query, setQuery] = useState('');
   const [globalQuery, setGlobalQuery] = useState('');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -1283,7 +1299,7 @@ export default function ACCanvas() {
     loadMuseumData();
   }, []);
 
-  const activeCat: CategoryId | null = (activeTab !== 'activity' && activeTab !== 'search' && activeTab !== 'analytics') ? activeTab : null;
+  const activeCat: CategoryId | null = (activeTab !== 'home' && activeTab !== 'activity' && activeTab !== 'search' && activeTab !== 'analytics') ? activeTab : null;
   const activeItems = activeCat ? data[activeCat] as AnyItem[] : [];
 
   const filtered = useMemo(() => {
@@ -1405,7 +1421,15 @@ export default function ACCanvas() {
               data={data}
             />
 
-            {activeTab === 'analytics' ? (
+            {activeTab === 'home' ? (
+              <HomeTab
+                data={data}
+                donated={activeTownDonated}
+                donatedAt={activeTownDonatedAt}
+                catCounts={catCounts}
+                onNavigate={(v) => handleTabChange(v)}
+              />
+            ) : activeTab === 'analytics' ? (
               <AnalyticsView
                 data={data}
                 catCounts={catCounts}
