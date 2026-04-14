@@ -25,6 +25,18 @@ import type {
   ArtPiece,
   CategoryId,
 } from '../lib/types';
+import {
+  displayName,
+  rowSubtitle,
+  itemBells,
+  itemMonths,
+  itemNotes,
+  formatTimestamp,
+  formatRelativeDate,
+  formatTime,
+  filterByQuery,
+  type AnyItem,
+} from '../lib/utils';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -59,7 +71,6 @@ const SEASONS: { label: string; months: number[]; color: string }[] = [
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
 type ViewId = CategoryId | 'activity' | 'search' | 'analytics';
 
 interface AllData {
@@ -67,45 +78,6 @@ interface AllData {
   bugs: BugItem[];
   fossils: FossilItem[];
   art: ArtPiece[];
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function displayName(item: AnyItem, category: CategoryId): string {
-  if (category === 'fossils') {
-    const f = item as FossilItem;
-    return f.part ? `${f.name} — ${f.part}` : f.name;
-  }
-  return item.name;
-}
-
-function rowSubtitle(item: AnyItem, category: CategoryId): string | null {
-  if (category === 'fish')    return (item as FishType).habitat;
-  if (category === 'fossils') return null;
-  if (category === 'art')     return (item as ArtPiece).basedOn;
-  return null;
-}
-
-function itemBells(item: AnyItem, category: CategoryId): number | null {
-  if (category === 'art') return null;
-  return (item as FishType | BugItem | FossilItem).value ?? null;
-}
-
-function itemMonths(item: AnyItem, category: CategoryId): number[] | undefined {
-  if (category === 'fossils' || category === 'art') return undefined;
-  return (item as FishType | BugItem).months;
-}
-
-function itemNotes(item: AnyItem): string | undefined {
-  return (item as FishType).notes;
-}
-
-function formatTimestamp(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 // ─── CreateTownModal ──────────────────────────────────────────────────────────
@@ -706,26 +678,6 @@ interface ActivityEntry {
   name: string;
   category: CategoryId;
   ts: string;
-}
-
-function formatRelativeDate(iso: string): string {
-  const date = new Date(iso);
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  const sameDay = (a: Date, b: Date) =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate();
-
-  if (sameDay(date, today)) return 'Today';
-  if (sameDay(date, yesterday)) return 'Yesterday';
-  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-}
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
 
 function ActivityFeed({
