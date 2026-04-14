@@ -520,7 +520,9 @@ function CollectibleRow({
           {bells != null ? `${bells.toLocaleString()} Bells` : category === 'art' ? 'Painting' : '—'}
           {category !== 'fossils' && category !== 'art' && (
             <span className="ml-2 opacity-60">
-              {months && months.length > 0 ? `${months.length} months` : 'Year-round'}
+              {months && months.length > 0
+                ? months.length === 12 ? 'Year-round' : months.map(m => MONTH_NAMES[m - 1]).join(', ')
+                : 'Year-round'}
             </span>
           )}
           {category === 'art' && subtitle && (
