@@ -17,6 +17,7 @@ interface AppState {
   donatedAt: Record<string, Record<string, string>>;
 
   createTown: (name: string, playerName: string) => Town;
+  updateTown: (id: string, name: string, playerName: string) => void;
   setActiveTown: (id: string) => void;
   deleteTown: (id: string) => void;
   toggle: (itemId: string) => void;
@@ -47,6 +48,13 @@ export const useAppStore = create<AppState>()(
         set(state => ({ towns: [...state.towns, town], activeTownId: town.id }));
         return town;
       },
+
+      updateTown: (id, name, playerName) =>
+        set(state => ({
+          towns: state.towns.map(t =>
+            t.id === id ? { ...t, name, playerName } : t
+          ),
+        })),
 
       setActiveTown: (id) => set({ activeTownId: id }),
 
