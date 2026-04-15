@@ -4,11 +4,11 @@ on:
   push:
     branches: [development]
   pull_request:
-    branches: [main]
+    branches: [main, development]
 
 jobs:
   build:
-    name: Expo Web Export
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,4 +17,6 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-      - run: npx expo export --platform web
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
