@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [v0.6.1] — 2024 (Hotfix)
+## [v0.6.1] — 2026 (Hotfix)
 
 ### Fixed
 - Restored files deleted during bad v0.6.0 merge into main
@@ -11,7 +11,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [v0.6.0] — 2024
+## [v0.6.0] — 2026
 
 ### Added
 - **Home screen tab** with seasonal availability overview
@@ -22,7 +22,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [v0.5.0] — 2024
+## [v0.5.0] — 2026
 
 ### Added
 - **CSV export** — download your donation records as a spreadsheet
@@ -36,7 +36,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [v0.4.0] — 2024
+## [v0.4.0] — 2026
 
 ### Added
 - **Global search** — search across all museum categories from a single input with history popover
@@ -44,7 +44,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [v0.3.0] — 2024
+## [v0.3.0] — 2026
 
 ### Added
 - **Multi-town management** — create and switch between multiple towns
@@ -59,7 +59,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [v0.2.0] — 2024
+## [v0.2.0] — 2026
 
 ### Added
 - Detail modal for individual museum items
@@ -69,7 +69,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [v0.1.0] — 2024
+## [v0.1.0] — 2026
 
 ### Added
 - Initial release
