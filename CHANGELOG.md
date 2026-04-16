@@ -15,6 +15,14 @@ All notable changes to this project are documented here.
   - `src/hooks/useHydration.ts` — `useHydration()` hook via `onFinishHydration`; gates `App.tsx` render to prevent empty-state flash for returning users
 - `Town` now carries `gameId: GameId` (defaults to `'ACGCN'` for existing and new towns)
 - Zustand persist store upgraded to `version: 2` with lossless migration — zero data loss for existing users
+- **ErrorBoundary** — top-level React error boundary wraps `<ACCanvas />`; crashes now render `ErrorState` instead of a blank page
+- **Pre-commit hooks** — Husky + lint-staged run ESLint and Prettier on staged `src/**/*.{ts,tsx}` files before every commit
+- **Type guards in utils** — `isFish()`, `isFossil()`, `isArtPiece()` predicates replace unsafe `as` casts; `itemNotes()` now returns `undefined` for non-fish items correctly
+- **Unified `AppErrorKind`** — moved to `src/lib/types.ts`; `ErrorState` now accepts the full discriminated union instead of a separate `LoadErrorKind` string
+
+### Fixed
+- **`as any` cast in HomeTab** — `displayName(item as any, cat)` replaced with `displayName(item as AnyItem, cat)`
+- **`filterByQuery` duplication** — ACCanvas per-category filter and global search filter now use the `filterByQuery()` / `globalFilter()` utilities from `src/lib/utils.ts` instead of reimplementing the same logic inline
 
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts

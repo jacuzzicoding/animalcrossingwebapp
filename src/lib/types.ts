@@ -53,6 +53,14 @@ export interface ArtPiece {
   basedOn: string;
 }
 
+// ─── Error types ─────────────────────────────────────────────────────────────
+
+export type AppErrorKind =
+  | { type: 'dataLoadFailed'; message: string }
+  | { type: 'operationFailed'; message: string; recoverySuggestion?: string }
+  | { type: 'networkError'; message: string }
+  | { type: 'validationFailed'; message: string };
+
 /** Normalised view of any collectible, used for the detail sheet. */
 export interface CollectibleDetail {
   id: string;

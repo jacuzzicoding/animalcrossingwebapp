@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import ACCanvas from './components/ACCanvas';
 import { useHydration } from './hooks/useHydration';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const hydrated = useHydration();
@@ -16,10 +17,10 @@ function App() {
   }
 
   return (
-    <>
+    <ErrorBoundary>
       <ACCanvas />
       <Analytics />
-    </>
+    </ErrorBoundary>
   );
 }
 
