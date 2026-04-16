@@ -1469,8 +1469,18 @@ export default function ACCanvas() {
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
-  const activeTownDonated = useAppStore(s => s.activeTownId ? (s.donated[s.activeTownId] ?? EMPTY_DONATED) : EMPTY_DONATED);
-  const activeTownDonatedAt = useAppStore(s => s.activeTownId ? (s.donatedAt[s.activeTownId] ?? EMPTY_DONATED_AT) : EMPTY_DONATED_AT);
+  const activeTownDonated = useAppStore(s => {
+    if (!s.activeTownId) return EMPTY_DONATED;
+    const town = s.towns.find(t => t.id === s.activeTownId);
+    if (!town) return EMPTY_DONATED;
+    return s.donated[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED;
+  });
+  const activeTownDonatedAt = useAppStore(s => {
+    if (!s.activeTownId) return EMPTY_DONATED_AT;
+    const town = s.towns.find(t => t.id === s.activeTownId);
+    if (!town) return EMPTY_DONATED_AT;
+    return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
+  });
   const toggle = useAppStore(s => s.toggle);
 
   // Show create town modal on first load if no towns exist

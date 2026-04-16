@@ -6,6 +6,15 @@ All notable changes to this project are documented here.
 
 ### Added
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+- **Multi-game foundation — Steps 1–3** (v0.7 architecture, PR targeting development):
+  - `src/lib/types.ts` — `GameId` expanded to union of all 5 games (`ACGCN | ACWW | ACCF | ACNL | ACNH`); `Game` interface and `GAMES` registry added
+  - `src/lib/constants.ts` — `MONTH_NAMES`, `CATEGORY_LABELS`, `CATEGORY_ORDER`, `SEASONS` extracted from ACCanvas
+  - `src/lib/colors.ts` — design token hex constants (`wood`, `paper`, `ink`, `leaf`, `border`, `muted`)
+  - `src/lib/bootstrapMigration.ts` — one-time localStorage key rename (`ac-web:v1` → `ac-web`) called synchronously in `main.tsx` before `createRoot`
+  - `src/lib/storeMigrations.ts` — Zustand `migrateStore` function (v1→v2): backfills `Town.gameId = 'ACGCN'`, lifts `donated`/`donatedAt` to 3-level schema (`townId → gameId → itemId`)
+  - `src/hooks/useHydration.ts` — `useHydration()` hook via `onFinishHydration`; gates `App.tsx` render to prevent empty-state flash for returning users
+- `Town` now carries `gameId: GameId` (defaults to `'ACGCN'` for existing and new towns)
+- Zustand persist store upgraded to `version: 2` with lossless migration — zero data loss for existing users
 
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts

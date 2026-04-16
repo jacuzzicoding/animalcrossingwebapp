@@ -1,22 +1,25 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { GameId } from './types';
+import { migrateStore } from './storeMigrations';
 
 export interface Town {
   id: string;
   name: string;
   playerName: string;
+  gameId: GameId;
   createdAt: string;
 }
 
 interface AppState {
   towns: Town[];
   activeTownId: string | null;
-  // donated[townId][itemId] = true
-  donated: Record<string, Record<string, boolean>>;
-  // donatedAt[townId][itemId] = ISO string
-  donatedAt: Record<string, Record<string, string>>;
+  // donated[townId][gameId][itemId] = true
+  donated: Record<string, Record<string, Record<string, boolean>>>;
+  // donatedAt[townId][gameId][itemId] = ISO string
+  donatedAt: Record<string, Record<string, Record<string, string>>>;
 
-  createTown: (name: string, playerName: string) => Town;
+  createTown: (name: string, playerName: string, gameId?: GameId) => Town;
   updateTown: (id: string, name: string, playerName: string) => void;
   setActiveTown: (id: string) => void;
   deleteTown: (id: string) => void;
@@ -38,11 +41,12 @@ export const useAppStore = create<AppState>()(
       donated: {},
       donatedAt: {},
 
-      createTown: (name, playerName) => {
+      createTown: (name, playerName, gameId = 'ACGCN') => {
         const town: Town = {
           id: generateId(),
           name,
           playerName,
+          gameId,
           createdAt: new Date().toISOString(),
         };
         set(state => ({ towns: [...state.towns, town], activeTownId: town.id }));
@@ -74,32 +78,44 @@ export const useAppStore = create<AppState>()(
         set(state => {
           const { activeTownId } = state;
           if (!activeTownId) return state;
-          const townDonated = { ...(state.donated[activeTownId] ?? {}) };
+          const activeTown = state.towns.find(t => t.id === activeTownId);
+          if (!activeTown) return state;
+          const { gameId } = activeTown;
+
+          const townDonated   = { ...(state.donated[activeTownId]   ?? {}) };
           const townDonatedAt = { ...(state.donatedAt[activeTownId] ?? {}) };
-          const nowDonated = !townDonated[itemId];
+          const gameDonated   = { ...(townDonated[gameId]   ?? {}) };
+          const gameDonatedAt = { ...(townDonatedAt[gameId] ?? {}) };
+
+          const nowDonated = !gameDonated[itemId];
           if (nowDonated) {
-            townDonated[itemId] = true;
-            townDonatedAt[itemId] = new Date().toISOString();
+            gameDonated[itemId]   = true;
+            gameDonatedAt[itemId] = new Date().toISOString();
           } else {
-            delete townDonated[itemId];
-            delete townDonatedAt[itemId];
+            delete gameDonated[itemId];
+            delete gameDonatedAt[itemId];
           }
+
           return {
-            donated: { ...state.donated, [activeTownId]: townDonated },
-            donatedAt: { ...state.donatedAt, [activeTownId]: townDonatedAt },
+            donated:   { ...state.donated,   [activeTownId]: { ...townDonated,   [gameId]: gameDonated   } },
+            donatedAt: { ...state.donatedAt, [activeTownId]: { ...townDonatedAt, [gameId]: gameDonatedAt } },
           };
         }),
 
       isDonated: (itemId) => {
-        const { activeTownId, donated } = get();
+        const { activeTownId, donated, towns } = get();
         if (!activeTownId) return false;
-        return !!(donated[activeTownId]?.[itemId]);
+        const activeTown = towns.find(t => t.id === activeTownId);
+        if (!activeTown) return false;
+        return !!(donated[activeTownId]?.[activeTown.gameId]?.[itemId]);
       },
 
       getDonatedAt: (itemId) => {
-        const { activeTownId, donatedAt } = get();
+        const { activeTownId, donatedAt, towns } = get();
         if (!activeTownId) return undefined;
-        return donatedAt[activeTownId]?.[itemId];
+        const activeTown = towns.find(t => t.id === activeTownId);
+        if (!activeTown) return undefined;
+        return donatedAt[activeTownId]?.[activeTown.gameId]?.[itemId];
       },
 
       getActiveTown: () => {
@@ -107,6 +123,10 @@ export const useAppStore = create<AppState>()(
         return towns.find(t => t.id === activeTownId);
       },
     }),
-    { name: 'ac-web:v1' }
+    {
+      name: 'ac-web',
+      version: 2,
+      migrate: migrateStore,
+    }
   )
 );

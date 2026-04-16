@@ -11,7 +11,7 @@ A previous Claude session mistakenly built a parallel Expo/React Native app — 
 ## Project Overview
 
 Animal Crossing GCN companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns.
-Cozy parchment/GameCube museum aesthetic. **Current version: v0.6.1**
+Cozy parchment/GameCube museum aesthetic. **Current version: v0.7.0-dev**
 Live at: https://animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -47,12 +47,18 @@ src/
     ErrorBanner.tsx         # Dismissible inline error notification
     ErrorState.tsx          # Full-page error fallback UI
   lib/
-    store.ts                # Zustand store: towns, donations, activeTownId
+    store.ts                # Zustand store: towns, donations, activeTownId. persist key 'ac-web' v2.
+    bootstrapMigration.ts   # One-time localStorage rename (ac-web:v1 → ac-web), called in main.tsx
+    storeMigrations.ts      # Zustand migrate callback: v1→v2 schema lift
+    constants.ts            # MONTH_NAMES, CATEGORY_LABELS, CATEGORY_ORDER, SEASONS
+    colors.ts               # Design token hex constants
     types.ts                # Shared TypeScript interfaces (Town, Donation, etc.)
     utils.ts                # Helper functions (formatting, date math, etc.)
     csvExport.ts            # CSV export logic for donation data
     store.test.ts           # Vitest tests for store actions
     utils.test.ts           # Vitest tests for utility functions
+  hooks/
+    useHydration.ts         # Gates render on Zustand persist rehydration (onFinishHydration)
   test/
     setup.ts                # Vitest setup file
 public/data/acgcn/
@@ -111,6 +117,7 @@ It is **highly conflict-prone** in multi-session work. Before editing:
 - v0.6: Home screen (available this month, leaving-soon, progress cards, recent activity)
 - v0.6.1: Hotfix — restore files deleted by bad v0.6.0 merge, fix corrupted main branch
 - v0.7.0-alpha: Edit/rename town, documentation overhaul (CLAUDE.md, README, CHANGELOG, CI fix)
+- v0.7.0-dev Steps 1–3: GameId union + GAMES registry, 3-level donation schema (townId→gameId→itemId), Zustand v2 migration, hydration guard
 
 ### v0.7 — Multi-game foundation
 - Fix open bugs: seasonal analytics counting everything as spring (#1), edit modal visual polish

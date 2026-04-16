@@ -1,4 +1,22 @@
-export type GameId = 'ACGCN';
+export type GameId = 'ACGCN' | 'ACWW' | 'ACCF' | 'ACNL' | 'ACNH';
+
+export interface Game {
+  id: GameId;
+  name: string;
+  shortName: string;
+  year: number;
+  platform: string;
+  /** Whether this game has hemisphere-specific availability (NL, NH only) */
+  hasHemispheres: boolean;
+}
+
+export const GAMES: Record<GameId, Game> = {
+  ACGCN: { id: 'ACGCN', name: 'Animal Crossing (GameCube)', shortName: 'Animal Crossing', year: 2001, platform: 'Nintendo GameCube', hasHemispheres: false },
+  ACWW:  { id: 'ACWW',  name: 'Animal Crossing: Wild World',  shortName: 'Wild World',    year: 2005, platform: 'Nintendo DS',        hasHemispheres: false },
+  ACCF:  { id: 'ACCF',  name: 'Animal Crossing: City Folk',   shortName: 'City Folk',     year: 2008, platform: 'Nintendo Wii',       hasHemispheres: false },
+  ACNL:  { id: 'ACNL',  name: 'Animal Crossing: New Leaf',    shortName: 'New Leaf',      year: 2012, platform: 'Nintendo 3DS',       hasHemispheres: true  },
+  ACNH:  { id: 'ACNH',  name: 'Animal Crossing: New Horizons',shortName: 'New Horizons',  year: 2020, platform: 'Nintendo Switch',    hasHemispheres: true  },
+};
 
 export type Habitat = 'river' | 'ocean' | 'pond' | 'lake' | 'other';
 
