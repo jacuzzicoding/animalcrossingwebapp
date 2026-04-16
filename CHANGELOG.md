@@ -6,6 +6,14 @@ All notable changes to this project are documented here.
 
 ### Added
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+- **ErrorBoundary** — top-level React error boundary wraps `<ACCanvas />`; crashes now render `ErrorState` instead of a blank page
+- **Pre-commit hooks** — Husky + lint-staged run ESLint and Prettier on staged `src/**/*.{ts,tsx}` files before every commit
+- **Type guards in utils** — `isFish()`, `isFossil()`, `isArtPiece()` predicates replace unsafe `as` casts; `itemNotes()` now returns `undefined` for non-fish items correctly
+- **Unified `AppErrorKind`** — moved to `src/lib/types.ts`; `ErrorState` now accepts the full discriminated union instead of a separate `LoadErrorKind` string
+
+### Fixed
+- **`as any` cast in HomeTab** — `displayName(item as any, cat)` replaced with `displayName(item as AnyItem, cat)`
+- **`filterByQuery` duplication** — ACCanvas per-category filter and global search filter now use the `filterByQuery()` / `globalFilter()` utilities from `src/lib/utils.ts` instead of reimplementing the same logic inline
 
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts

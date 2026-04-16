@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type ElementType } from 'react';
 import {
   Fish as FishIcon,
   Bug,
@@ -9,15 +9,31 @@ import {
   AlertTriangle,
   Sparkles,
 } from 'lucide-react';
-import type { Fish as FishType, BugItem, FossilItem, ArtPiece, CategoryId } from '../lib/types';
-import { displayName, formatRelativeDate } from '../lib/utils';
+import type {
+  Fish as FishType,
+  BugItem,
+  FossilItem,
+  ArtPiece,
+  CategoryId,
+} from '../lib/types';
+import { displayName, formatRelativeDate, type AnyItem } from '../lib/utils';
 
 const MONTH_FULL = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
-const CAT_ICON: Record<CategoryId, React.ElementType> = {
+const CAT_ICON: Record<CategoryId, ElementType> = {
   fish: FishIcon,
   bugs: Bug,
   fossils: Bone,
@@ -51,7 +67,13 @@ interface AvailItem {
   leavingSoon: boolean;
 }
 
-export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigate }: HomeTabProps) {
+export default function HomeTab({
+  data,
+  donated,
+  donatedAt,
+  catCounts,
+  onNavigate,
+}: HomeTabProps) {
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
@@ -73,7 +95,11 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
     };
     push(data.fish, 'fish');
     push(data.bugs, 'bugs');
-    return out.sort((a, b) => Number(b.leavingSoon) - Number(a.leavingSoon) || a.name.localeCompare(b.name));
+    return out.sort(
+      (a, b) =>
+        Number(b.leavingSoon) - Number(a.leavingSoon) ||
+        a.name.localeCompare(b.name)
+    );
   }, [data.fish, data.bugs, donated, currentMonth, nextMonth]);
 
   const fishCount = available.filter(a => a.category === 'fish').length;
@@ -84,7 +110,10 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
     const nameMap: Record<string, { name: string; category: CategoryId }> = {};
     (['fish', 'bugs', 'fossils', 'art'] as CategoryId[]).forEach(cat => {
       for (const item of data[cat]) {
-        nameMap[item.id] = { name: displayName(item as any, cat), category: cat };
+        nameMap[item.id] = {
+          name: displayName(item as AnyItem, cat),
+          category: cat,
+        };
       }
     });
     return Object.entries(donatedAt)
@@ -110,7 +139,10 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
       >
         <div
           className="px-4 py-3 flex items-center gap-2"
-          style={{ background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)', color: '#F5E9D4' }}
+          style={{
+            background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)',
+            color: '#F5E9D4',
+          }}
         >
           <Sparkles className="w-4 h-4" />
           <div className="text-sm font-semibold">Available in {monthName}</div>
@@ -122,15 +154,20 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
               <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>
                 You're all caught up for {monthName}!
               </div>
-              <div className="text-xs mt-1" style={{ color: '#5a4a35', opacity: 0.75 }}>
-                Every fish and bug available this month is already in your museum.
+              <div
+                className="text-xs mt-1"
+                style={{ color: '#5a4a35', opacity: 0.75 }}
+              >
+                Every fish and bug available this month is already in your
+                museum.
               </div>
             </div>
           ) : (
             <>
               <div className="text-sm mb-3" style={{ color: '#2A2A2A' }}>
                 <span className="font-semibold">{fishCount}</span> fish and{' '}
-                <span className="font-semibold">{bugsCount}</span> bugs still to donate this month
+                <span className="font-semibold">{bugsCount}</span> bugs still to
+                donate this month
                 {leavingCount > 0 && (
                   <>
                     {' · '}
@@ -153,8 +190,14 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
                         backgroundColor: a.leavingSoon ? '#fdf3e8' : '#FDF9F1',
                       }}
                     >
-                      <Icon className="w-4 h-4 shrink-0" style={{ color: '#7B5E3B' }} />
-                      <div className="flex-1 min-w-0 text-sm truncate" style={{ color: '#2A2A2A' }}>
+                      <Icon
+                        className="w-4 h-4 shrink-0"
+                        style={{ color: '#7B5E3B' }}
+                      />
+                      <div
+                        className="flex-1 min-w-0 text-sm truncate"
+                        style={{ color: '#2A2A2A' }}
+                      >
                         {a.name}
                       </div>
                       {a.leavingSoon && (
@@ -191,15 +234,24 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
             >
               <div className="flex items-center gap-2 mb-1.5">
                 <Icon className="w-4 h-4" style={{ color: '#7B5E3B' }} />
-                <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>
+                <div
+                  className="text-sm font-semibold"
+                  style={{ color: '#2A2A2A' }}
+                >
                   {CAT_LABEL[cat]}
                 </div>
               </div>
               <div className="text-xs mb-1.5" style={{ color: '#5a4a35' }}>
                 {done} / {total} donated
               </div>
-              <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: '#e9dcc3' }}>
-                <div className="h-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: '#3CA370' }} />
+              <div
+                className="h-1.5 w-full rounded-full overflow-hidden"
+                style={{ backgroundColor: '#e9dcc3' }}
+              >
+                <div
+                  className="h-full transition-all duration-500"
+                  style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
+                />
               </div>
             </button>
           );
@@ -211,10 +263,15 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
         className="rounded-[14px] border overflow-hidden"
         style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
       >
-        <div className="px-4 py-2.5 flex items-center justify-between border-b" style={{ borderColor: '#E7DAC4' }}>
+        <div
+          className="px-4 py-2.5 flex items-center justify-between border-b"
+          style={{ borderColor: '#E7DAC4' }}
+        >
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" style={{ color: '#7B5E3B' }} />
-            <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>Recent donations</div>
+            <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>
+              Recent donations
+            </div>
           </div>
           <button
             onClick={() => onNavigate('activity')}
@@ -225,7 +282,10 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
           </button>
         </div>
         {recent.length === 0 ? (
-          <div className="px-4 py-5 text-center text-sm" style={{ color: '#5a4a35', opacity: 0.75 }}>
+          <div
+            className="px-4 py-5 text-center text-sm"
+            style={{ color: '#5a4a35', opacity: 0.75 }}
+          >
             No donations yet.
           </div>
         ) : (
@@ -234,11 +294,20 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
               const Icon = CAT_ICON[r.category];
               return (
                 <div key={r.id} className="px-4 py-2.5 flex items-center gap-3">
-                  <Icon className="w-4 h-4 shrink-0" style={{ color: '#7B5E3B' }} />
-                  <div className="flex-1 min-w-0 text-sm truncate" style={{ color: '#2A2A2A' }}>
+                  <Icon
+                    className="w-4 h-4 shrink-0"
+                    style={{ color: '#7B5E3B' }}
+                  />
+                  <div
+                    className="flex-1 min-w-0 text-sm truncate"
+                    style={{ color: '#2A2A2A' }}
+                  >
                     {r.name}
                   </div>
-                  <div className="text-xs shrink-0" style={{ color: '#5a4a35', opacity: 0.75 }}>
+                  <div
+                    className="text-xs shrink-0"
+                    style={{ color: '#5a4a35', opacity: 0.75 }}
+                  >
                     {formatRelativeDate(r.ts)}
                   </div>
                 </div>
@@ -261,12 +330,16 @@ export default function HomeTab({ data, donated, donatedAt, catCounts, onNavigat
           <BarChart2 className="w-4 h-4" style={{ color: '#2A7A52' }} />
         </div>
         <div className="flex-1 text-left">
-          <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>View full stats</div>
+          <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>
+            View full stats
+          </div>
           <div className="text-xs" style={{ color: '#5a4a35', opacity: 0.75 }}>
             Progress charts and monthly availability
           </div>
         </div>
-        <div className="text-sm" style={{ color: '#7B5E3B' }}>→</div>
+        <div className="text-sm" style={{ color: '#7B5E3B' }}>
+          →
+        </div>
       </button>
     </div>
   );

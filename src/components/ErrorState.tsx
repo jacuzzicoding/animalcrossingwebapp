@@ -1,28 +1,22 @@
 import React from 'react';
 import { AlertTriangle, WifiOff, RefreshCw } from 'lucide-react';
+import type { AppErrorKind } from '../lib/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type LoadErrorKind = 'dataLoadFailed' | 'networkError';
-
 interface ErrorStateProps {
-  kind?: LoadErrorKind;
-  message?: string;
+  error?: AppErrorKind;
   onRetry?: () => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function ErrorState({
-  kind = 'dataLoadFailed',
-  message,
-  onRetry,
-}: ErrorStateProps) {
-  const isNetwork = kind === 'networkError';
+export default function ErrorState({ error, onRetry }: ErrorStateProps) {
+  const isNetwork = error?.type === 'networkError';
   const Icon = isNetwork ? WifiOff : AlertTriangle;
-  const heading = isNetwork ? 'No Connection' : 'Couldn\'t Load Museum Data';
+  const heading = isNetwork ? 'No Connection' : "Couldn't Load Museum Data";
   const body =
-    message ??
+    error?.message ??
     (isNetwork
       ? 'Check your internet connection and try again.'
       : 'Something went wrong while fetching the museum collection.');
@@ -30,7 +24,9 @@ export default function ErrorState({
   return (
     <div
       className="min-h-screen w-full flex items-center justify-center"
-      style={{ background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)' }}
+      style={{
+        background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)',
+      }}
     >
       {/* Parchment card */}
       <div

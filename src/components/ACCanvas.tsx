@@ -39,40 +39,53 @@ import {
   formatRelativeDate,
   formatTime,
   filterByQuery,
+  globalFilter,
   type AnyItem,
 } from '../lib/utils';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
-const CATEGORY_META: Record<CategoryId, {
-  label: string;
-  Icon: React.ElementType;
-  file: string;
-}> = {
-  fish:    { label: 'Fish',    Icon: FishIcon, file: '/data/acgcn/fish.json'    },
-  bugs:    { label: 'Bugs',    Icon: Bug,      file: '/data/acgcn/bugs.json'    },
-  fossils: { label: 'Fossils', Icon: Bone,     file: '/data/acgcn/fossils.json' },
-  art:     { label: 'Art',     Icon: Palette,  file: '/data/acgcn/art.json'     },
+const CATEGORY_META: Record<
+  CategoryId,
+  {
+    label: string;
+    Icon: React.ElementType;
+    file: string;
+  }
+> = {
+  fish: { label: 'Fish', Icon: FishIcon, file: '/data/acgcn/fish.json' },
+  bugs: { label: 'Bugs', Icon: Bug, file: '/data/acgcn/bugs.json' },
+  fossils: { label: 'Fossils', Icon: Bone, file: '/data/acgcn/fossils.json' },
+  art: { label: 'Art', Icon: Palette, file: '/data/acgcn/art.json' },
 };
 
 const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
 
 const SEASONS: { label: string; months: number[]; color: string }[] = [
-  { label: 'Spring', months: [3, 4, 5],   color: '#3CA370' },
-  { label: 'Summer', months: [6, 7, 8],   color: '#E8A838' },
-  { label: 'Fall',   months: [9, 10, 11], color: '#C8663A' },
-  { label: 'Winter', months: [12, 1, 2],  color: '#6A9EC8' },
+  { label: 'Spring', months: [3, 4, 5], color: '#3CA370' },
+  { label: 'Summer', months: [6, 7, 8], color: '#E8A838' },
+  { label: 'Fall', months: [9, 10, 11], color: '#C8663A' },
+  { label: 'Winter', months: [12, 1, 2], color: '#6A9EC8' },
 ];
 
 // Stable empty fallbacks so Zustand selectors don't return new {} references
 const EMPTY_DONATED: Record<string, boolean> = {};
 const EMPTY_DONATED_AT: Record<string, string> = {};
-
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -119,13 +132,18 @@ function CreateTownModal({
         {/* Header */}
         <div
           className="px-6 py-4 flex items-center justify-between"
-          style={{ background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)' }}
+          style={{
+            background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)',
+          }}
         >
           <h2 className="text-base font-semibold" style={{ color: '#F5E9D4' }}>
             New Town
           </h2>
           {!required && (
-            <button onClick={onClose} style={{ color: '#F5E9D4', opacity: 0.7 }}>
+            <button
+              onClick={onClose}
+              style={{ color: '#F5E9D4', opacity: 0.7 }}
+            >
               <X className="w-4 h-4" />
             </button>
           )}
@@ -133,7 +151,10 @@ function CreateTownModal({
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+            <label
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: '#5a4a35' }}
+            >
               Town Name
             </label>
             <input
@@ -143,11 +164,18 @@ function CreateTownModal({
               onChange={e => setName(e.target.value)}
               placeholder="e.g. Plumeria"
               className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+              style={{
+                borderColor: '#E7DAC4',
+                backgroundColor: '#FFFDF6',
+                color: '#2A2A2A',
+              }}
             />
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+            <label
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: '#5a4a35' }}
+            >
               Your Name
             </label>
             <input
@@ -156,7 +184,11 @@ function CreateTownModal({
               onChange={e => setPlayerName(e.target.value)}
               placeholder="e.g. Brock"
               className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+              style={{
+                borderColor: '#E7DAC4',
+                backgroundColor: '#FFFDF6',
+                color: '#2A2A2A',
+              }}
             />
           </div>
           <button
@@ -164,7 +196,8 @@ function CreateTownModal({
             disabled={!name.trim() || !playerName.trim()}
             className="w-full py-3 rounded-[12px] text-sm font-semibold transition"
             style={{
-              backgroundColor: name.trim() && playerName.trim() ? '#3CA370' : '#D9CCBA',
+              backgroundColor:
+                name.trim() && playerName.trim() ? '#3CA370' : '#D9CCBA',
               color: '#fff',
             }}
           >
@@ -210,7 +243,9 @@ function EditTownModal({
         {/* Header */}
         <div
           className="px-6 py-4 flex items-center justify-between"
-          style={{ background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)' }}
+          style={{
+            background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)',
+          }}
         >
           <h2 className="text-base font-semibold" style={{ color: '#F5E9D4' }}>
             Edit Town
@@ -222,7 +257,10 @@ function EditTownModal({
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+            <label
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: '#5a4a35' }}
+            >
               Town Name
             </label>
             <input
@@ -231,11 +269,18 @@ function EditTownModal({
               value={name}
               onChange={e => setName(e.target.value)}
               className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+              style={{
+                borderColor: '#E7DAC4',
+                backgroundColor: '#FFFDF6',
+                color: '#2A2A2A',
+              }}
             />
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+            <label
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: '#5a4a35' }}
+            >
               Your Name
             </label>
             <input
@@ -243,7 +288,11 @@ function EditTownModal({
               value={playerName}
               onChange={e => setPlayerName(e.target.value)}
               className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+              style={{
+                borderColor: '#E7DAC4',
+                backgroundColor: '#FFFDF6',
+                color: '#2A2A2A',
+              }}
             />
           </div>
           <button
@@ -251,7 +300,8 @@ function EditTownModal({
             disabled={!name.trim() || !playerName.trim()}
             className="w-full py-3 rounded-[12px] text-sm font-semibold transition"
             style={{
-              backgroundColor: name.trim() && playerName.trim() ? '#3CA370' : '#D9CCBA',
+              backgroundColor:
+                name.trim() && playerName.trim() ? '#3CA370' : '#D9CCBA',
               color: '#fff',
             }}
           >
@@ -260,7 +310,7 @@ function EditTownModal({
         </form>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 
@@ -278,76 +328,96 @@ function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
 
   return (
     <>
-    <div className="relative">
-      <div className="flex items-center gap-2">
-        {/* Town name button — only tappable if multiple towns */}
-        {towns.length > 1 ? (
+      <div className="relative">
+        <div className="flex items-center gap-2">
+          {/* Town name button — only tappable if multiple towns */}
+          {towns.length > 1 ? (
+            <button
+              onClick={() => setOpen(o => !o)}
+              className="flex items-center gap-1.5 rounded-[10px] px-3 py-1.5 text-sm font-medium transition"
+              style={{
+                backgroundColor: '#EDE3D0',
+                color: '#2A2A2A',
+                border: '1px solid #E7DAC4',
+              }}
+            >
+              {activeTown.name}
+              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            </button>
+          ) : (
+            <span
+              className="text-sm font-medium px-1"
+              style={{ color: '#2A2A2A' }}
+            >
+              {activeTown.name}
+            </span>
+          )}
+
+          {/* Edit town button */}
           <button
-            onClick={() => setOpen(o => !o)}
-            className="flex items-center gap-1.5 rounded-[10px] px-3 py-1.5 text-sm font-medium transition"
-            style={{ backgroundColor: '#EDE3D0', color: '#2A2A2A', border: '1px solid #E7DAC4' }}
+            onClick={() => setEditing(true)}
+            className="flex items-center justify-center rounded-[10px] p-1.5 transition"
+            style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+            aria-label="Edit town"
           >
-            {activeTown.name}
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            <Pencil className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
           </button>
-        ) : (
-          <span className="text-sm font-medium px-1" style={{ color: '#2A2A2A' }}>
-            {activeTown.name}
-          </span>
-        )}
 
-        {/* Edit town button */}
-        <button
-          onClick={() => setEditing(true)}
-          className="flex items-center justify-center rounded-[10px] p-1.5 transition"
-          style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
-          aria-label="Edit town"
-        >
-          <Pencil className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
-        </button>
-
-        {/* New town button */}
-        <button
-          onClick={onCreateNew}
-          className="flex items-center justify-center rounded-[10px] p-1.5 transition"
-          style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
-          aria-label="Add town"
-        >
-          <Plus className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
-        </button>
-      </div>
-
-      {/* Dropdown */}
-      {open && towns.length > 1 && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div
-            className="absolute left-0 top-full mt-1.5 z-20 rounded-[12px] overflow-hidden shadow-lg"
-            style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4', minWidth: '160px' }}
+          {/* New town button */}
+          <button
+            onClick={onCreateNew}
+            className="flex items-center justify-center rounded-[10px] p-1.5 transition"
+            style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+            aria-label="Add town"
           >
-            {towns.map((town, i) => (
-              <button
-                key={town.id}
-                onClick={() => { setActiveTown(town.id); setOpen(false); }}
-                className="w-full text-left px-4 py-2.5 text-sm transition"
-                style={{
-                  backgroundColor: town.id === activeTownId ? '#F5E9D4' : 'transparent',
-                  color: '#2A2A2A',
-                  borderTop: i > 0 ? '1px solid #E7DAC4' : 'none',
-                  fontWeight: town.id === activeTownId ? '600' : '400',
-                }}
-              >
-                <div>{town.name}</div>
-                <div className="text-[11px] opacity-60">{town.playerName}</div>
-              </button>
-            ))}
-          </div>
-        </>
+            <Plus className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
+          </button>
+        </div>
+
+        {/* Dropdown */}
+        {open && towns.length > 1 && (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setOpen(false)}
+            />
+            <div
+              className="absolute left-0 top-full mt-1.5 z-20 rounded-[12px] overflow-hidden shadow-lg"
+              style={{
+                backgroundColor: '#FDF9F1',
+                border: '1px solid #E7DAC4',
+                minWidth: '160px',
+              }}
+            >
+              {towns.map((town, i) => (
+                <button
+                  key={town.id}
+                  onClick={() => {
+                    setActiveTown(town.id);
+                    setOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm transition"
+                  style={{
+                    backgroundColor:
+                      town.id === activeTownId ? '#F5E9D4' : 'transparent',
+                    color: '#2A2A2A',
+                    borderTop: i > 0 ? '1px solid #E7DAC4' : 'none',
+                    fontWeight: town.id === activeTownId ? '600' : '400',
+                  }}
+                >
+                  <div>{town.name}</div>
+                  <div className="text-[11px] opacity-60">
+                    {town.playerName}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      {editing && (
+        <EditTownModal town={activeTown} onClose={() => setEditing(false)} />
       )}
-    </div>
-    {editing && (
-      <EditTownModal town={activeTown} onClose={() => setEditing(false)} />
-    )}
     </>
   );
 }
@@ -378,9 +448,14 @@ function MuseumHeader({
           color: '#F5E9D4',
         }}
       >
-        <div className="text-[13px] tracking-wide opacity-90">AC GCN Museum</div>
+        <div className="text-[13px] tracking-wide opacity-90">
+          AC GCN Museum
+        </div>
         <div className="flex items-end justify-between">
-          <h1 className="text-2xl font-semibold" style={{ letterSpacing: '0.2px' }}>
+          <h1
+            className="text-2xl font-semibold"
+            style={{ letterSpacing: '0.2px' }}
+          >
             Museum Tracker
           </h1>
           <div className="flex items-center gap-2">
@@ -393,8 +468,14 @@ function MuseumHeader({
                 color: '#F5E9D4',
                 border: '1px solid rgba(245,233,212,0.3)',
               }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(245,233,212,0.25)')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(245,233,212,0.15)')}
+              onMouseEnter={e =>
+                (e.currentTarget.style.backgroundColor =
+                  'rgba(245,233,212,0.25)')
+              }
+              onMouseLeave={e =>
+                (e.currentTarget.style.backgroundColor =
+                  'rgba(245,233,212,0.15)')
+              }
             >
               <Download className="w-3.5 h-3.5" />
               <span>Export CSV</span>
@@ -409,7 +490,9 @@ function MuseumHeader({
           style={{ color: '#2A2A2A' }}
         >
           <span>Overall progress</span>
-          <span>{donatedCount} / {totalCount} · {pct}% complete</span>
+          <span>
+            {donatedCount} / {totalCount} · {pct}% complete
+          </span>
         </div>
         <div
           className="h-2 w-full rounded-full overflow-hidden"
@@ -455,9 +538,11 @@ function TabBar({
       >
         <Home className="w-4 h-4" />
         <span>Home</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
-      {CATEGORY_ORDER.map((cat) => {
+      {CATEGORY_ORDER.map(cat => {
         const { label, Icon } = CATEGORY_META[cat];
         const isActive = cat === active;
         const total = data[cat].length;
@@ -493,7 +578,9 @@ function TabBar({
       >
         <Clock className="w-4 h-4" />
         <span>Log</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
       {/* Search tab */}
       <button
@@ -507,7 +594,9 @@ function TabBar({
       >
         <Search className="w-4 h-4" />
         <span>Search</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
       {/* Analytics tab */}
       <button
@@ -521,7 +610,9 @@ function TabBar({
       >
         <BarChart2 className="w-4 h-4" />
         <span>Stats</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
     </div>
   );
@@ -529,18 +620,34 @@ function TabBar({
 
 // ─── CategoryProgress ─────────────────────────────────────────────────────────
 
-function CategoryProgress({ donated, total, label }: { donated: number; total: number; label: string }) {
+function CategoryProgress({
+  donated,
+  total,
+  label,
+}: {
+  donated: number;
+  total: number;
+  label: string;
+}) {
   const pct = total ? Math.round((donated / total) * 100) : 0;
   return (
     <div
       className="rounded-[12px] border px-4 py-3"
       style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
     >
-      <div className="flex items-center justify-between text-sm mb-1.5" style={{ color: '#2A2A2A' }}>
+      <div
+        className="flex items-center justify-between text-sm mb-1.5"
+        style={{ color: '#2A2A2A' }}
+      >
         <span className="font-medium">{label} Collection</span>
-        <span>{donated} / {total} donated · {pct}%</span>
+        <span>
+          {donated} / {total} donated · {pct}%
+        </span>
       </div>
-      <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: '#e9dcc3' }}>
+      <div
+        className="h-1.5 w-full rounded-full overflow-hidden"
+        style={{ backgroundColor: '#e9dcc3' }}
+      >
         <div
           className="h-full transition-all duration-500"
           style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
@@ -552,7 +659,15 @@ function CategoryProgress({ donated, total, label }: { donated: number; total: n
 
 // ─── SearchBar ────────────────────────────────────────────────────────────────
 
-function SearchBar({ query, setQuery, placeholder }: { query: string; setQuery: (v: string) => void; placeholder: string }) {
+function SearchBar({
+  query,
+  setQuery,
+  placeholder,
+}: {
+  query: string;
+  setQuery: (v: string) => void;
+  placeholder: string;
+}) {
   return (
     <div
       className="flex items-center gap-2 rounded-[14px] border px-3 py-2"
@@ -567,7 +682,10 @@ function SearchBar({ query, setQuery, placeholder }: { query: string; setQuery: 
         className="w-full bg-transparent outline-none text-sm"
       />
       {query && (
-        <button onClick={() => setQuery('')} className="opacity-40 hover:opacity-70 shrink-0">
+        <button
+          onClick={() => setQuery('')}
+          className="opacity-40 hover:opacity-70 shrink-0"
+        >
           <X className="w-3.5 h-3.5" />
         </button>
       )}
@@ -581,7 +699,11 @@ function HabitatChip({ label }: { label: string }) {
   return (
     <span
       className="inline-block px-2 py-0.5 text-[11px] rounded-[10px] shrink-0"
-      style={{ backgroundColor: '#F5E9D4', border: '1px solid #E7DAC4', color: '#5a4a35' }}
+      style={{
+        backgroundColor: '#F5E9D4',
+        border: '1px solid #E7DAC4',
+        color: '#5a4a35',
+      }}
     >
       {label.charAt(0).toUpperCase() + label.slice(1)}
     </span>
@@ -590,10 +712,19 @@ function HabitatChip({ label }: { label: string }) {
 
 // ─── DonateToggle ─────────────────────────────────────────────────────────────
 
-function DonateToggle({ checked, onToggle }: { checked: boolean; onToggle: () => void }) {
+function DonateToggle({
+  checked,
+  onToggle,
+}: {
+  checked: boolean;
+  onToggle: () => void;
+}) {
   return (
     <button
-      onClick={e => { e.stopPropagation(); onToggle(); }}
+      onClick={e => {
+        e.stopPropagation();
+        onToggle();
+      }}
       aria-pressed={checked}
       aria-label={checked ? 'Mark as not donated' : 'Mark as donated'}
       className="shrink-0 inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs transition select-none"
@@ -612,9 +743,17 @@ function DonateToggle({ checked, onToggle }: { checked: boolean; onToggle: () =>
 // ─── CollectibleRow ───────────────────────────────────────────────────────────
 
 function CollectibleRow({
-  item, category, checked, onToggle, onClick,
+  item,
+  category,
+  checked,
+  onToggle,
+  onClick,
 }: {
-  item: AnyItem; category: CategoryId; checked: boolean; onToggle: () => void; onClick: () => void;
+  item: AnyItem;
+  category: CategoryId;
+  checked: boolean;
+  onToggle: () => void;
+  onClick: () => void;
 }) {
   const { Icon } = CATEGORY_META[category];
   const name = displayName(item, category);
@@ -642,18 +781,34 @@ function CollectibleRow({
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="truncate font-medium text-sm" style={{ color: '#2A2A2A' }}>{name}</span>
+          <span
+            className="truncate font-medium text-sm"
+            style={{ color: '#2A2A2A' }}
+          >
+            {name}
+          </span>
           {category === 'fish' && subtitle && <HabitatChip label={subtitle} />}
         </div>
-        <div className="text-[12px] mt-0.5 truncate" style={{ color: '#5a4a35' }}>
-          {bells != null ? `${bells.toLocaleString()} Bells` : category === 'art' ? 'Painting' : '—'}
+        <div
+          className="text-[12px] mt-0.5 truncate"
+          style={{ color: '#5a4a35' }}
+        >
+          {bells != null
+            ? `${bells.toLocaleString()} Bells`
+            : category === 'art'
+              ? 'Painting'
+              : '—'}
           {category !== 'fossils' && category !== 'art' && (
             <span className="ml-2 opacity-60">
-              {months && months.length > 0 ? `${months.length} months` : 'Year-round'}
+              {months && months.length > 0
+                ? `${months.length} months`
+                : 'Year-round'}
             </span>
           )}
           {category === 'art' && subtitle && (
-            <span className="ml-1 opacity-70">· {subtitle.length > 38 ? subtitle.slice(0, 38) + '…' : subtitle}</span>
+            <span className="ml-1 opacity-70">
+              · {subtitle.length > 38 ? subtitle.slice(0, 38) + '…' : subtitle}
+            </span>
           )}
           {notes && <span className="ml-2 italic opacity-70">{notes}</span>}
         </div>
@@ -674,9 +829,15 @@ function MonthGrid({ months }: { months?: number[] }) {
           <div
             key={m}
             className="flex items-center justify-center rounded-[6px] py-1.5"
-            style={{ backgroundColor: active ? '#3CA370' : '#EDE3D0', opacity: active ? 1 : 0.45 }}
+            style={{
+              backgroundColor: active ? '#3CA370' : '#EDE3D0',
+              opacity: active ? 1 : 0.45,
+            }}
           >
-            <span className="text-[10px] font-semibold" style={{ color: active ? '#fff' : '#5a4a35' }}>
+            <span
+              className="text-[10px] font-semibold"
+              style={{ color: active ? '#fff' : '#5a4a35' }}
+            >
               {m}
             </span>
           </div>
@@ -689,9 +850,19 @@ function MonthGrid({ months }: { months?: number[] }) {
 // ─── DetailModal ──────────────────────────────────────────────────────────────
 
 function DetailModal({
-  item, category, checked, donatedAt, onToggle, onClose,
+  item,
+  category,
+  checked,
+  donatedAt,
+  onToggle,
+  onClose,
 }: {
-  item: AnyItem; category: CategoryId; checked: boolean; donatedAt?: string; onToggle: () => void; onClose: () => void;
+  item: AnyItem;
+  category: CategoryId;
+  checked: boolean;
+  donatedAt?: string;
+  onToggle: () => void;
+  onClose: () => void;
 }) {
   const { Icon, label } = CATEGORY_META[category];
   const name = displayName(item, category);
@@ -708,11 +879,18 @@ function DetailModal({
     >
       <div
         className="w-full max-w-3xl rounded-t-[20px] overflow-hidden"
-        style={{ backgroundColor: '#FDF9F1', maxHeight: '88vh', overflowY: 'auto' }}
+        style={{
+          backgroundColor: '#FDF9F1',
+          maxHeight: '88vh',
+          overflowY: 'auto',
+        }}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: '#D9CCBA' }} />
+          <div
+            className="w-10 h-1 rounded-full"
+            style={{ backgroundColor: '#D9CCBA' }}
+          />
         </div>
         <div className="flex justify-end px-4 pt-1 pb-2">
           <button
@@ -728,34 +906,73 @@ function DetailModal({
           <div className="flex items-start gap-4">
             <div
               className="rounded-2xl p-3.5 shrink-0"
-              style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+              style={{
+                backgroundColor: '#EDE3D0',
+                border: '1px solid #E7DAC4',
+              }}
             >
               <Icon className="w-7 h-7" />
             </div>
             <div className="pt-1">
-              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5" style={{ color: '#5a4a35' }}>
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
+                style={{ color: '#5a4a35' }}
+              >
                 {label}
               </div>
-              <h2 className="text-xl font-semibold leading-snug" style={{ color: '#2A2A2A' }}>{name}</h2>
-              {subtitle && <p className="text-sm mt-1" style={{ color: '#5a4a35' }}>{subtitle}</p>}
+              <h2
+                className="text-xl font-semibold leading-snug"
+                style={{ color: '#2A2A2A' }}
+              >
+                {name}
+              </h2>
+              {subtitle && (
+                <p className="text-sm mt-1" style={{ color: '#5a4a35' }}>
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
 
           {bells != null && (
-            <div className="rounded-[12px] px-4 py-3" style={{ backgroundColor: '#F5E9D4', border: '1px solid #E7DAC4' }}>
-              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5" style={{ color: '#5a4a35' }}>Value</div>
-              <div className="font-semibold text-base" style={{ color: '#2A2A2A' }}>{bells.toLocaleString()} Bells</div>
+            <div
+              className="rounded-[12px] px-4 py-3"
+              style={{
+                backgroundColor: '#F5E9D4',
+                border: '1px solid #E7DAC4',
+              }}
+            >
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
+                style={{ color: '#5a4a35' }}
+              >
+                Value
+              </div>
+              <div
+                className="font-semibold text-base"
+                style={{ color: '#2A2A2A' }}
+              >
+                {bells.toLocaleString()} Bells
+              </div>
             </div>
           )}
 
           {category !== 'fossils' && category !== 'art' && (
             <div>
-              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-2" style={{ color: '#5a4a35' }}>
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-2"
+                style={{ color: '#5a4a35' }}
+              >
                 Availability
               </div>
               <MonthGrid months={months} />
               {(!months || months.length === 0) && (
-                <p className="text-xs mt-1.5 opacity-60" style={{ color: '#5a4a35' }}>Active all year</p>
+                <p
+                  className="text-xs mt-1.5 opacity-60"
+                  style={{ color: '#5a4a35' }}
+                >
+                  Active all year
+                </p>
               )}
             </div>
           )}
@@ -763,16 +980,33 @@ function DetailModal({
           {notes && (
             <div
               className="rounded-[12px] px-4 py-3 italic text-sm"
-              style={{ backgroundColor: '#fff8ee', border: '1px solid #E7DAC4', color: '#5a4a35' }}
+              style={{
+                backgroundColor: '#fff8ee',
+                border: '1px solid #E7DAC4',
+                color: '#5a4a35',
+              }}
             >
               {notes}
             </div>
           )}
 
           {checked && donatedAt && (
-            <div className="rounded-[12px] px-4 py-3" style={{ backgroundColor: '#f2faf6', border: '1px solid #b8dfc8' }}>
-              <div className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5" style={{ color: '#2A7A52' }}>Donated</div>
-              <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>{formatTimestamp(donatedAt)}</div>
+            <div
+              className="rounded-[12px] px-4 py-3"
+              style={{
+                backgroundColor: '#f2faf6',
+                border: '1px solid #b8dfc8',
+              }}
+            >
+              <div
+                className="text-[11px] uppercase tracking-wider opacity-60 mb-0.5"
+                style={{ color: '#2A7A52' }}
+              >
+                Donated
+              </div>
+              <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>
+                {formatTimestamp(donatedAt)}
+              </div>
             </div>
           )}
 
@@ -870,16 +1104,25 @@ function ActivityFeed({
                 >
                   <div
                     className="shrink-0 rounded-xl p-2"
-                    style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+                    style={{
+                      backgroundColor: '#EDE3D0',
+                      border: '1px solid #E7DAC4',
+                    }}
                     aria-hidden
                   >
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm truncate" style={{ color: '#2A2A2A' }}>
+                    <div
+                      className="font-medium text-sm truncate"
+                      style={{ color: '#2A2A2A' }}
+                    >
                       {entry.name}
                     </div>
-                    <div className="text-[12px] mt-0.5" style={{ color: '#2A7A52' }}>
+                    <div
+                      className="text-[12px] mt-0.5"
+                      style={{ color: '#2A7A52' }}
+                    >
                       Donated to museum
                     </div>
                   </div>
@@ -913,12 +1156,29 @@ function SectionCard({
   return (
     <div
       className="rounded-[14px] border"
-      style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', padding: 16 }}
+      style={{
+        borderColor: '#E7DAC4',
+        backgroundColor: '#FFFDF6',
+        padding: 16,
+      }}
     >
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 700, color: '#2A2A2A', margin: 0 }}>{title}</h2>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 8,
+          marginBottom: 14,
+        }}
+      >
+        <h2
+          style={{ fontSize: 14, fontWeight: 700, color: '#2A2A2A', margin: 0 }}
+        >
+          {title}
+        </h2>
         {subtitle && (
-          <span style={{ fontSize: 11, color: '#5a4a35', opacity: 0.7 }}>{subtitle}</span>
+          <span style={{ fontSize: 11, color: '#5a4a35', opacity: 0.7 }}>
+            {subtitle}
+          </span>
         )}
       </div>
       {children}
@@ -954,8 +1214,12 @@ function AnalyticsView({
     for (const cat of ['fish', 'bugs'] as const) {
       for (const item of data[cat]) {
         if (!donatedIds.has(item.id)) continue;
-        const months: number[] | undefined = (item as FishType | BugItem).months;
-        const active = months && months.length > 0 ? months : [1,2,3,4,5,6,7,8,9,10,11,12];
+        const months: number[] | undefined = (item as FishType | BugItem)
+          .months;
+        const active =
+          months && months.length > 0
+            ? months
+            : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         for (const m of active) counts[m - 1]++;
       }
     }
@@ -966,12 +1230,21 @@ function AnalyticsView({
   // Seasonal breakdown: for each season, count donated fish/bugs available in that season
   const seasonalData = useMemo(() => {
     const donatedIds = new Set(Object.keys(donatedAt));
-    const counts: Record<string, number> = { Spring: 0, Summer: 0, Fall: 0, Winter: 0 };
+    const counts: Record<string, number> = {
+      Spring: 0,
+      Summer: 0,
+      Fall: 0,
+      Winter: 0,
+    };
     for (const cat of ['fish', 'bugs'] as const) {
       for (const item of data[cat]) {
         if (!donatedIds.has(item.id)) continue;
-        const months: number[] | undefined = (item as FishType | BugItem).months;
-        const active = months && months.length > 0 ? months : [1,2,3,4,5,6,7,8,9,10,11,12];
+        const months: number[] | undefined = (item as FishType | BugItem)
+          .months;
+        const active =
+          months && months.length > 0
+            ? months
+            : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         for (const season of SEASONS) {
           if (active.some(m => season.months.includes(m))) {
             counts[season.label]++;
@@ -979,8 +1252,8 @@ function AnalyticsView({
         }
       }
     }
-    const totalDonatedFishBugs = [...donatedIds].filter(id =>
-      data.fish.some(f => f.id === id) || data.bugs.some(b => b.id === id)
+    const totalDonatedFishBugs = [...donatedIds].filter(
+      id => data.fish.some(f => f.id === id) || data.bugs.some(b => b.id === id)
     ).length;
     return { counts, total: totalDonatedFishBugs };
   }, [donatedAt, data]);
@@ -997,8 +1270,18 @@ function AnalyticsView({
           const pct = total ? Math.round((donated / total) * 100) : 0;
           const complete = donated === total && total > 0;
           return (
-            <div key={cat} style={{ marginBottom: i < CATEGORY_ORDER.length - 1 ? 14 : 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+            <div
+              key={cat}
+              style={{ marginBottom: i < CATEGORY_ORDER.length - 1 ? 14 : 0 }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  marginBottom: 6,
+                }}
+              >
                 <div
                   style={{
                     backgroundColor: '#EDE3D0',
@@ -1012,10 +1295,19 @@ function AnalyticsView({
                 >
                   <Icon style={{ width: 14, height: 14, color: '#5a4a35' }} />
                 </div>
-                <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#2A2A2A' }}>
+                <span
+                  style={{
+                    flex: 1,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: '#2A2A2A',
+                  }}
+                >
                   {label}
                 </span>
-                <span style={{ fontSize: 12, color: '#5a4a35' }}>{donated}/{total}</span>
+                <span style={{ fontSize: 12, color: '#5a4a35' }}>
+                  {donated}/{total}
+                </span>
                 <span
                   style={{
                     fontSize: 12,
@@ -1054,14 +1346,23 @@ function AnalyticsView({
       {/* Section 2: Monthly Donation Timeline */}
       <SectionCard
         title="Donation Timeline"
-        subtitle={totalDonated > 0 ? `${totalDonated} donation${totalDonated !== 1 ? 's' : ''}` : undefined}
+        subtitle={
+          totalDonated > 0
+            ? `${totalDonated} donation${totalDonated !== 1 ? 's' : ''}`
+            : undefined
+        }
       >
         {monthlyBuckets.buckets.length === 0 ? (
           <div
             className="rounded-[10px] border px-4 py-6 text-center text-sm"
-            style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
+            style={{
+              borderColor: '#E7DAC4',
+              backgroundColor: '#F5E9D4',
+              color: '#5a4a35',
+            }}
           >
-            No donations yet — timestamps will appear here once you start donating.
+            No donations yet — timestamps will appear here once you start
+            donating.
           </div>
         ) : (
           <div
@@ -1090,7 +1391,12 @@ function AnalyticsView({
                   }}
                 >
                   <span
-                    style={{ fontSize: 9, color: '#5a4a35', opacity: 0.75, lineHeight: 1 }}
+                    style={{
+                      fontSize: 9,
+                      color: '#5a4a35',
+                      opacity: 0.75,
+                      lineHeight: 1,
+                    }}
                   >
                     {count}
                   </span>
@@ -1134,7 +1440,11 @@ function AnalyticsView({
         {totalDonated === 0 ? (
           <div
             className="rounded-[10px] border px-4 py-6 text-center text-sm"
-            style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
+            style={{
+              borderColor: '#E7DAC4',
+              backgroundColor: '#F5E9D4',
+              color: '#5a4a35',
+            }}
           >
             Donate fish or bugs to see monthly availability.
           </div>
@@ -1144,8 +1454,18 @@ function AnalyticsView({
               const count = monthAvailability.counts[i];
               const barWidth = (count / monthAvailability.max) * 100;
               return (
-                <div key={name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 28, fontSize: 11, color: '#5a4a35', flexShrink: 0 }}>
+                <div
+                  key={name}
+                  style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                >
+                  <div
+                    style={{
+                      width: 28,
+                      fontSize: 11,
+                      color: '#5a4a35',
+                      flexShrink: 0,
+                    }}
+                  >
                     {name.slice(0, 3)}
                   </div>
                   <div
@@ -1167,7 +1487,16 @@ function AnalyticsView({
                       }}
                     />
                   </div>
-                  <div style={{ width: 18, fontSize: 12, fontWeight: 600, color: '#2A2A2A', textAlign: 'right', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: 18,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: '#2A2A2A',
+                      textAlign: 'right',
+                      flexShrink: 0,
+                    }}
+                  >
                     {count}
                   </div>
                 </div>
@@ -1185,18 +1514,28 @@ function AnalyticsView({
         {seasonalData.total === 0 ? (
           <div
             className="rounded-[10px] border px-4 py-6 text-center text-sm"
-            style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
+            style={{
+              borderColor: '#E7DAC4',
+              backgroundColor: '#F5E9D4',
+              color: '#5a4a35',
+            }}
           >
             Donate fish or bugs to see seasonal availability.
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}
+          >
             {SEASONS.map(season => {
               const count = seasonalData.counts[season.label];
-              const pct = seasonalData.total > 0
-                ? Math.round((count / seasonalData.total) * 100)
-                : 0;
-              const maxCount = Math.max(...SEASONS.map(s => seasonalData.counts[s.label]), 1);
+              const pct =
+                seasonalData.total > 0
+                  ? Math.round((count / seasonalData.total) * 100)
+                  : 0;
+              const maxCount = Math.max(
+                ...SEASONS.map(s => seasonalData.counts[s.label]),
+                1
+              );
               const barWidth = (count / maxCount) * 100;
               return (
                 <div
@@ -1208,7 +1547,9 @@ function AnalyticsView({
                     padding: '12px 14px',
                   }}
                 >
-                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 3 }}>
+                  <div
+                    style={{ fontSize: 11, color: '#5a4a35', marginBottom: 3 }}
+                  >
                     {season.label}
                   </div>
                   <div
@@ -1222,7 +1563,9 @@ function AnalyticsView({
                   >
                     {count}
                   </div>
-                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 8 }}>
+                  <div
+                    style={{ fontSize: 11, color: '#5a4a35', marginBottom: 8 }}
+                  >
                     {pct}% of donated
                   </div>
                   <div
@@ -1259,7 +1602,11 @@ function EmptyState({ message }: { message: string }) {
   return (
     <div
       className="rounded-[14px] border px-4 py-8 text-center text-sm"
-      style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#5a4a35' }}
+      style={{
+        borderColor: '#E7DAC4',
+        backgroundColor: '#FFFDF6',
+        color: '#5a4a35',
+      }}
     >
       {message}
     </div>
@@ -1286,7 +1633,10 @@ function SearchHistoryPopover({
         className="flex items-center justify-between px-4 py-2.5"
         style={{ borderBottom: '1px solid #E7DAC4' }}
       >
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a4a35' }}>
+        <span
+          className="text-xs font-semibold uppercase tracking-wider"
+          style={{ color: '#5a4a35' }}
+        >
           Recent Searches
         </span>
         <button
@@ -1298,7 +1648,10 @@ function SearchHistoryPopover({
         </button>
       </div>
       {searches.length === 0 ? (
-        <div className="px-4 py-3 text-sm" style={{ color: '#5a4a35', opacity: 0.6 }}>
+        <div
+          className="px-4 py-3 text-sm"
+          style={{ color: '#5a4a35', opacity: 0.6 }}
+        >
           No recent searches.
         </div>
       ) : (
@@ -1352,13 +1705,18 @@ function GlobalSearchBar({
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter' && query.trim()) onSubmit(query.trim()); }}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && query.trim()) onSubmit(query.trim());
+          }}
           placeholder="Search all categories…"
           className="w-full bg-transparent outline-none text-sm"
           style={{ color: '#2A2A2A' }}
         />
         {query && (
-          <button onClick={() => setQuery('')} className="opacity-40 hover:opacity-70 shrink-0">
+          <button
+            onClick={() => setQuery('')}
+            className="opacity-40 hover:opacity-70 shrink-0"
+          >
             <X className="w-3.5 h-3.5" />
           </button>
         )}
@@ -1374,7 +1732,10 @@ function GlobalSearchBar({
       {historyOpen && (
         <SearchHistoryPopover
           searches={recentSearches}
-          onSelect={s => { onSelectHistory(s); setHistoryOpen(false); }}
+          onSelect={s => {
+            onSelectHistory(s);
+            setHistoryOpen(false);
+          }}
           onClear={onClearHistory}
         />
       )}
@@ -1460,17 +1821,33 @@ export default function ACCanvas() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
-  const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
+  const [data, setData] = useState<AllData>({
+    fish: [],
+    bugs: [],
+    fossils: [],
+    art: [],
+  });
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<'dataLoadFailed' | 'networkError' | null>(null);
+  const [loadError, setLoadError] = useState<AppErrorKind | null>(null);
   const [banner, setBanner] = useState<AppErrorKind | null>(null);
-  const [selected, setSelected] = useState<{ item: AnyItem; category: CategoryId } | null>(null);
+  const [selected, setSelected] = useState<{
+    item: AnyItem;
+    category: CategoryId;
+  } | null>(null);
   const [showCreateTown, setShowCreateTown] = useState(false);
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
-  const activeTownDonated = useAppStore(s => s.activeTownId ? (s.donated[s.activeTownId] ?? EMPTY_DONATED) : EMPTY_DONATED);
-  const activeTownDonatedAt = useAppStore(s => s.activeTownId ? (s.donatedAt[s.activeTownId] ?? EMPTY_DONATED_AT) : EMPTY_DONATED_AT);
+  const activeTownDonated = useAppStore(s =>
+    s.activeTownId
+      ? (s.donated[s.activeTownId] ?? EMPTY_DONATED)
+      : EMPTY_DONATED
+  );
+  const activeTownDonatedAt = useAppStore(s =>
+    s.activeTownId
+      ? (s.donatedAt[s.activeTownId] ?? EMPTY_DONATED_AT)
+      : EMPTY_DONATED_AT
+  );
   const toggle = useAppStore(s => s.toggle);
 
   // Show create town modal on first load if no towns exist
@@ -1480,7 +1857,13 @@ export default function ACCanvas() {
 
   function handleExport() {
     if (!activeTown) return;
-    downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name, activeTown.playerName);
+    downloadCSV(
+      data,
+      activeTownDonated,
+      activeTownDonatedAt,
+      activeTown.name,
+      activeTown.playerName
+    );
   }
 
   function loadMuseumData() {
@@ -1488,7 +1871,10 @@ export default function ACCanvas() {
     setLoadError(null);
     Promise.all(
       CATEGORY_ORDER.map(cat =>
-        fetch(CATEGORY_META[cat].file).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        fetch(CATEGORY_META[cat].file).then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
       )
     )
       .then(([fish, bugs, fossils, art]) => {
@@ -1498,7 +1884,18 @@ export default function ACCanvas() {
       .catch(err => {
         console.error('Failed to load museum data:', err);
         const isNetwork = !navigator.onLine || err instanceof TypeError;
-        setLoadError(isNetwork ? 'networkError' : 'dataLoadFailed');
+        setLoadError(
+          isNetwork
+            ? {
+                type: 'networkError',
+                message: 'Check your internet connection and try again.',
+              }
+            : {
+                type: 'dataLoadFailed',
+                message:
+                  'Something went wrong while fetching the museum collection.',
+              }
+        );
         setLoading(false);
       });
   }
@@ -1507,28 +1904,26 @@ export default function ACCanvas() {
     loadMuseumData();
   }, []);
 
-  const activeCat: CategoryId | null = (activeTab !== 'home' && activeTab !== 'activity' && activeTab !== 'search' && activeTab !== 'analytics') ? activeTab : null;
-  const activeItems = activeCat ? data[activeCat] as AnyItem[] : [];
+  const activeCat: CategoryId | null =
+    activeTab !== 'home' &&
+    activeTab !== 'activity' &&
+    activeTab !== 'search' &&
+    activeTab !== 'analytics'
+      ? activeTab
+      : null;
+  const activeItems = useMemo(
+    () => (activeCat ? (data[activeCat] as AnyItem[]) : []),
+    [activeCat, data]
+  );
 
   const filtered = useMemo(() => {
     if (!activeCat) return [];
-    const q = query.trim().toLowerCase();
-    if (!q) return activeItems;
-    return activeItems.filter(item =>
-      displayName(item, activeCat).toLowerCase().includes(q)
-    );
+    return filterByQuery(activeItems, activeCat, query);
   }, [activeItems, activeCat, query]);
 
   const globalResults = useMemo(() => {
-    const q = globalQuery.trim().toLowerCase();
-    if (!q) return null;
-    const results = {} as Record<CategoryId, AnyItem[]>;
-    for (const cat of CATEGORY_ORDER) {
-      results[cat] = (data[cat] as AnyItem[]).filter(item =>
-        displayName(item, cat).toLowerCase().includes(q)
-      );
-    }
-    return results;
+    if (!globalQuery.trim()) return null;
+    return globalFilter(data as Record<CategoryId, AnyItem[]>, globalQuery);
   }, [globalQuery, data]);
 
   function pushRecentSearch(term: string) {
@@ -1543,7 +1938,10 @@ export default function ACCanvas() {
   useEffect(() => {
     if (!historyOpen) return;
     function handleOutside(e: MouseEvent) {
-      if (historyRef.current && !historyRef.current.contains(e.target as Node)) {
+      if (
+        historyRef.current &&
+        !historyRef.current.contains(e.target as Node)
+      ) {
         setHistoryOpen(false);
       }
     }
@@ -1552,15 +1950,26 @@ export default function ACCanvas() {
   }, [historyOpen]);
 
   const catCounts = useMemo(() => {
-    const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<CategoryId, number>;
+    const counts = { fish: 0, bugs: 0, fossils: 0, art: 0 } as Record<
+      CategoryId,
+      number
+    >;
     for (const cat of CATEGORY_ORDER) {
-      counts[cat] = (data[cat] as AnyItem[]).filter(item => !!activeTownDonated[item.id]).length;
+      counts[cat] = (data[cat] as AnyItem[]).filter(
+        item => !!activeTownDonated[item.id]
+      ).length;
     }
     return counts;
   }, [data, activeTownDonated]);
 
-  const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
-  const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
+  const totalItems = CATEGORY_ORDER.reduce(
+    (sum, cat) => sum + data[cat].length,
+    0
+  );
+  const totalDonated = CATEGORY_ORDER.reduce(
+    (sum, cat) => sum + catCounts[cat],
+    0
+  );
 
   const handleTabChange = (cat: ViewId) => {
     setActiveTab(cat);
@@ -1568,20 +1977,22 @@ export default function ACCanvas() {
   };
 
   if (loadError) {
-    return (
-      <ErrorState
-        kind={loadError}
-        onRetry={loadMuseumData}
-      />
-    );
+    return <ErrorState error={loadError} onRetry={loadMuseumData} />;
   }
 
   if (loading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg font-medium" style={{ color: '#2A2A2A' }}>Loading museum data…</div>
-          <div className="text-sm mt-1" style={{ color: '#5a4a35', opacity: 0.7 }}>Preparing your collection</div>
+          <div className="text-lg font-medium" style={{ color: '#2A2A2A' }}>
+            Loading museum data…
+          </div>
+          <div
+            className="text-sm mt-1"
+            style={{ color: '#5a4a35', opacity: 0.7 }}
+          >
+            Preparing your collection
+          </div>
         </div>
       </div>
     );
@@ -1592,7 +2003,12 @@ export default function ACCanvas() {
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
       {/* Parchment background */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)' }} />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)',
+        }}
+      />
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none"
         style={{
@@ -1614,7 +2030,14 @@ export default function ACCanvas() {
           <ErrorBanner
             error={banner}
             onDismiss={() => setBanner(null)}
-            onRetry={banner.type === 'networkError' ? () => { setBanner(null); loadMuseumData(); } : undefined}
+            onRetry={
+              banner.type === 'networkError'
+                ? () => {
+                    setBanner(null);
+                    loadMuseumData();
+                  }
+                : undefined
+            }
           />
         )}
 
@@ -1635,7 +2058,7 @@ export default function ACCanvas() {
                 donated={activeTownDonated}
                 donatedAt={activeTownDonatedAt}
                 catCounts={catCounts}
-                onNavigate={(v) => handleTabChange(v)}
+                onNavigate={v => handleTabChange(v)}
               />
             ) : activeTab === 'analytics' ? (
               <AnalyticsView
@@ -1644,10 +2067,7 @@ export default function ACCanvas() {
                 donatedAt={activeTownDonatedAt}
               />
             ) : activeTab === 'activity' ? (
-              <ActivityFeed
-                donatedAt={activeTownDonatedAt}
-                data={data}
-              />
+              <ActivityFeed donatedAt={activeTownDonatedAt} data={data} />
             ) : activeTab === 'search' ? (
               <>
                 <GlobalSearchBar
@@ -1657,8 +2077,14 @@ export default function ACCanvas() {
                   historyOpen={historyOpen}
                   setHistoryOpen={setHistoryOpen}
                   recentSearches={recentSearches}
-                  onSelectHistory={s => { setGlobalQuery(s); pushRecentSearch(s); }}
-                  onClearHistory={() => { setRecentSearches([]); setHistoryOpen(false); }}
+                  onSelectHistory={s => {
+                    setGlobalQuery(s);
+                    pushRecentSearch(s);
+                  }}
+                  onClearHistory={() => {
+                    setRecentSearches([]);
+                    setHistoryOpen(false);
+                  }}
                   wrapperRef={historyRef}
                 />
                 <GlobalSearchResults
@@ -1667,7 +2093,8 @@ export default function ACCanvas() {
                   donated={activeTownDonated}
                   onToggle={id => toggle(id)}
                   onSelect={(item, category) => {
-                    if (globalQuery.trim()) pushRecentSearch(globalQuery.trim());
+                    if (globalQuery.trim())
+                      pushRecentSearch(globalQuery.trim());
                     setSelected({ item, category });
                   }}
                 />
@@ -1694,12 +2121,18 @@ export default function ACCanvas() {
                       category={activeCat!}
                       checked={!!activeTownDonated[item.id]}
                       onToggle={() => toggle(item.id)}
-                      onClick={() => setSelected({ item, category: activeCat! })}
+                      onClick={() =>
+                        setSelected({ item, category: activeCat! })
+                      }
                     />
                   ))}
                   {filtered.length === 0 && (
                     <EmptyState
-                      message={query ? `No ${catLabel.toLowerCase()} match "${query}".` : `No ${catLabel.toLowerCase()} found.`}
+                      message={
+                        query
+                          ? `No ${catLabel.toLowerCase()} match "${query}".`
+                          : `No ${catLabel.toLowerCase()} found.`
+                      }
                     />
                   )}
                 </div>
