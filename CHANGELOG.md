@@ -19,6 +19,7 @@ All notable changes to this project are documented here.
 - **Pre-commit hooks** — Husky + lint-staged run ESLint and Prettier on staged `src/**/*.{ts,tsx}` files before every commit
 - **Type guards in utils** — `isFish()`, `isFossil()`, `isArtPiece()` predicates replace unsafe `as` casts; `itemNotes()` now returns `undefined` for non-fish items correctly
 - **Unified `AppErrorKind`** — moved to `src/lib/types.ts`; `ErrorState` now accepts the full discriminated union instead of a separate `LoadErrorKind` string
+- `public/data/acww/` — complete Animal Crossing: Wild World game data (56 fish, 56 bugs, 52 fossils). Item IDs are shared with GCN where species overlap, enabling the multi-game data model. New species unique to Wild World include: Dorado, Gar, Char, King Salmon, Sea Butterfly, Clownfish, Zebra Turkeyfish, Football Fish, Tuna, Ocean Sunfish, Hammerhead Shark, Shark, Yellow Perch, Black Bass, and more (see PR for full breakdown).
 
 ### Fixed
 - **`as any` cast in HomeTab** — `displayName(item as any, cat)` replaced with `displayName(item as AnyItem, cat)`
