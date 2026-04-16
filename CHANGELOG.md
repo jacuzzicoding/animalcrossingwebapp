@@ -5,7 +5,26 @@ All notable changes to this project are documented here.
 ## [v0.7.0] — In Progress
 
 ### Added
+- **Edit/rename town** — inline edit flow for town names; pencil icon in town switcher opens modal
+- **Wild World data** — `public/data/acww/` with 56 fish, 56 bugs, and 52 fossils; item IDs shared with GCN where species overlap
+- **Multi-game foundation (Steps 1–3):**
+  - `GameId` union type (`ACGCN | ACWW | ACCF | ACNL | ACNH`) + `Game` interface and `GAMES` registry
+  - 3-level donation schema: `donated[townId][gameId][itemId]`; Zustand persist upgraded to v2 with lossless migration
+  - `src/lib/bootstrapMigration.ts` — one-time localStorage key rename before React mounts
+  - `src/lib/storeMigrations.ts` — Zustand v1→v2 migration; backfills `gameId = 'ACGCN'` for existing towns
+  - `src/lib/constants.ts` — `MONTH_NAMES`, `CATEGORY_LABELS`, `CATEGORY_ORDER`, `SEASONS`
+  - `src/lib/colors.ts` — design token hex constants
+  - `src/hooks/useHydration.ts` — hydration guard via `onFinishHydration`; eliminates empty-state flash
+- **ErrorBoundary** (`src/components/ErrorBoundary.tsx`) — top-level React error boundary; unhandled crashes render `ErrorState`
+- **Pre-commit hooks** — Husky + lint-staged; ESLint + Prettier run on staged `src/**/*.{ts,tsx}` before every commit
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+- `docs/v0.7-architecture-proposal.md` — multi-game foundation design: store schema, decomposition plan for ACCanvas
+
+### Changed
+- `AppErrorKind` unified across `ErrorBanner` and `ErrorState` — single discriminated union in `types.ts`
+- `HomeTab` — replaced `as any` cast with `AnyItem` union type; fixed stale `React.ElementType` import
+- ACCanvas per-category filter and global search now call `filterByQuery()` / `globalFilter()` from utils; inline reimplementations removed
+- `Town` interface gains `gameId` field (defaults to `'ACGCN'` for new towns; backfilled for existing)
 
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts
@@ -16,6 +35,7 @@ All notable changes to this project are documented here.
   escaping the `overflow-hidden` header stacking context that caused visual clipping.
 - **Missing `@vercel/analytics` dependency** — package was referenced in `App.tsx` but not
   installed; added to dependencies so the build no longer fails.
+- **Type safety** — `isFish()`, `isFossil()`, `isArtPiece()` type guards in `utils.ts`; `itemNotes()` no longer does an unsafe `as FishType` cast
 
 ---
 
