@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+- `public/data/acww/` — complete Animal Crossing: Wild World game data (56 fish, 56 bugs, 52 fossils). Item IDs are shared with GCN where species overlap, enabling the multi-game data model. New species unique to Wild World include: Dorado, Gar, Char, King Salmon, Sea Butterfly, Clownfish, Zebra Turkeyfish, Football Fish, Tuna, Ocean Sunfish, Hammerhead Shark, Shark, Yellow Perch, Black Bass, and more (see PR for full breakdown).
 
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts
