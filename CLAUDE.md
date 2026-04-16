@@ -90,7 +90,6 @@ Inline hex styles — **no Tailwind design tokens**. Use raw hex values:
 
 ## Known Issues
 
-- **issue #1** — Seasonal analytics bug (Stats tab)
 - **issue #10** — CI was broken (ran `npx expo export` instead of `npm run build`) — now fixed
 - **Home screen tab routing** — HomeTab may not display correctly depending on active tab state; treat as fragile
 
