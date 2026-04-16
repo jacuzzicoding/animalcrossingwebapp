@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [v0.7.0] — In Progress
 
+### Added
+- `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts
   donated fish/bugs available *in-game per season* (based on `months[]` data), not the
