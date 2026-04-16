@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased — v0.7.0]
+
+### Added
+- `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+
+---
+
 ## [v0.6.1] — April 15th, 2026 (Hotfix)
 
 ### Fixed
