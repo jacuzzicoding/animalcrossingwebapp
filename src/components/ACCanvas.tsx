@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Fish as FishIcon,
@@ -60,6 +61,13 @@ const CATEGORY_META: Record<CategoryId, {
 };
 
 const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
+
+const SEASONS: { label: string; months: number[]; color: string }[] = [
+  { label: 'Spring', months: [3, 4, 5],   color: '#3CA370' },
+  { label: 'Summer', months: [6, 7, 8],   color: '#E8A838' },
+  { label: 'Fall',   months: [9, 10, 11], color: '#C8663A' },
+  { label: 'Winter', months: [12, 1, 2],  color: '#6A9EC8' },
+];
 
 // Stable empty fallbacks so Zustand selectors don't return new {} references
 const EMPTY_DONATED: Record<string, boolean> = {};
@@ -188,7 +196,7 @@ function EditTownModal({
     onClose();
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
@@ -251,7 +259,8 @@ function EditTownModal({
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -938,7 +947,7 @@ function AnalyticsView({
     return { buckets: sorted, maxCount };
   }, [donatedAt]);
 
-  // Build a lookup: itemId -> months[] for fish and bugs only
+  // Monthly availability: for each month, count donated fish/bugs available that month
   const monthAvailability = useMemo(() => {
     const donatedIds = new Set(Object.keys(donatedAt));
     const counts = new Array(12).fill(0);
@@ -952,6 +961,28 @@ function AnalyticsView({
     }
     const max = Math.max(...counts, 1);
     return { counts, max };
+  }, [donatedAt, data]);
+
+  // Seasonal breakdown: for each season, count donated fish/bugs available in that season
+  const seasonalData = useMemo(() => {
+    const donatedIds = new Set(Object.keys(donatedAt));
+    const counts: Record<string, number> = { Spring: 0, Summer: 0, Fall: 0, Winter: 0 };
+    for (const cat of ['fish', 'bugs'] as const) {
+      for (const item of data[cat]) {
+        if (!donatedIds.has(item.id)) continue;
+        const months: number[] | undefined = (item as FishType | BugItem).months;
+        const active = months && months.length > 0 ? months : [1,2,3,4,5,6,7,8,9,10,11,12];
+        for (const season of SEASONS) {
+          if (active.some(m => season.months.includes(m))) {
+            counts[season.label]++;
+          }
+        }
+      }
+    }
+    const totalDonatedFishBugs = [...donatedIds].filter(id =>
+      data.fish.some(f => f.id === id) || data.bugs.some(b => b.id === id)
+    ).length;
+    return { counts, total: totalDonatedFishBugs };
   }, [donatedAt, data]);
   const totalDonated = Object.keys(donatedAt).length;
 
@@ -1138,6 +1169,79 @@ function AnalyticsView({
                   </div>
                   <div style={{ width: 18, fontSize: 12, fontWeight: 600, color: '#2A2A2A', textAlign: 'right', flexShrink: 0 }}>
                     {count}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </SectionCard>
+
+      {/* Section 4: Seasonal Breakdown */}
+      <SectionCard title="Seasonal Breakdown">
+        <div style={{ fontSize: 12, color: '#5a4a35', marginBottom: 10 }}>
+          Donated fish &amp; bugs available each season
+        </div>
+        {seasonalData.total === 0 ? (
+          <div
+            className="rounded-[10px] border px-4 py-6 text-center text-sm"
+            style={{ borderColor: '#E7DAC4', backgroundColor: '#F5E9D4', color: '#5a4a35' }}
+          >
+            Donate fish or bugs to see seasonal availability.
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {SEASONS.map(season => {
+              const count = seasonalData.counts[season.label];
+              const pct = seasonalData.total > 0
+                ? Math.round((count / seasonalData.total) * 100)
+                : 0;
+              const maxCount = Math.max(...SEASONS.map(s => seasonalData.counts[s.label]), 1);
+              const barWidth = (count / maxCount) * 100;
+              return (
+                <div
+                  key={season.label}
+                  style={{
+                    backgroundColor: '#FFFDF6',
+                    border: '1px solid #E7DAC4',
+                    borderRadius: 12,
+                    padding: '12px 14px',
+                  }}
+                >
+                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 3 }}>
+                    {season.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 26,
+                      fontWeight: 700,
+                      color: '#2A2A2A',
+                      lineHeight: 1.1,
+                      marginBottom: 2,
+                    }}
+                  >
+                    {count}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#5a4a35', marginBottom: 8 }}>
+                    {pct}% of donated
+                  </div>
+                  <div
+                    style={{
+                      height: 4,
+                      backgroundColor: '#e9dcc3',
+                      borderRadius: 999,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${barWidth}%`,
+                        backgroundColor: season.color,
+                        transition: 'width 0.4s ease',
+                        borderRadius: 999,
+                      }}
+                    />
                   </div>
                 </div>
               );

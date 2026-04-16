@@ -2,10 +2,20 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased — v0.7.0]
+## [v0.7.0] — In Progress
 
 ### Added
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
+
+### Fixed
+- **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts
+  donated fish/bugs available *in-game per season* (based on `months[]` data), not the
+  timestamps of when items were donated. Previously everything showed as Spring because
+  all donations were recorded in April.
+- **Edit Town modal visual polish** — modal now renders via React portal to `document.body`,
+  escaping the `overflow-hidden` header stacking context that caused visual clipping.
+- **Missing `@vercel/analytics` dependency** — package was referenced in `App.tsx` but not
+  installed; added to dependencies so the build no longer fails.
 
 ---
 
