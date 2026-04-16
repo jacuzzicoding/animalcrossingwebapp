@@ -2142,6 +2142,12 @@ export default function ACCanvas() {
             )}
           </>
         )}
+        {/* Version badge */}
+        <div className="text-center pb-2">
+          <span style={{ color: '#9c8a6e', fontSize: '0.7rem', letterSpacing: '0.05em' }}>
+            {import.meta.env.VITE_APP_VERSION}
+          </span>
+        </div>
       </div>
 
       {/* Create town modal — required on first load, optional after */}

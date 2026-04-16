@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## [v0.7.0] — In Progress
 
 ### Added
+- **Build version badge** — version string (from `package.json` via `VITE_APP_VERSION`) displayed in small muted text at the bottom of the museum canvas; `vite.config.ts` injects version at build time
 - **Edit/rename town** — inline edit flow for town names; pencil icon in town switcher opens modal
 - **Wild World data** — `public/data/acww/` with 56 fish, 56 bugs, and 52 fossils; item IDs shared with GCN where species overlap
 - **Multi-game foundation (Steps 1–3):**
