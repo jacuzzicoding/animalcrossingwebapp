@@ -104,14 +104,49 @@ It is **highly conflict-prone** in multi-session work. Before editing:
 
 ## Roadmap
 
-- **v0.1** ✅ Basic app, four category tabs, donation tracking
-- **v0.2** ✅ Detail modal, search, donation timestamps
-- **v0.3** ✅ Multi-town management, town switcher, activity feed
-- **v0.4** ✅ Global search, Stats/analytics tab
-- **v0.5** ✅ CSV export, error UI, Vitest tests, Vercel Analytics, monthly availability chart
-- **v0.6** ✅ Home screen (seasonal availability, leaving-soon, progress cards, recent activity)
-- **v0.6.1** ✅ Hotfix — restore files lost in bad v0.6.0 merge, fix corrupted main branch
-- **v0.7** 🚧 TBD
+### Shipped
+- v0.1–v0.2: Initial release, basic museum tracking, town management
+- v0.3: Town management improvements  
+- v0.4: Global search, analytics/stats tab
+- v0.5: CSV export, error handling UI, Vitest tests, Vercel Analytics, monthly availability chart, enriched JSON data
+- v0.6: Home screen (available this month, leaving-soon, progress cards, recent activity)
+- v0.6.1: Hotfix — restore files deleted by bad v0.6.0 merge, fix corrupted main branch
+- v0.7.0-alpha: Edit/rename town, documentation overhaul (CLAUDE.md, README, CHANGELOG, CI fix)
+
+### v0.7 — Multi-game foundation
+- Fix open bugs: seasonal analytics counting everything as spring (#1), edit modal visual polish
+- Build unified multi-game data model (items shared across games with per-game availability metadata)
+- Game selection UI
+- Migrate existing GCN data to new structure (zero data loss for current users)
+- Add Wild World + City Folk item data
+- Break up ACCanvas.tsx (~1500 lines) into focused components
+- Add React Router for game URLs and item detail routes
+
+### v0.8 — Full game coverage + item details
+- Add New Leaf and New Horizons item data
+- Item detail views (inline expand for fish/bugs/fossils, bottom sheet for art)
+- Seasonal/time-based filtering
+- Data access layer (lib/data/) to isolate components from data format
+
+### v0.9 — Polish, onboarding, and PWA
+- UI redesign pass (design tokens, consistent styling, cozy museum aesthetic)
+- First-run onboarding experience (zero steps to value — land on "Available Now")
+- PWA support (service worker, manifest, offline capability, add-to-home-screen)
+- Mobile-first responsive pass
+
+### v1.0 — Launch ready
+- Branding: favicon, about page, footer with Ko-fi link (jacuzzicoding)
+- SEO: meta tags, Open Graph for social sharing, semantic HTML
+- Performance audit (bundle size, lazy loading, slow connection testing)
+- Accessibility pass (keyboard nav, screen reader, color contrast)
+- Final bug sweep and edge case cleanup
+
+### Post v1.0
+- Villager tracking
+- ACNH-specific features (sea creatures, Nook Miles)
+- Shareable completion milestones
+- Multi-game dashboard view
+- Account sync (optional)
 
 ## Sister Project
 
