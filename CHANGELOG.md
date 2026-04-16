@@ -5,25 +5,26 @@ All notable changes to this project are documented here.
 ## [v0.7.0] — In Progress
 
 ### Added
+- **Edit/rename town** — inline edit flow for town names; pencil icon in town switcher opens modal
+- **Wild World data** — `public/data/acww/` with 56 fish, 56 bugs, and 52 fossils; item IDs shared with GCN where species overlap
+- **Multi-game foundation (Steps 1–3):**
+  - `GameId` union type (`ACGCN | ACWW | ACCF | ACNL | ACNH`) + `Game` interface and `GAMES` registry
+  - 3-level donation schema: `donated[townId][gameId][itemId]`; Zustand persist upgraded to v2 with lossless migration
+  - `src/lib/bootstrapMigration.ts` — one-time localStorage key rename before React mounts
+  - `src/lib/storeMigrations.ts` — Zustand v1→v2 migration; backfills `gameId = 'ACGCN'` for existing towns
+  - `src/lib/constants.ts` — `MONTH_NAMES`, `CATEGORY_LABELS`, `CATEGORY_ORDER`, `SEASONS`
+  - `src/lib/colors.ts` — design token hex constants
+  - `src/hooks/useHydration.ts` — hydration guard via `onFinishHydration`; eliminates empty-state flash
+- **ErrorBoundary** (`src/components/ErrorBoundary.tsx`) — top-level React error boundary; unhandled crashes render `ErrorState`
+- **Pre-commit hooks** — Husky + lint-staged; ESLint + Prettier run on staged `src/**/*.{ts,tsx}` before every commit
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
-- **Multi-game foundation — Steps 1–3** (v0.7 architecture, PR targeting development):
-  - `src/lib/types.ts` — `GameId` expanded to union of all 5 games (`ACGCN | ACWW | ACCF | ACNL | ACNH`); `Game` interface and `GAMES` registry added
-  - `src/lib/constants.ts` — `MONTH_NAMES`, `CATEGORY_LABELS`, `CATEGORY_ORDER`, `SEASONS` extracted from ACCanvas
-  - `src/lib/colors.ts` — design token hex constants (`wood`, `paper`, `ink`, `leaf`, `border`, `muted`)
-  - `src/lib/bootstrapMigration.ts` — one-time localStorage key rename (`ac-web:v1` → `ac-web`) called synchronously in `main.tsx` before `createRoot`
-  - `src/lib/storeMigrations.ts` — Zustand `migrateStore` function (v1→v2): backfills `Town.gameId = 'ACGCN'`, lifts `donated`/`donatedAt` to 3-level schema (`townId → gameId → itemId`)
-  - `src/hooks/useHydration.ts` — `useHydration()` hook via `onFinishHydration`; gates `App.tsx` render to prevent empty-state flash for returning users
-- `Town` now carries `gameId: GameId` (defaults to `'ACGCN'` for existing and new towns)
-- Zustand persist store upgraded to `version: 2` with lossless migration — zero data loss for existing users
-- **ErrorBoundary** — top-level React error boundary wraps `<ACCanvas />`; crashes now render `ErrorState` instead of a blank page
-- **Pre-commit hooks** — Husky + lint-staged run ESLint and Prettier on staged `src/**/*.{ts,tsx}` files before every commit
-- **Type guards in utils** — `isFish()`, `isFossil()`, `isArtPiece()` predicates replace unsafe `as` casts; `itemNotes()` now returns `undefined` for non-fish items correctly
-- **Unified `AppErrorKind`** — moved to `src/lib/types.ts`; `ErrorState` now accepts the full discriminated union instead of a separate `LoadErrorKind` string
-- `public/data/acww/` — complete Animal Crossing: Wild World game data (56 fish, 56 bugs, 52 fossils). Item IDs are shared with GCN where species overlap, enabling the multi-game data model. New species unique to Wild World include: Dorado, Gar, Char, King Salmon, Sea Butterfly, Clownfish, Zebra Turkeyfish, Football Fish, Tuna, Ocean Sunfish, Hammerhead Shark, Shark, Yellow Perch, Black Bass, and more (see PR for full breakdown).
+- `docs/v0.7-architecture-proposal.md` — multi-game foundation design: store schema, decomposition plan for ACCanvas
 
-### Fixed
-- **`as any` cast in HomeTab** — `displayName(item as any, cat)` replaced with `displayName(item as AnyItem, cat)`
-- **`filterByQuery` duplication** — ACCanvas per-category filter and global search filter now use the `filterByQuery()` / `globalFilter()` utilities from `src/lib/utils.ts` instead of reimplementing the same logic inline
+### Changed
+- `AppErrorKind` unified across `ErrorBanner` and `ErrorState` — single discriminated union in `types.ts`
+- `HomeTab` — replaced `as any` cast with `AnyItem` union type; fixed stale `React.ElementType` import
+- ACCanvas per-category filter and global search now call `filterByQuery()` / `globalFilter()` from utils; inline reimplementations removed
+- `Town` interface gains `gameId` field (defaults to `'ACGCN'` for new towns; backfilled for existing)
 
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts
@@ -34,6 +35,7 @@ All notable changes to this project are documented here.
   escaping the `overflow-hidden` header stacking context that caused visual clipping.
 - **Missing `@vercel/analytics` dependency** — package was referenced in `App.tsx` but not
   installed; added to dependencies so the build no longer fails.
+- **Type safety** — `isFish()`, `isFossil()`, `isArtPiece()` type guards in `utils.ts`; `itemNotes()` no longer does an unsafe `as FishType` cast
 
 ---
 

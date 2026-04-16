@@ -1,6 +1,6 @@
-# Animal Crossing GCN Museum Tracker
+# Animal Crossing Museum Tracker
 
-A cozy companion web app for Animal Crossing (GameCube) that helps you track museum donations across multiple towns.
+A cozy companion web app for Animal Crossing (GameCube and Wild World) that helps you track museum donations across multiple towns. Multi-game support for City Folk, New Leaf, and New Horizons is in development.
 
 **Live app:** https://animalcrossingwebapp.vercel.app
 
@@ -9,7 +9,8 @@ A cozy companion web app for Animal Crossing (GameCube) that helps you track mus
 ## Features
 
 - Track donations for all four museum categories: Fish, Bugs, Fossils, and Art
-- Manage multiple towns — switch between them at any time
+- Manage multiple towns — create, switch, and rename them at any time
+- Multi-game support: GameCube and Wild World data included; more games in development
 - Home screen with seasonal availability, leaving-soon alerts, and progress cards
 - Global search across all categories
 - Stats tab with collection analytics and monthly availability chart
@@ -46,14 +47,12 @@ npm run lint      # Lint with ESLint
 
 ## Data
 
-Museum data lives in `public/data/acgcn/`:
-- `fish.json` — 40 species with monthly availability
-- `bugs.json` — 40 species with monthly availability
-- `fossils.json` — 25 fossil pieces
-- `art.json` — 13 paintings
+Museum data lives in `public/data/<game>/`:
+- `public/data/acgcn/` — GameCube: 40 fish, 40 bugs, 25 fossils, 13 paintings
+- `public/data/acww/` — Wild World: 56 fish, 56 bugs, 52 fossils
 
 ---
 
 ## Version
 
-Current release: **v0.6.1** — see [CHANGELOG.md](CHANGELOG.md) for history.
+Current release: **v0.7.0-alpha** — see [CHANGELOG.md](CHANGELOG.md) for history.
