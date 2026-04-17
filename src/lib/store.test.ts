@@ -34,7 +34,7 @@ describe('createTown', () => {
 
   it('accumulates multiple towns', () => {
     useAppStore.getState().createTown('Pallet', 'Ash');
-    const t2 = useAppStore.getState().createTown('Viridian', 'Brock');
+    const _t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     expect(useAppStore.getState().towns).toHaveLength(2);
   });
 });
