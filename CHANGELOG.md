@@ -2,9 +2,12 @@
 
 All notable changes to this project are documented here.
 
-## [v0.7.0] — In Progress
+## [v0.7.0-alpha] — In Progress
 
 ### Added
+- **Game selection UI** — `CreateTownModal` now shows a visual card selector for available games (ACGCN, ACWW); only games with data files under `public/data/` are shown; defaults to the most recent town's game or ACGCN; selected `gameId` is saved to the town on creation
+- **Game badges in town switcher** — each town in the dropdown now shows a small coloured badge with the game's short name (e.g. "Wild World", "Animal Crossing")
+- **Version bump** — `package.json` updated to `0.7.0-alpha`
 - **Build version badge** — version string (from `package.json` via `VITE_APP_VERSION`) displayed in small muted text at the bottom of the museum canvas; `vite.config.ts` injects version at build time
 - **Edit/rename town** — inline edit flow for town names; pencil icon in town switcher opens modal
 - **Wild World data** — `public/data/acww/` with 56 fish, 56 bugs, and 52 fossils; item IDs shared with GCN where species overlap
