@@ -7,7 +7,12 @@ import type { AllData } from '../lib/viewTypes';
 export type { AllData };
 
 export function useMuseumData() {
-  const [data, setData] = useState<AllData>({ fish: [], bugs: [], fossils: [], art: [] });
+  const [data, setData] = useState<AllData>({
+    fish: [],
+    bugs: [],
+    fossils: [],
+    art: [],
+  });
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<AppErrorKind | null>(null);
 
@@ -31,8 +36,15 @@ export function useMuseumData() {
         const isNetwork = !navigator.onLine || err instanceof TypeError;
         setLoadError(
           isNetwork
-            ? { type: 'networkError', message: 'Check your internet connection and try again.' }
-            : { type: 'dataLoadFailed', message: 'Something went wrong while fetching the museum collection.' }
+            ? {
+                type: 'networkError',
+                message: 'Check your internet connection and try again.',
+              }
+            : {
+                type: 'dataLoadFailed',
+                message:
+                  'Something went wrong while fetching the museum collection.',
+              }
         );
         setLoading(false);
       });

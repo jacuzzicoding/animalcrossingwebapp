@@ -13,16 +13,29 @@ export function migrateStore(persisted: unknown, fromVersion: number): unknown {
     // 2. Lift donated/donatedAt from [townId][itemId] to [townId][gameId][itemId]
 
     const towns = (state.towns as Town[] | undefined) ?? [];
-    const migratedTowns = towns.map(t => ({ ...t, gameId: t.gameId ?? 'ACGCN' }));
+    const migratedTowns = towns.map(t => ({
+      ...t,
+      gameId: t.gameId ?? 'ACGCN',
+    }));
 
-    const oldDonated   = (state.donated   as Record<string, Record<string, boolean>> | undefined) ?? {};
-    const oldDonatedAt = (state.donatedAt as Record<string, Record<string, string>>  | undefined) ?? {};
+    const oldDonated =
+      (state.donated as Record<string, Record<string, boolean>> | undefined) ??
+      {};
+    const oldDonatedAt =
+      (state.donatedAt as Record<string, Record<string, string>> | undefined) ??
+      {};
 
-    const newDonated:   Record<string, Record<string, Record<string, boolean>>> = {};
-    const newDonatedAt: Record<string, Record<string, Record<string, string>>>  = {};
+    const newDonated: Record<
+      string,
+      Record<string, Record<string, boolean>>
+    > = {};
+    const newDonatedAt: Record<
+      string,
+      Record<string, Record<string, string>>
+    > = {};
 
     for (const townId of Object.keys(oldDonated)) {
-      newDonated[townId]   = { ACGCN: oldDonated[townId] };
+      newDonated[townId] = { ACGCN: oldDonated[townId] };
     }
     for (const townId of Object.keys(oldDonatedAt)) {
       newDonatedAt[townId] = { ACGCN: oldDonatedAt[townId] };
@@ -30,8 +43,8 @@ export function migrateStore(persisted: unknown, fromVersion: number): unknown {
 
     state = {
       ...state,
-      towns:     migratedTowns,
-      donated:   newDonated,
+      towns: migratedTowns,
+      donated: newDonated,
       donatedAt: newDonatedAt,
     };
   }

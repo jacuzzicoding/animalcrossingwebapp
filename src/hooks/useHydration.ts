@@ -10,7 +10,9 @@ export function useHydration(): boolean {
 
   useEffect(() => {
     // Subscribe for the case where hydration completes after this effect runs
-    const unsub = useAppStore.persist.onFinishHydration(() => setHydrated(true));
+    const unsub = useAppStore.persist.onFinishHydration(() =>
+      setHydrated(true)
+    );
     // Handle the case where hydration already completed before this effect ran
     setHydrated(useAppStore.persist.hasHydrated());
     return unsub;

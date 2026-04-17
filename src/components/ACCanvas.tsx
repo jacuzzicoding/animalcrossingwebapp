@@ -7,7 +7,7 @@ import { downloadCSV } from '../lib/csvExport';
 import { filterByQuery, globalFilter, type AnyItem } from '../lib/utils';
 import type { CategoryId } from '../lib/types';
 import type { AppErrorKind } from '../lib/types';
-import type { ViewId, AllData } from '../lib/viewTypes';
+import type { ViewId } from '../lib/viewTypes';
 
 import HomeTab from './HomeTab';
 import ErrorBanner from './ErrorBanner';
@@ -80,8 +80,14 @@ export default function ACCanvas() {
 
   const catCounts = useCategoryStats(data, activeTownDonated);
 
-  const totalItems = CATEGORY_ORDER.reduce((sum, cat) => sum + data[cat].length, 0);
-  const totalDonated = CATEGORY_ORDER.reduce((sum, cat) => sum + catCounts[cat], 0);
+  const totalItems = CATEGORY_ORDER.reduce(
+    (sum, cat) => sum + data[cat].length,
+    0
+  );
+  const totalDonated = CATEGORY_ORDER.reduce(
+    (sum, cat) => sum + catCounts[cat],
+    0
+  );
 
   const activeCat: CategoryId | null =
     activeTab !== 'home' &&
@@ -108,7 +114,13 @@ export default function ACCanvas() {
 
   function handleExport() {
     if (!activeTown) return;
-    downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name, activeTown.playerName);
+    downloadCSV(
+      data,
+      activeTownDonated,
+      activeTownDonatedAt,
+      activeTown.name,
+      activeTown.playerName
+    );
   }
 
   function handleTabChange(cat: ViewId) {
@@ -127,7 +139,10 @@ export default function ACCanvas() {
           <div className="text-lg font-medium" style={{ color: '#2A2A2A' }}>
             Loading museum data…
           </div>
-          <div className="text-sm mt-1" style={{ color: '#5a4a35', opacity: 0.7 }}>
+          <div
+            className="text-sm mt-1"
+            style={{ color: '#5a4a35', opacity: 0.7 }}
+          >
             Preparing your collection
           </div>
         </div>
@@ -168,7 +183,10 @@ export default function ACCanvas() {
             onDismiss={() => setBanner(null)}
             onRetry={
               banner.type === 'networkError'
-                ? () => { setBanner(null); reload(); }
+                ? () => {
+                    setBanner(null);
+                    reload();
+                  }
                 : undefined
             }
           />
@@ -226,7 +244,8 @@ export default function ACCanvas() {
                   donated={activeTownDonated}
                   onToggle={id => toggle(id)}
                   onSelect={(item, category) => {
-                    if (globalQuery.trim()) pushRecentSearch(globalQuery.trim());
+                    if (globalQuery.trim())
+                      pushRecentSearch(globalQuery.trim());
                     setSelected({ item, category });
                   }}
                 />
@@ -251,7 +270,9 @@ export default function ACCanvas() {
                       category={activeCat!}
                       checked={!!activeTownDonated[item.id]}
                       onToggle={() => toggle(item.id)}
-                      onClick={() => setSelected({ item, category: activeCat! })}
+                      onClick={() =>
+                        setSelected({ item, category: activeCat! })
+                      }
                     />
                   ))}
                   {filtered.length === 0 && (
@@ -270,7 +291,13 @@ export default function ACCanvas() {
         )}
 
         <div className="text-center pb-2">
-          <span style={{ color: '#9c8a6e', fontSize: '0.7rem', letterSpacing: '0.05em' }}>
+          <span
+            style={{
+              color: '#9c8a6e',
+              fontSize: '0.7rem',
+              letterSpacing: '0.05em',
+            }}
+          >
             {import.meta.env.VITE_APP_VERSION}
           </span>
         </div>

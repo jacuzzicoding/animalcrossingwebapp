@@ -32,7 +32,9 @@ export function TabBar({
       >
         <Home className="w-4 h-4" />
         <span>Home</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
       {CATEGORY_ORDER.map(cat => {
         const { label, Icon } = CATEGORY_META[cat];
@@ -69,7 +71,9 @@ export function TabBar({
       >
         <Clock className="w-4 h-4" />
         <span>Log</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
       <button
         onClick={() => onChange('search')}
@@ -82,7 +86,9 @@ export function TabBar({
       >
         <Search className="w-4 h-4" />
         <span>Search</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
       <button
         onClick={() => onChange('analytics')}
@@ -95,7 +101,9 @@ export function TabBar({
       >
         <BarChart2 className="w-4 h-4" />
         <span>Stats</span>
-        <span className="opacity-0" style={{ fontSize: '10px' }}>·</span>
+        <span className="opacity-0" style={{ fontSize: '10px' }}>
+          ·
+        </span>
       </button>
     </div>
   );

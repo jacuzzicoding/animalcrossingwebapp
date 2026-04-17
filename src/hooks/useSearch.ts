@@ -18,7 +18,10 @@ export function useSearch() {
   useEffect(() => {
     if (!historyOpen) return;
     function handleOutside(e: MouseEvent) {
-      if (historyRef.current && !historyRef.current.contains(e.target as Node)) {
+      if (
+        historyRef.current &&
+        !historyRef.current.contains(e.target as Node)
+      ) {
         setHistoryOpen(false);
       }
     }

@@ -49,7 +49,10 @@ export const useAppStore = create<AppState>()(
           gameId,
           createdAt: new Date().toISOString(),
         };
-        set(state => ({ towns: [...state.towns, town], activeTownId: town.id }));
+        set(state => ({
+          towns: [...state.towns, town],
+          activeTownId: town.id,
+        }));
         return town;
       },
 
@@ -60,9 +63,9 @@ export const useAppStore = create<AppState>()(
           ),
         })),
 
-      setActiveTown: (id) => set({ activeTownId: id }),
+      setActiveTown: id => set({ activeTownId: id }),
 
-      deleteTown: (id) =>
+      deleteTown: id =>
         set(state => {
           const towns = state.towns.filter(t => t.id !== id);
           const donated = { ...state.donated };
@@ -70,11 +73,13 @@ export const useAppStore = create<AppState>()(
           delete donated[id];
           delete donatedAt[id];
           const activeTownId =
-            state.activeTownId === id ? (towns[0]?.id ?? null) : state.activeTownId;
+            state.activeTownId === id
+              ? (towns[0]?.id ?? null)
+              : state.activeTownId;
           return { towns, donated, donatedAt, activeTownId };
         }),
 
-      toggle: (itemId) =>
+      toggle: itemId =>
         set(state => {
           const { activeTownId } = state;
           if (!activeTownId) return state;
@@ -82,14 +87,14 @@ export const useAppStore = create<AppState>()(
           if (!activeTown) return state;
           const { gameId } = activeTown;
 
-          const townDonated   = { ...(state.donated[activeTownId]   ?? {}) };
+          const townDonated = { ...(state.donated[activeTownId] ?? {}) };
           const townDonatedAt = { ...(state.donatedAt[activeTownId] ?? {}) };
-          const gameDonated   = { ...(townDonated[gameId]   ?? {}) };
+          const gameDonated = { ...(townDonated[gameId] ?? {}) };
           const gameDonatedAt = { ...(townDonatedAt[gameId] ?? {}) };
 
           const nowDonated = !gameDonated[itemId];
           if (nowDonated) {
-            gameDonated[itemId]   = true;
+            gameDonated[itemId] = true;
             gameDonatedAt[itemId] = new Date().toISOString();
           } else {
             delete gameDonated[itemId];
@@ -97,20 +102,26 @@ export const useAppStore = create<AppState>()(
           }
 
           return {
-            donated:   { ...state.donated,   [activeTownId]: { ...townDonated,   [gameId]: gameDonated   } },
-            donatedAt: { ...state.donatedAt, [activeTownId]: { ...townDonatedAt, [gameId]: gameDonatedAt } },
+            donated: {
+              ...state.donated,
+              [activeTownId]: { ...townDonated, [gameId]: gameDonated },
+            },
+            donatedAt: {
+              ...state.donatedAt,
+              [activeTownId]: { ...townDonatedAt, [gameId]: gameDonatedAt },
+            },
           };
         }),
 
-      isDonated: (itemId) => {
+      isDonated: itemId => {
         const { activeTownId, donated, towns } = get();
         if (!activeTownId) return false;
         const activeTown = towns.find(t => t.id === activeTownId);
         if (!activeTown) return false;
-        return !!(donated[activeTownId]?.[activeTown.gameId]?.[itemId]);
+        return !!donated[activeTownId]?.[activeTown.gameId]?.[itemId];
       },
 
-      getDonatedAt: (itemId) => {
+      getDonatedAt: itemId => {
         const { activeTownId, donatedAt, towns } = get();
         if (!activeTownId) return undefined;
         const activeTown = towns.find(t => t.id === activeTownId);

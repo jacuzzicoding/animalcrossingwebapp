@@ -32,7 +32,8 @@ export function AnalyticsView({
     for (const cat of ['fish', 'bugs'] as const) {
       for (const item of data[cat]) {
         if (!donatedIds.has(item.id)) continue;
-        const months: number[] | undefined = (item as FishType | BugItem).months;
+        const months: number[] | undefined = (item as FishType | BugItem)
+          .months;
         const active =
           months && months.length > 0
             ? months
@@ -55,13 +56,16 @@ export function AnalyticsView({
     for (const cat of ['fish', 'bugs'] as const) {
       for (const item of data[cat]) {
         if (!donatedIds.has(item.id)) continue;
-        const months: number[] | undefined = (item as FishType | BugItem).months;
+        const months: number[] | undefined = (item as FishType | BugItem)
+          .months;
         const active =
           months && months.length > 0
             ? months
             : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         for (const season of SEASONS) {
-          if (active.some(m => (season.months as readonly number[]).includes(m))) {
+          if (
+            active.some(m => (season.months as readonly number[]).includes(m))
+          ) {
             counts[season.label]++;
           }
         }

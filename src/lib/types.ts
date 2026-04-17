@@ -11,11 +11,46 @@ export interface Game {
 }
 
 export const GAMES: Record<GameId, Game> = {
-  ACGCN: { id: 'ACGCN', name: 'Animal Crossing (GameCube)', shortName: 'Animal Crossing', year: 2001, platform: 'Nintendo GameCube', hasHemispheres: false },
-  ACWW:  { id: 'ACWW',  name: 'Animal Crossing: Wild World',  shortName: 'Wild World',    year: 2005, platform: 'Nintendo DS',        hasHemispheres: false },
-  ACCF:  { id: 'ACCF',  name: 'Animal Crossing: City Folk',   shortName: 'City Folk',     year: 2008, platform: 'Nintendo Wii',       hasHemispheres: false },
-  ACNL:  { id: 'ACNL',  name: 'Animal Crossing: New Leaf',    shortName: 'New Leaf',      year: 2012, platform: 'Nintendo 3DS',       hasHemispheres: true  },
-  ACNH:  { id: 'ACNH',  name: 'Animal Crossing: New Horizons',shortName: 'New Horizons',  year: 2020, platform: 'Nintendo Switch',    hasHemispheres: true  },
+  ACGCN: {
+    id: 'ACGCN',
+    name: 'Animal Crossing (GameCube)',
+    shortName: 'Animal Crossing',
+    year: 2001,
+    platform: 'Nintendo GameCube',
+    hasHemispheres: false,
+  },
+  ACWW: {
+    id: 'ACWW',
+    name: 'Animal Crossing: Wild World',
+    shortName: 'Wild World',
+    year: 2005,
+    platform: 'Nintendo DS',
+    hasHemispheres: false,
+  },
+  ACCF: {
+    id: 'ACCF',
+    name: 'Animal Crossing: City Folk',
+    shortName: 'City Folk',
+    year: 2008,
+    platform: 'Nintendo Wii',
+    hasHemispheres: false,
+  },
+  ACNL: {
+    id: 'ACNL',
+    name: 'Animal Crossing: New Leaf',
+    shortName: 'New Leaf',
+    year: 2012,
+    platform: 'Nintendo 3DS',
+    hasHemispheres: true,
+  },
+  ACNH: {
+    id: 'ACNH',
+    name: 'Animal Crossing: New Horizons',
+    shortName: 'New Horizons',
+    year: 2020,
+    platform: 'Nintendo Switch',
+    hasHemispheres: true,
+  },
 };
 
 export type Habitat = 'river' | 'ocean' | 'pond' | 'lake' | 'other';
