@@ -150,3 +150,10 @@ expo-env.d.ts
 # Claude Code local settings only — rules/ and other tracked files are committed
 .claude/settings.local.json
 .vercel
+
+# macOS metadata
+.DS_Store
+
+# Claude Code worktrees (session scratch dirs)
+.claude/worktrees/
+.claire/
