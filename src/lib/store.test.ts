@@ -34,7 +34,7 @@ describe('createTown', () => {
 
   it('accumulates multiple towns', () => {
     useAppStore.getState().createTown('Pallet', 'Ash');
-    useAppStore.getState().createTown('Viridian', 'Brock');
+    const t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     expect(useAppStore.getState().towns).toHaveLength(2);
   });
 });
@@ -42,7 +42,7 @@ describe('createTown', () => {
 describe('setActiveTown', () => {
   it('switches the active town', () => {
     const t1 = useAppStore.getState().createTown('Pallet', 'Ash');
-    useAppStore.getState().createTown('Viridian', 'Brock');
+    const t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     // createTown sets active to t2; switch back to t1
     useAppStore.getState().setActiveTown(t1.id);
     expect(useAppStore.getState().activeTownId).toBe(t1.id);
@@ -69,7 +69,7 @@ describe('deleteTown', () => {
 
   it('falls back to the first remaining town when the active town is deleted', () => {
     const t1 = useAppStore.getState().createTown('Pallet', 'Ash');
-    useAppStore.getState().createTown('Viridian', 'Brock');
+    const t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     // t2 is active now; delete t2 → should fall back to t1
     useAppStore.getState().deleteTown(t2.id);
     expect(useAppStore.getState().activeTownId).toBe(t1.id);
@@ -83,7 +83,7 @@ describe('deleteTown', () => {
 
   it('does not change activeTownId when a non-active town is deleted', () => {
     const t1 = useAppStore.getState().createTown('Pallet', 'Ash');
-    useAppStore.getState().createTown('Viridian', 'Brock');
+    const t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     useAppStore.getState().setActiveTown(t2.id);
     useAppStore.getState().deleteTown(t1.id);
     expect(useAppStore.getState().activeTownId).toBe(t2.id);
@@ -135,7 +135,7 @@ describe('toggle', () => {
     const t1 = useAppStore.getState().createTown('Pallet', 'Ash');
     useAppStore.getState().toggle('fish-001');
 
-    useAppStore.getState().createTown('Viridian', 'Brock');
+    const _t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     // t2 is now active; fish-001 should NOT be donated here
     expect(useAppStore.getState().isDonated('fish-001')).toBe(false);
 
