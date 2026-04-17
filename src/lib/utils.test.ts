@@ -112,11 +112,13 @@ describe('itemBells', () => {
 
 describe('itemMonths', () => {
   it('returns months for fish', () => {
-    expect(itemMonths(fishItem, 'fish')).toEqual([1,2,3,4,5,6,7,8,9,10,11,12]);
+    expect(itemMonths(fishItem, 'fish')).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+    ]);
   });
 
   it('returns months for bugs', () => {
-    expect(itemMonths(bugItem, 'bugs')).toEqual([3,4,5,6,7,8,9]);
+    expect(itemMonths(bugItem, 'bugs')).toEqual([3, 4, 5, 6, 7, 8, 9]);
   });
 
   it('returns undefined for fossils', () => {
@@ -173,8 +175,8 @@ describe('formatRelativeDate', () => {
 
 const allFish: AnyItem[] = [
   { id: 'f1', name: 'Crucian Carp', value: 160, habitat: 'river' },
-  { id: 'f2', name: 'Dace',         value: 200, habitat: 'river' },
-  { id: 'f3', name: 'Carp',         value: 300, habitat: 'pond'  },
+  { id: 'f2', name: 'Dace', value: 200, habitat: 'river' },
+  { id: 'f3', name: 'Carp', value: 300, habitat: 'pond' },
 ];
 
 describe('filterByQuery', () => {
@@ -204,7 +206,7 @@ describe('filterByQuery', () => {
   it('includes fossil part in the match for fossils', () => {
     const fossils: AnyItem[] = [
       { id: 'fo1', name: 'Dinosaur', part: 'Skull', value: 5000 },
-      { id: 'fo2', name: 'Dinosaur', part: 'Tail',  value: 4000 },
+      { id: 'fo2', name: 'Dinosaur', part: 'Tail', value: 4000 },
     ];
     const results = filterByQuery(fossils, 'fossils', 'Skull');
     expect(results).toHaveLength(1);

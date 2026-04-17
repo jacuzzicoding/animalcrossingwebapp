@@ -42,7 +42,7 @@ export function downloadCSV(
   donatedMap: Record<string, boolean>,
   donatedAtMap: Record<string, string>,
   townName: string,
-  playerName: string,
+  playerName: string
 ): void {
   const csv = buildCSV(data, donatedMap, donatedAtMap, townName, playerName);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -63,17 +63,25 @@ export function buildCSV(
   donatedMap: Record<string, boolean>,
   donatedAtMap: Record<string, string>,
   townName: string,
-  playerName: string,
+  playerName: string
 ): string {
   const sections: string[] = [];
 
   // ── 1. Header metadata ────────────────────────────────────────────────────
-  sections.push([
-    row('Animal Crossing GCN — Museum Tracker Export'),
-    row('Town', townName),
-    row('Player', playerName),
-    row('Exported', new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })),
-  ].join('\n'));
+  sections.push(
+    [
+      row('Animal Crossing GCN — Museum Tracker Export'),
+      row('Town', townName),
+      row('Player', playerName),
+      row(
+        'Exported',
+        new Date().toLocaleString('en-US', {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        })
+      ),
+    ].join('\n')
+  );
 
   // ── 2. Donation Activity Log ──────────────────────────────────────────────
   interface ActivityEntry {
@@ -88,25 +96,45 @@ export function buildCSV(
   for (const item of data.fish) {
     if (donatedMap[item.id]) {
       const iso = donatedAtMap[item.id] ?? '';
-      activity.push({ name: item.name, category: 'Fish', iso, formatted: fmtDate(iso) });
+      activity.push({
+        name: item.name,
+        category: 'Fish',
+        iso,
+        formatted: fmtDate(iso),
+      });
     }
   }
   for (const item of data.bugs) {
     if (donatedMap[item.id]) {
       const iso = donatedAtMap[item.id] ?? '';
-      activity.push({ name: item.name, category: 'Bugs', iso, formatted: fmtDate(iso) });
+      activity.push({
+        name: item.name,
+        category: 'Bugs',
+        iso,
+        formatted: fmtDate(iso),
+      });
     }
   }
   for (const item of data.fossils) {
     if (donatedMap[item.id]) {
       const iso = donatedAtMap[item.id] ?? '';
-      activity.push({ name: fossilDisplayName(item), category: 'Fossils', iso, formatted: fmtDate(iso) });
+      activity.push({
+        name: fossilDisplayName(item),
+        category: 'Fossils',
+        iso,
+        formatted: fmtDate(iso),
+      });
     }
   }
   for (const item of data.art) {
     if (donatedMap[item.id]) {
       const iso = donatedAtMap[item.id] ?? '';
-      activity.push({ name: item.name, category: 'Art', iso, formatted: fmtDate(iso) });
+      activity.push({
+        name: item.name,
+        category: 'Art',
+        iso,
+        formatted: fmtDate(iso),
+      });
     }
   }
 
@@ -128,10 +156,10 @@ export function buildCSV(
 
   // ── 3. Category Completion ─────────────────────────────────────────────────
   const cats: { id: CategoryId; label: string }[] = [
-    { id: 'fish',    label: 'Fish'    },
-    { id: 'bugs',    label: 'Bugs'    },
+    { id: 'fish', label: 'Fish' },
+    { id: 'bugs', label: 'Bugs' },
     { id: 'fossils', label: 'Fossils' },
-    { id: 'art',     label: 'Art'     },
+    { id: 'art', label: 'Art' },
   ];
 
   const completionLines = [
@@ -152,7 +180,9 @@ export function buildCSV(
     grandTotal += total;
   }
 
-  const grandPct = grandTotal ? ((grandDonated / grandTotal) * 100).toFixed(1) : '0.0';
+  const grandPct = grandTotal
+    ? ((grandDonated / grandTotal) * 100).toFixed(1)
+    : '0.0';
   completionLines.push(row('Total', grandDonated, grandTotal, `${grandPct}%`));
   sections.push(completionLines.join('\n'));
 
@@ -167,7 +197,8 @@ export function buildCSV(
       if (!iso) continue;
       const d = new Date(iso);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      if (!monthMap[key]) monthMap[key] = { fish: 0, bugs: 0, fossils: 0, art: 0 };
+      if (!monthMap[key])
+        monthMap[key] = { fish: 0, bugs: 0, fossils: 0, art: 0 };
       monthMap[key][cat]++;
     }
   }
@@ -186,10 +217,13 @@ export function buildCSV(
   for (const key of sortedMonths) {
     const m = monthMap[key];
     const [year, month] = key.split('-');
-    const label = new Date(Number(year), Number(month) - 1, 1).toLocaleString('en-US', {
-      month: 'long',
-      year: 'numeric',
-    });
+    const label = new Date(Number(year), Number(month) - 1, 1).toLocaleString(
+      'en-US',
+      {
+        month: 'long',
+        year: 'numeric',
+      }
+    );
     const total = m.fish + m.bugs + m.fossils + m.art;
     monthlyLines.push(row(label, m.fish, m.bugs, m.fossils, m.art, total));
   }

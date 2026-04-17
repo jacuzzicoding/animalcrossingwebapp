@@ -1,46 +1,51 @@
 import React from 'react';
 import { AlertTriangle, WifiOff, AlertCircle, X } from 'lucide-react';
+import type { AppErrorKind } from '../lib/types';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export type AppErrorKind =
-  | { type: 'dataLoadFailed'; message: string }
-  | { type: 'operationFailed'; message: string; recoverySuggestion?: string }
-  | { type: 'networkError'; message: string }
-  | { type: 'validationFailed'; message: string };
+export type { AppErrorKind };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function iconFor(kind: AppErrorKind['type']) {
   switch (kind) {
-    case 'dataLoadFailed':    return AlertTriangle;
-    case 'networkError':      return WifiOff;
-    case 'operationFailed':   return AlertCircle;
-    case 'validationFailed':  return AlertCircle;
+    case 'dataLoadFailed':
+      return AlertTriangle;
+    case 'networkError':
+      return WifiOff;
+    case 'operationFailed':
+      return AlertCircle;
+    case 'validationFailed':
+      return AlertCircle;
   }
 }
 
 function colorFor(kind: AppErrorKind['type']): string {
   switch (kind) {
     case 'dataLoadFailed':
-    case 'networkError':    return '#C8663A';   // warm orange-brown (matches Fall season colour)
+    case 'networkError':
+      return '#C8663A'; // warm orange-brown (matches Fall season colour)
     case 'operationFailed':
-    case 'validationFailed': return '#B94040';  // muted red
+    case 'validationFailed':
+      return '#B94040'; // muted red
   }
 }
 
 function bgFor(kind: AppErrorKind['type']): string {
   switch (kind) {
     case 'dataLoadFailed':
-    case 'networkError':    return 'rgba(200,102,58,0.10)';
+    case 'networkError':
+      return 'rgba(200,102,58,0.10)';
     case 'operationFailed':
-    case 'validationFailed': return 'rgba(185,64,64,0.10)';
+    case 'validationFailed':
+      return 'rgba(185,64,64,0.10)';
   }
 }
 
 function recoverySuggestionFor(error: AppErrorKind): string | undefined {
-  if (error.type === 'networkError') return 'Check your connection and try again.';
-  if (error.type === 'validationFailed') return 'Please correct the error and try again.';
+  if (error.type === 'networkError')
+    return 'Check your connection and try again.';
+  if (error.type === 'validationFailed')
+    return 'Please correct the error and try again.';
   if (error.type === 'operationFailed') return error.recoverySuggestion;
   return undefined;
 }
@@ -53,7 +58,11 @@ interface ErrorBannerProps {
   onRetry?: () => void;
 }
 
-export default function ErrorBanner({ error, onDismiss, onRetry }: ErrorBannerProps) {
+export default function ErrorBanner({
+  error,
+  onDismiss,
+  onRetry,
+}: ErrorBannerProps) {
   const Icon = iconFor(error.type);
   const color = colorFor(error.type);
   const bg = bgFor(error.type);
@@ -105,7 +114,14 @@ export default function ErrorBanner({ error, onDismiss, onRetry }: ErrorBannerPr
         )}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          flexShrink: 0,
+        }}
+      >
         {onRetry && (
           <button
             onClick={onRetry}

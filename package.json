@@ -1,6 +1,6 @@
 {
   "name": "animalcrossingwebapp",
-  "version": "0.6.1",
+  "version": "0.7.0-alpha",
   "description": "",
   "type": "module",
   "main": "index.js",
@@ -15,7 +15,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -44,11 +45,20 @@
     "vite": "^7.1.2",
     "zustand": "^5.0.7"
   },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --max-warnings 0",
+      "prettier --check"
+    ]
+  },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@tailwindcss/postcss": "^4.1.12",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
+    "@vitest/coverage-v8": "^2.0.0",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -56,11 +66,10 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
-    "prettier": "^3.6.2",
-    "vitest": "^2.0.0",
-    "@vitest/coverage-v8": "^2.0.0",
+    "husky": "^9.1.7",
     "jsdom": "^25.0.0",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/jest-dom": "^6.0.0"
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.6.2",
+    "vitest": "^2.0.0"
   }
 }

@@ -34,7 +34,7 @@ describe('createTown', () => {
 
   it('accumulates multiple towns', () => {
     useAppStore.getState().createTown('Pallet', 'Ash');
-    useAppStore.getState().createTown('Viridian', 'Brock');
+    const _t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     expect(useAppStore.getState().towns).toHaveLength(2);
   });
 });
@@ -135,7 +135,7 @@ describe('toggle', () => {
     const t1 = useAppStore.getState().createTown('Pallet', 'Ash');
     useAppStore.getState().toggle('fish-001');
 
-    const t2 = useAppStore.getState().createTown('Viridian', 'Brock');
+    const _t2 = useAppStore.getState().createTown('Viridian', 'Brock');
     // t2 is now active; fish-001 should NOT be donated here
     expect(useAppStore.getState().isDonated('fish-001')).toBe(false);
 
