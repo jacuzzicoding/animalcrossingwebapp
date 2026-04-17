@@ -34,6 +34,8 @@ All notable changes to this project are documented here.
 - `docs/v0.7-audit.md` — comprehensive codebase audit covering component modularity, type safety, state management, latent bugs, and multi-game architectural readiness
 - `docs/v0.7-architecture-proposal.md` — multi-game foundation design: store schema, decomposition plan for ACCanvas
 
+- **Game-aware museum data loading** — `useMuseumData` now accepts a `gameId` and fetches from the correct `/data/<game>/` directory; re-fetches automatically when the active town's game changes. Art tab is hidden for games without art data (ACWW, ACCF). If the user was on the art tab and switches to a non-GCN town, the tab resets to Home.
+
 ### Changed
 - `AppErrorKind` unified across `ErrorBanner` and `ErrorState` — single discriminated union in `types.ts`
 - `HomeTab` — replaced `as any` cast with `AnyItem` union type; fixed stale `React.ElementType` import

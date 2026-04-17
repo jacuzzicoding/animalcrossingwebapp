@@ -36,7 +36,7 @@ export function TabBar({
           ·
         </span>
       </button>
-      {CATEGORY_ORDER.map(cat => {
+      {CATEGORY_ORDER.filter(cat => cat !== 'art' || data.art.length > 0).map(cat => {
         const { label, Icon } = CATEGORY_META[cat];
         const isActive = cat === active;
         const total = data[cat].length;

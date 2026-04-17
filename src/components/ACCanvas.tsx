@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useAppStore } from '../lib/store';
 import { CATEGORY_ORDER } from '../lib/constants';
 import { CATEGORY_META } from '../lib/categoryMeta';
@@ -66,7 +66,7 @@ export default function ACCanvas() {
   const noTowns = towns.length === 0;
   const activeTown = towns.find(t => t.id === activeTownId);
 
-  const { data, loading, loadError, reload } = useMuseumData();
+  const { data, loading, loadError, reload } = useMuseumData(activeTown?.gameId ?? 'ACGCN');
   const {
     globalQuery,
     setGlobalQuery,
@@ -79,6 +79,13 @@ export default function ACCanvas() {
   } = useSearch();
 
   const catCounts = useCategoryStats(data, activeTownDonated);
+
+  // If the user was on the art tab and switches to a game without art, go home.
+  useEffect(() => {
+    if (activeTab === 'art' && data.art.length === 0 && !loading) {
+      setActiveTab('home');
+    }
+  }, [data.art.length, loading, activeTab]);
 
   const totalItems = CATEGORY_ORDER.reduce(
     (sum, cat) => sum + data[cat].length,

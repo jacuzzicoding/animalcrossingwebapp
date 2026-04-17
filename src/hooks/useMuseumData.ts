@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { CATEGORY_META } from '../lib/categoryMeta';
+import { useState, useEffect, useCallback } from 'react';
+import { getDataPaths } from '../lib/categoryMeta';
 import { CATEGORY_ORDER } from '../lib/constants';
-import type { AppErrorKind } from '../lib/types';
+import type { GameId, AppErrorKind } from '../lib/types';
 import type { AllData } from '../lib/viewTypes';
 
 export type { AllData };
 
-export function useMuseumData() {
+export function useMuseumData(gameId: GameId = 'ACGCN') {
   const [data, setData] = useState<AllData>({
     fish: [],
     bugs: [],
@@ -16,16 +16,19 @@ export function useMuseumData() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<AppErrorKind | null>(null);
 
-  function load() {
+  const load = useCallback(() => {
+    const paths = getDataPaths(gameId);
     setLoading(true);
     setLoadError(null);
     Promise.all(
-      CATEGORY_ORDER.map(cat =>
-        fetch(CATEGORY_META[cat].file).then(r => {
+      CATEGORY_ORDER.map(cat => {
+        const path = paths[cat];
+        if (!path) return Promise.resolve([]);
+        return fetch(path).then(r => {
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
           return r.json();
-        })
-      )
+        });
+      })
     )
       .then(([fish, bugs, fossils, art]) => {
         setData({ fish, bugs, fossils, art });
@@ -48,11 +51,11 @@ export function useMuseumData() {
         );
         setLoading(false);
       });
-  }
+  }, [gameId]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   return { data, loading, loadError, reload: load };
 }
