@@ -12,6 +12,15 @@ All notable changes to this project are documented here.
 - **Edit/rename town** — inline edit flow for town names; pencil icon in town switcher opens modal
 - **Wild World data** — `public/data/acww/` with 56 fish, 56 bugs, and 52 fossils; item IDs shared with GCN where species overlap
 - **City Folk data** — `public/data/accf/` with 40 fish, 40 bugs, and 52 fossils; item IDs shared with GCN/WW where species overlap
+- **ACCanvas decomposition (Steps 4–8):** `ACCanvas.tsx` reduced from ~2175 lines to 298 lines (thin orchestration shell). Extracted into focused modules:
+  - `src/lib/categoryMeta.ts` — `CATEGORY_META` constant (label/Icon/file per category)
+  - `src/lib/viewTypes.ts` — `ViewId` and `AllData` types
+  - `src/components/shared/` — `EmptyState`, `HabitatChip`, `DonateToggle`, `MonthGrid`, `SearchBar`, `CategoryProgress`
+  - `src/components/modals/` — `CreateTownModal`, `EditTownModal`, `DetailModal`
+  - `src/components/search/` — `GlobalSearchBar`, `GlobalSearchResults`, `SearchHistoryPopover`
+  - `src/components/views/` — `AnalyticsView`, `ActivityFeed`, `SectionCard`
+  - `src/components/CollectibleRow.tsx`, `TownSwitcher.tsx`, `MuseumHeader.tsx`, `TabBar.tsx`
+  - `src/hooks/useMuseumData.ts`, `useSearch.ts`, `useCategoryStats.ts`
 - **Multi-game foundation (Steps 1–3):**
   - `GameId` union type (`ACGCN | ACWW | ACCF | ACNL | ACNH`) + `Game` interface and `GAMES` registry
   - 3-level donation schema: `donated[townId][gameId][itemId]`; Zustand persist upgraded to v2 with lossless migration
