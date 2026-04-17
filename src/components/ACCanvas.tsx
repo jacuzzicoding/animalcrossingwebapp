@@ -28,7 +28,9 @@ import type {
   FossilItem,
   ArtPiece,
   CategoryId,
+  GameId,
 } from '../lib/types';
+import { GAMES } from '../lib/types';
 import {
   displayName,
   rowSubtitle,
@@ -100,6 +102,18 @@ interface AllData {
 
 // ─── CreateTownModal ──────────────────────────────────────────────────────────
 
+// Games that have data files present under public/data/
+const AVAILABLE_GAME_IDS: GameId[] = ['ACGCN', 'ACWW'];
+
+// Accent colours per game for the selector cards
+const GAME_COLORS: Record<GameId, string> = {
+  ACGCN: '#7B5E3B',
+  ACWW:  '#5A7A5A',
+  ACCF:  '#8B9B6E',
+  ACNL:  '#5A8FAA',
+  ACNH:  '#3CA370',
+};
+
 function CreateTownModal({
   onClose,
   required,
@@ -108,13 +122,21 @@ function CreateTownModal({
   required: boolean; // true = no towns exist yet, can't dismiss
 }) {
   const createTown = useAppStore(s => s.createTown);
+  const towns = useAppStore(s => s.towns);
   const [name, setName] = useState('');
   const [playerName, setPlayerName] = useState('');
+
+  // Default to the most recently-created town's game, or ACGCN
+  const defaultGame: GameId =
+    towns.length > 0
+      ? [...towns].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0].gameId
+      : 'ACGCN';
+  const [selectedGame, setSelectedGame] = useState<GameId>(defaultGame);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !playerName.trim()) return;
-    createTown(name.trim(), playerName.trim());
+    createTown(name.trim(), playerName.trim(), selectedGame);
     onClose();
   }
 
@@ -150,6 +172,48 @@ function CreateTownModal({
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Game selector */}
+          <div>
+            <label
+              className="block text-xs font-medium mb-2"
+              style={{ color: '#5a4a35' }}
+            >
+              Game
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {AVAILABLE_GAME_IDS.map(gameId => {
+                const game = GAMES[gameId];
+                const isSelected = selectedGame === gameId;
+                const accent = GAME_COLORS[gameId];
+                return (
+                  <button
+                    key={gameId}
+                    type="button"
+                    onClick={() => setSelectedGame(gameId)}
+                    className="rounded-[10px] px-3 py-2.5 text-left transition"
+                    style={{
+                      border: `2px solid ${isSelected ? accent : '#E7DAC4'}`,
+                      backgroundColor: isSelected ? `${accent}18` : '#FFFDF6',
+                    }}
+                  >
+                    <div
+                      className="text-xs font-semibold leading-tight"
+                      style={{ color: isSelected ? accent : '#2A2A2A' }}
+                    >
+                      {game.shortName}
+                    </div>
+                    <div
+                      className="text-[10px] mt-0.5 leading-tight"
+                      style={{ color: '#5a4a35', opacity: 0.8 }}
+                    >
+                      {game.platform} · {game.year}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div>
             <label
               className="block text-xs font-medium mb-1.5"
@@ -405,7 +469,18 @@ function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
                     fontWeight: town.id === activeTownId ? '600' : '400',
                   }}
                 >
-                  <div>{town.name}</div>
+                  <div className="flex items-center gap-1.5">
+                    <span>{town.name}</span>
+                    <span
+                      className="text-[9px] font-semibold px-1 py-px rounded"
+                      style={{
+                        backgroundColor: GAME_COLORS[town.gameId] + '22',
+                        color: GAME_COLORS[town.gameId],
+                      }}
+                    >
+                      {GAMES[town.gameId]?.shortName ?? town.gameId}
+                    </span>
+                  </div>
                   <div className="text-[11px] opacity-60">
                     {town.playerName}
                   </div>
