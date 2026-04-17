@@ -40,6 +40,11 @@ All notable changes to this project are documented here.
 - ACCanvas per-category filter and global search now call `filterByQuery()` / `globalFilter()` from utils; inline reimplementations removed
 - `Town` interface gains `gameId` field (defaults to `'ACGCN'` for new towns; backfilled for existing)
 
+### Infrastructure
+- **ESLint config** — added `varsIgnorePattern: '^_'` so intentionally unused `_`-prefixed variables don't error; added Vitest/Jest globals for test files
+- **Prettier** — auto-format applied across `src/` post-merge
+- **`.gitignore`** — added `.DS_Store`, `.claude/worktrees/`, `.claire/`
+
 ### Fixed
 - **Seasonal analytics bug (#1)** — "Seasonal Breakdown" section in Stats tab now counts
   donated fish/bugs available *in-game per season* (based on `months[]` data), not the

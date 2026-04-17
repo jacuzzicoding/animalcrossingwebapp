@@ -46,19 +46,47 @@ src/
   App.tsx                   # Root component — hydration guard + ErrorBoundary + ACCanvas
   main.tsx                  # Entry point — runs bootstrapMigration before React mounts
   components/
-    ACCanvas.tsx            # PRIMARY COMPONENT — ~1500 lines. Tab navigation,
-                            # all four museum tabs (Fish/Bugs/Fossils/Art),
-                            # town switcher, search, modal. CONFLICT-PRONE.
-                            # Decomposition planned — see docs/v0.7-architecture-proposal.md
+    ACCanvas.tsx            # Orchestration shell ~298 lines. Mounts active tab view,
+                            # wires modals and global search. Decomposition complete (v0.7).
     HomeTab.tsx             # Home screen: seasonal availability, leaving-soon,
                             # progress cards, recent activity
+    CollectibleRow.tsx      # Single item row with donate toggle
+    MuseumHeader.tsx        # Header bar + TownSwitcher dropdown
+    TabBar.tsx              # Tab navigation strip
+    TownSwitcher.tsx        # Town dropdown with game badge per town
     ErrorBanner.tsx         # Dismissible inline error notification
     ErrorBoundary.tsx       # Top-level React error boundary; crashes render ErrorState
     ErrorState.tsx          # Full-page error fallback UI
+    shared/
+      CategoryProgress.tsx  # "X / Y donated" progress bar
+      DonateToggle.tsx      # Checkbox/button to mark item donated
+      EmptyState.tsx        # "Nothing here yet" placeholder
+      HabitatChip.tsx       # Fish habitat badge
+      MonthGrid.tsx         # 12-cell month availability grid
+      SearchBar.tsx         # Per-tab inline search input
+    modals/
+      CreateTownModal.tsx   # New town form with game selector
+      EditTownModal.tsx     # Rename town form (gameId immutable)
+      DetailModal.tsx       # Item detail sheet
+    views/
+      AnalyticsView.tsx     # Charts + stats tab content
+      ActivityFeed.tsx      # Recent donations list
+      SectionCard.tsx       # Reusable card wrapper
+    search/
+      GlobalSearchBar.tsx   # Global search input
+      GlobalSearchResults.tsx  # Cross-category search results
+      SearchHistoryPopover.tsx # Recent search history dropdown
+  hooks/
+    useHydration.ts         # Gates render on Zustand persist rehydration (onFinishHydration)
+    useMuseumData.ts        # Fetches and caches all 4 category JSONs for active town's game
+    useSearch.ts            # Search history, click-outside, debounce
+    useCategoryStats.ts     # Memoized donated counts per category
   lib/
     store.ts                # Zustand store: towns, donations, activeTownId. persist key 'ac-web' v2.
     bootstrapMigration.ts   # One-time localStorage rename (ac-web:v1 → ac-web), called in main.tsx
     storeMigrations.ts      # Zustand migrate callback: v1→v2 schema lift
+    categoryMeta.ts         # CATEGORY_META constant (label/Icon/file per category)
+    viewTypes.ts            # ViewId and AllData types
     constants.ts            # MONTH_NAMES, CATEGORY_LABELS, CATEGORY_ORDER, SEASONS
     colors.ts               # Design token hex constants
     types.ts                # Shared TypeScript interfaces (Town, Donation, GameId, Game, etc.)
@@ -66,8 +94,6 @@ src/
     csvExport.ts            # CSV export logic for donation data
     store.test.ts           # Vitest tests for store actions
     utils.test.ts           # Vitest tests for utility functions
-  hooks/
-    useHydration.ts         # Gates render on Zustand persist rehydration (onFinishHydration)
   test/
     setup.ts                # Vitest setup file
 public/data/acgcn/
@@ -79,6 +105,10 @@ public/data/acww/
   fish.json                 # 56 species (Wild World)
   bugs.json                 # 56 species (Wild World)
   fossils.json              # 52 fossil items (Wild World)
+public/data/accf/
+  fish.json                 # 40 species (City Folk)
+  bugs.json                 # 40 species (City Folk)
+  fossils.json              # 52 fossil items (City Folk)
 docs/
   dev-process.md            # PR checklist and dev process rules for Claude Code sessions
   architecture.md           # Deep architectural context: store schema, migrations, multi-game types
@@ -118,15 +148,15 @@ Inline hex constants via `src/lib/colors.ts` — **no Tailwind design tokens**:
 - **issue #10** — CI was broken (ran `npx expo export` instead of `npm run build`) — **fixed**
 - **issue #1** — Seasonal analytics counted everything as spring — **fixed in v0.7**
 - **@vercel/analytics missing** — package was missing from dependencies — **fixed in v0.7**
-- **ACCanvas.tsx decomposition** — ~1500 lines, planned for breakup in v0.7 (see `docs/v0.7-architecture-proposal.md`)
+- **ACCanvas.tsx decomposition** — completed in v0.7 (PRs #25); file is now ~298-line orchestration shell
+- **useMuseumData hardcoded to ACGCN paths** — game-aware data loading not yet implemented; `useMuseumData` always loads ACGCN data regardless of active town's `gameId`
 
-## ACCanvas.tsx Warning
+## ACCanvas.tsx
 
-`src/components/ACCanvas.tsx` is ~1500 lines and contains all tab navigation logic.
-It is **highly conflict-prone** in multi-session work. Before editing:
-1. Read the whole file (or at minimum the tab-routing section).
-2. Make surgical edits — avoid reformatting unrelated code.
-3. Do not add new top-level tabs without updating every switch/conditional that handles tab state.
+`src/components/ACCanvas.tsx` was decomposed in v0.7 and is now ~298 lines (orchestration shell only).
+It mounts the active tab view, wires modals, and handles global search. All data fetching,
+filtering, and sub-component logic lives in dedicated hooks and components.
+Do not add new top-level tabs without updating the tab switch and `TabBar` props.
 
 ## Roadmap
 
@@ -146,9 +176,10 @@ It is **highly conflict-prone** in multi-session work. Before editing:
   - 3-level donation schema (townId→gameId→itemId), Zustand v2 migration, hydration guard
 
 ### v0.7 — Multi-game foundation (remaining)
-- Game selection UI
-- Break up ACCanvas.tsx into focused components
+- ~~Game selection UI~~ — **done** (PR #23)
+- ~~Break up ACCanvas.tsx into focused components~~ — **done** (PR #25)
 - Add React Router for game URLs and item detail routes
+- Game-aware data loading in `useMuseumData` (currently hardcoded to ACGCN)
 
 ### v0.8 — Full game coverage + item details
 - Add New Leaf and New Horizons item data
