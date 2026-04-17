@@ -149,7 +149,7 @@ Inline hex constants via `src/lib/colors.ts` — **no Tailwind design tokens**:
 - **issue #1** — Seasonal analytics counted everything as spring — **fixed in v0.7**
 - **@vercel/analytics missing** — package was missing from dependencies — **fixed in v0.7**
 - **ACCanvas.tsx decomposition** — completed in v0.7 (PRs #25); file is now ~298-line orchestration shell
-- **useMuseumData hardcoded to ACGCN paths** — game-aware data loading not yet implemented; `useMuseumData` always loads ACGCN data regardless of active town's `gameId`
+- **useMuseumData hardcoded to ACGCN paths** — **fixed in v0.7.0-alpha** (PR #27); now accepts `gameId` and fetches from the correct `/data/<game>/` directory
 
 ## ACCanvas.tsx
 
@@ -167,19 +167,18 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
 - v0.5: CSV export, error handling UI, Vitest tests, Vercel Analytics, monthly availability chart, enriched JSON data
 - v0.6: Home screen (available this month, leaving-soon, progress cards, recent activity)
 - v0.6.1: Hotfix — restore files deleted by bad v0.6.0 merge, fix corrupted main branch
-- v0.7.0-alpha (in development):
+- v0.7.0-alpha — **shipped 2026-04-17**:
   - Edit/rename town, documentation overhaul (CLAUDE.md, README, CHANGELOG, CI fix)
   - Seasonal analytics fix (#1), edit modal visual polish, @vercel/analytics fix
   - v0.7 architecture proposal and codebase audit
-  - Wild World data (56 fish, 56 bugs, 52 fossils) in `public/data/acww/`
+  - Wild World + City Folk data in `public/data/acww/` and `public/data/accf/`
   - Type safety pass: AppErrorKind, type guards, ErrorBoundary, pre-commit hooks
   - 3-level donation schema (townId→gameId→itemId), Zustand v2 migration, hydration guard
+  - Game selection UI (PR #23), ACCanvas decomposition (PR #25)
+  - Game-aware data loading in `useMuseumData` (PR #27)
 
 ### v0.7 — Multi-game foundation (remaining)
-- ~~Game selection UI~~ — **done** (PR #23)
-- ~~Break up ACCanvas.tsx into focused components~~ — **done** (PR #25)
 - Add React Router for game URLs and item detail routes
-- Game-aware data loading in `useMuseumData` (currently hardcoded to ACGCN)
 
 ### v0.8 — Full game coverage + item details
 - Add New Leaf and New Horizons item data

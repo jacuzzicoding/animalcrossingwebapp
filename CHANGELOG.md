@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [v0.7.0-alpha] — In Progress
+## [v0.7.0-alpha] — 2026-04-17
 
 ### Added
 - **Game selection UI** — `CreateTownModal` now shows a visual card selector for available games (ACGCN, ACWW); only games with data files under `public/data/` are shown; defaults to the most recent town's game or ACGCN; selected `gameId` is saved to the town on creation
