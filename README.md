@@ -50,6 +50,7 @@ npm run lint      # Lint with ESLint
 Museum data lives in `public/data/<game>/`:
 - `public/data/acgcn/` — GameCube: 40 fish, 40 bugs, 25 fossils, 13 paintings
 - `public/data/acww/` — Wild World: 56 fish, 56 bugs, 52 fossils
+- `public/data/accf/` — City Folk: 40 fish, 40 bugs, 52 fossils
 
 ---
 
