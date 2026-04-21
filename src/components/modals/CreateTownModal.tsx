@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
+import { type GameId, GAMES } from '../../lib/types';
 
 export function CreateTownModal({
   onClose,
@@ -12,11 +13,12 @@ export function CreateTownModal({
   const createTown = useAppStore(s => s.createTown);
   const [name, setName] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [gameId, setGameId] = useState<GameId>('ACGCN');
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !playerName.trim()) return;
-    createTown(name.trim(), playerName.trim());
+    createTown(name.trim(), playerName.trim(), gameId);
     onClose();
   }
 
@@ -91,6 +93,21 @@ export function CreateTownModal({
                 color: '#2A2A2A',
               }}
             />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4a35' }}>
+              Game
+            </label>
+            <select
+              value={gameId}
+              onChange={e => setGameId(e.target.value as GameId)}
+              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
+              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6', color: '#2A2A2A' }}
+            >
+              {(['ACGCN', 'ACWW', 'ACCF'] as GameId[]).map(id => (
+                <option key={id} value={id}>{GAMES[id].name}</option>
+              ))}
+            </select>
           </div>
           <button
             type="submit"
