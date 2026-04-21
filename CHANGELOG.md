@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [v0.8.0-alpha] — In Progress
+
+### Added
+- Game selector in Create Town modal — players can now choose Animal Crossing (GCN), Wild World, or City Folk when creating a new town
+
 ## [v0.7.0-alpha] — 2026-04-17
 
 ### Added
