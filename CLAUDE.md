@@ -50,7 +50,8 @@ src/
                             # wires modals and global search. Decomposition complete (v0.7).
     HomeTab.tsx             # Home screen: seasonal availability, leaving-soon,
                             # progress cards, recent activity
-    CollectibleRow.tsx      # Single item row with donate toggle
+    CollectibleRow.tsx      # Single item row with donate toggle; shows chevron + rounded-top when expanded
+    ItemExpandPanel.tsx     # Inline accordion panel shown below CollectibleRow for fish/bugs/fossils
     MuseumHeader.tsx        # Header bar + TownSwitcher dropdown
     TabBar.tsx              # Tab navigation strip
     TownSwitcher.tsx        # Town dropdown with game badge per town
