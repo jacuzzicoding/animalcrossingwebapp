@@ -21,7 +21,9 @@ const GAME_DATA_DIR: Partial<Record<GameId, string>> = {
 const GAMES_WITH_ART = new Set<GameId>(['ACGCN']);
 
 /** Returns per-category fetch paths for the given game. Art is null for games without art data. */
-export function getDataPaths(gameId: GameId): Record<CategoryId, string | null> {
+export function getDataPaths(
+  gameId: GameId
+): Record<CategoryId, string | null> {
   const dir = GAME_DATA_DIR[gameId] ?? '/data/acgcn';
   return {
     fish: `${dir}/fish.json`,

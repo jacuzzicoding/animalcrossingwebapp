@@ -34,11 +34,22 @@ function App() {
     <ErrorBoundary>
       <ACCanvas />
       <Analytics />
-      {typeof window !== 'undefined' && window.location.hostname !== 'animalcrossingwebapp.vercel.app' && (
-        <div style={{ position: 'fixed', bottom: 8, right: 10, fontSize: 10, color: '#5a4a35', opacity: 0.5, pointerEvents: 'none' }}>
-          {import.meta.env.VITE_APP_VERSION}+{import.meta.env.VITE_GIT_SHA}
-        </div>
-      )}
+      {typeof window !== 'undefined' &&
+        window.location.hostname !== 'animalcrossingwebapp.vercel.app' && (
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 8,
+              right: 10,
+              fontSize: 10,
+              color: '#5a4a35',
+              opacity: 0.5,
+              pointerEvents: 'none',
+            }}
+          >
+            {import.meta.env.VITE_APP_VERSION}+{import.meta.env.VITE_GIT_SHA}
+          </div>
+        )}
     </ErrorBoundary>
   );
 }
