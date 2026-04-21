@@ -1,6 +1,6 @@
 # Animal Crossing Museum Tracker
 
-A cozy companion web app for Animal Crossing (GameCube and Wild World) that helps you track museum donations across multiple towns. Multi-game support for City Folk, New Leaf, and New Horizons is in development.
+A cozy companion web app for Animal Crossing (GameCube, Wild World, and City Folk) that helps you track museum donations across multiple towns. Multi-game support for New Leaf and New Horizons is in development.
 
 **Live app:** https://animalcrossingwebapp.vercel.app
 
@@ -10,7 +10,7 @@ A cozy companion web app for Animal Crossing (GameCube and Wild World) that help
 
 - Track donations for all four museum categories: Fish, Bugs, Fossils, and Art
 - Manage multiple towns — create, switch, and rename them at any time
-- Multi-game support: GameCube and Wild World data included; more games in development
+- Multi-game support: GameCube, Wild World, and City Folk data included; New Leaf and New Horizons in development
 - Home screen with seasonal availability, leaving-soon alerts, and progress cards
 - Global search across all categories
 - Stats tab with collection analytics and monthly availability chart

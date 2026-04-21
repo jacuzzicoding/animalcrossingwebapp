@@ -13,7 +13,7 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist middleware)
 - `src/lib/storeMigrations.ts` — Zustand migrate callback (v1→v2, backfills gameId)
 - `src/lib/bootstrapMigration.ts` — one-time localStorage key rename, called in main.tsx before createRoot
 - `src/hooks/useHydration.ts` — onFinishHydration guard, prevents flash of empty state
-- `src/hooks/useMuseumData.ts` — fetches and caches category JSONs; **currently hardcoded to ACGCN paths** (game-aware loading not yet implemented)
+- `src/hooks/useMuseumData.ts` — fetches and caches category JSONs; accepts `gameId` and fetches from the correct `/data/<game>/` directory; re-fetches when active town's game changes (PR #27)
 - `src/hooks/useSearch.ts` — search history, click-outside, debounce
 - `src/hooks/useCategoryStats.ts` — memoized donated counts per category
 - `src/components/ErrorBoundary.tsx` — wraps app root, crashes show ErrorState not blank page

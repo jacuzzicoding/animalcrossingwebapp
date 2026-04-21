@@ -150,6 +150,7 @@ Inline hex constants via `src/lib/colors.ts` — **no Tailwind design tokens**:
 - **@vercel/analytics missing** — package was missing from dependencies — **fixed in v0.7**
 - **ACCanvas.tsx decomposition** — completed in v0.7 (PRs #25); file is now ~298-line orchestration shell
 - **useMuseumData hardcoded to ACGCN paths** — **fixed in v0.7.0-alpha** (PR #27); now accepts `gameId` and fetches from the correct `/data/<game>/` directory
+- **issue #26** — Art tab shows persistent large item name label after clicking an item; low priority, open
 
 ## ACCanvas.tsx
 
