@@ -137,9 +137,13 @@ Inline hex constants via `src/lib/colors.ts` — **no Tailwind design tokens**:
 
 ## Deployment
 
+See `.claude/rules/vercel.md` for full deployment rules. Key points:
+
 - **Vercel** auto-deploys from `main` to https://animalcrossingwebapp.vercel.app
 - `development` branch auto-deploys to https://development-animalcrossingwebapp.vercel.app
-- Manual: `vercel --prod` from repo root
+- **Preview URLs** come from the PR's GitHub Checks — never run `vercel` CLI manually
+- **NEVER** run `vercel --prod` unless Bea explicitly says "ship to production"
+- **NEVER** run `vercel link` from a worktree directory
 - `vercel.json`: `buildCommand: npm run build`, `outputDirectory: dist`, `installCommand: npm install`
 - Project: `animalcrossingwebapp` under `jacuzzicodings-projects`
 
