@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## [v0.8.0-alpha] — In Progress
 
 ### Added
+- **New Horizons data** — `public/data/acnh/` with 81 fish, 80 bugs, 86 fossil pieces, 43 art pieces, and 40 sea creatures; fish/bugs/sea creatures include both Northern and Southern Hemisphere month availability (`months_nh` / `months_sh`); art pieces include `hasFake` flag for counterfeit detection
 - Game selector in Create Town modal — players can now choose Animal Crossing (GCN), Wild World, or City Folk when creating a new town
 
 ## [v0.7.0-alpha] — 2026-04-17
