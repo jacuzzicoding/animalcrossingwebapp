@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { useAppStore } from '../lib/store';
 import { EditTownModal } from './modals/EditTownModal';
@@ -10,8 +10,30 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
 
+  // Close the dropdown whenever the active town changes so stale-open state
+  // can't persist across town switches (fixes duplicate-entry visual bug).
+  useEffect(() => {
+    setOpen(false);
+  }, [activeTownId]);
+
   const activeTown = towns.find(t => t.id === activeTownId);
-  if (!activeTown) return null;
+
+  // If activeTown can't be resolved (e.g. during a state transition), still
+  // render the + button so the user can always create a new town.
+  if (!activeTown) {
+    return (
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onCreateNew}
+          className="flex items-center justify-center rounded-[10px] p-1.5 transition"
+          style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+          aria-label="Add town"
+        >
+          <Plus className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
