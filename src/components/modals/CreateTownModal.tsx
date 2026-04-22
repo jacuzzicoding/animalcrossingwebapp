@@ -4,9 +4,11 @@ import { useAppStore } from '../../lib/store';
 import { type GameId, GAMES } from '../../lib/types';
 
 export function CreateTownModal({
+  isOpen,
   onClose,
   required,
 }: {
+  isOpen: boolean;
   onClose: () => void;
   required: boolean;
 }) {
@@ -14,6 +16,8 @@ export function CreateTownModal({
   const [name, setName] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [gameId, setGameId] = useState<GameId>('ACGCN');
+
+  if (!isOpen) return null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
