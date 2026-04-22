@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
 import { CATEGORY_ORDER } from '../lib/constants';
 import { CATEGORY_META } from '../lib/categoryMeta';
@@ -16,7 +17,6 @@ import ErrorState from './ErrorState';
 import { MuseumHeader } from './MuseumHeader';
 import { TabBar } from './TabBar';
 import { CollectibleRow } from './CollectibleRow';
-import { ItemExpandPanel } from './ItemExpandPanel';
 import { CategoryProgress } from './shared/CategoryProgress';
 import { SearchBar } from './shared/SearchBar';
 import { EmptyState } from './shared/EmptyState';
@@ -34,23 +34,35 @@ import { useMuseumData } from '../hooks/useMuseumData';
 import { useSearch } from '../hooks/useSearch';
 import { useCategoryStats } from '../hooks/useCategoryStats';
 
+const VALID_TABS: ViewId[] = [
+  'home',
+  'fish',
+  'bugs',
+  'fossils',
+  'art',
+  'activity',
+  'search',
+  'analytics',
+];
+
+function isValidTab(s: string | undefined): s is ViewId {
+  return !!s && (VALID_TABS as string[]).includes(s);
+}
+
 // Stable empty fallbacks so Zustand selectors don't return new {} references
 const EMPTY_DONATED: Record<string, boolean> = {};
 const EMPTY_DONATED_AT: Record<string, string> = {};
 
 export default function ACCanvas() {
-  const [activeTab, setActiveTab] = useState<ViewId>('home');
-  const [query, setQuery] = useState('');
-  const [banner, setBanner] = useState<AppErrorKind | null>(null);
-  const [selected, setSelected] = useState<{
-    item: AnyItem;
-    category: CategoryId;
-  } | null>(null);
-  const [showCreateTown, setShowCreateTown] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { townId: urlTownId, tab: urlTab } = useParams<{
+    townId?: string;
+    tab?: string;
+  }>();
+  const navigate = useNavigate();
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
+  const setActiveTown = useAppStore(s => s.setActiveTown);
   const activeTownDonated = useAppStore(s => {
     if (!s.activeTownId) return EMPTY_DONATED;
     const town = s.towns.find(t => t.id === s.activeTownId);
@@ -65,8 +77,27 @@ export default function ACCanvas() {
   });
   const toggle = useAppStore(s => s.toggle);
 
+  // Sync URL townId → Zustand activeTownId
+  useEffect(() => {
+    if (urlTownId && urlTownId !== activeTownId) {
+      const exists = towns.find(t => t.id === urlTownId);
+      if (exists) setActiveTown(urlTownId);
+    }
+  }, [urlTownId, activeTownId, towns, setActiveTown]);
+
   const noTowns = towns.length === 0;
   const activeTown = towns.find(t => t.id === activeTownId);
+
+  // Derive activeTab from URL param; default to 'home'
+  const activeTab: ViewId = isValidTab(urlTab) ? urlTab : 'home';
+
+  const [query, setQuery] = useState('');
+  const [banner, setBanner] = useState<AppErrorKind | null>(null);
+  const [selected, setSelected] = useState<{
+    item: AnyItem;
+    category: CategoryId;
+  } | null>(null);
+  const [showCreateTown, setShowCreateTown] = useState(false);
 
   const { data, loading, loadError, reload } = useMuseumData(
     activeTown?.gameId ?? 'ACGCN'
@@ -87,9 +118,15 @@ export default function ACCanvas() {
   // If the user was on the art tab and switches to a game without art, go home.
   useEffect(() => {
     if (activeTab === 'art' && data.art.length === 0 && !loading) {
-      setActiveTab('home');
+      handleTabChange('home');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.art.length, loading, activeTab]);
+
+  // Reset per-tab search query when tab changes
+  useEffect(() => {
+    setQuery('');
+  }, [activeTab]);
 
   const totalItems = CATEGORY_ORDER.reduce(
     (sum, cat) => sum + data[cat].length,
@@ -134,10 +171,10 @@ export default function ACCanvas() {
     );
   }
 
-  function handleTabChange(cat: ViewId) {
-    setActiveTab(cat);
-    setQuery('');
-    setExpandedId(null);
+  function handleTabChange(tab: ViewId) {
+    const id = activeTownId ?? urlTownId;
+    if (!id) return;
+    navigate(`/town/${id}/${tab}`);
   }
 
   if (loadError) {
@@ -276,37 +313,16 @@ export default function ACCanvas() {
                 />
                 <div className="space-y-3">
                   {filtered.map(item => (
-                    <div key={item.id}>
-                      <CollectibleRow
-                        item={item}
-                        category={activeCat!}
-                        checked={!!activeTownDonated[item.id]}
-                        onToggle={() => toggle(item.id)}
-                        onClick={() => {
-                          if (activeCat === 'art') {
-                            setSelected({ item, category: activeCat! });
-                          } else {
-                            setExpandedId(prev =>
-                              prev === item.id ? null : item.id
-                            );
-                          }
-                        }}
-                        expanded={
-                          activeCat !== 'art'
-                            ? expandedId === item.id
-                            : undefined
-                        }
-                      />
-                      {activeCat !== 'art' && expandedId === item.id && (
-                        <ItemExpandPanel
-                          item={item}
-                          category={activeCat!}
-                          checked={!!activeTownDonated[item.id]}
-                          donatedAt={activeTownDonatedAt[item.id]}
-                          onToggle={() => toggle(item.id)}
-                        />
-                      )}
-                    </div>
+                    <CollectibleRow
+                      key={item.id}
+                      item={item}
+                      category={activeCat!}
+                      checked={!!activeTownDonated[item.id]}
+                      onToggle={() => toggle(item.id)}
+                      onClick={() =>
+                        setSelected({ item, category: activeCat! })
+                      }
+                    />
                   ))}
                   {filtered.length === 0 && (
                     <EmptyState

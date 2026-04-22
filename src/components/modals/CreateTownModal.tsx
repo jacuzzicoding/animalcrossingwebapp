@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../lib/store';
 import { type GameId, GAMES } from '../../lib/types';
 
@@ -11,6 +12,7 @@ export function CreateTownModal({
   required: boolean;
 }) {
   const createTown = useAppStore(s => s.createTown);
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [gameId, setGameId] = useState<GameId>('ACGCN');
@@ -18,8 +20,9 @@ export function CreateTownModal({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !playerName.trim()) return;
-    createTown(name.trim(), playerName.trim(), gameId);
+    const town = createTown(name.trim(), playerName.trim(), gameId);
     onClose();
+    navigate(`/town/${town.id}/home`);
   }
 
   return (
