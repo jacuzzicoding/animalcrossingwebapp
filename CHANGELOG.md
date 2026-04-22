@@ -6,7 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 - **New Horizons data** — `public/data/acnh/` with 81 fish, 80 bugs, 86 fossil pieces, 43 art pieces, and 40 sea creatures; fish/bugs/sea creatures include both Northern and Southern Hemisphere month availability (`months_nh` / `months_sh`); art pieces include `hasFake` flag for counterfeit detection
-- Game selector in Create Town modal — players can now choose Animal Crossing (GCN), Wild World, or City Folk when creating a new town
+- Game selector in Create Town modal — players can now choose Animal Crossing (GCN), Wild World, City Folk, New Leaf, or New Horizons when creating a new town; `CreateTownModal` now derives game list from the `GAMES` registry rather than a hardcoded array
+- `categoryMeta.ts` — added ACNL and ACNH data directory paths and art support for both games
 - **Item detail view (inline expand)** — clicking a fish, bug, or fossil row now expands it in-place to show full detail: month availability grid, sell value, habitat (fish), and notes. Art still opens the existing bottom-sheet modal. Donate/undonate button is included in the expand panel so the user never needs to leave the list.
   - `src/components/ItemExpandPanel.tsx` — new inline expand panel component
   - `CollectibleRow` updated with optional chevron indicator and rounded-top-only corners when expanded
