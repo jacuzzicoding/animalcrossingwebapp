@@ -16,6 +16,7 @@ import ErrorState from './ErrorState';
 import { MuseumHeader } from './MuseumHeader';
 import { TabBar } from './TabBar';
 import { CollectibleRow } from './CollectibleRow';
+import { ItemExpandPanel } from './ItemExpandPanel';
 import { CategoryProgress } from './shared/CategoryProgress';
 import { SearchBar } from './shared/SearchBar';
 import { EmptyState } from './shared/EmptyState';
@@ -46,6 +47,7 @@ export default function ACCanvas() {
     category: CategoryId;
   } | null>(null);
   const [showCreateTown, setShowCreateTown] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
@@ -66,7 +68,9 @@ export default function ACCanvas() {
   const noTowns = towns.length === 0;
   const activeTown = towns.find(t => t.id === activeTownId);
 
-  const { data, loading, loadError, reload } = useMuseumData(activeTown?.gameId ?? 'ACGCN');
+  const { data, loading, loadError, reload } = useMuseumData(
+    activeTown?.gameId ?? 'ACGCN'
+  );
   const {
     globalQuery,
     setGlobalQuery,
@@ -133,6 +137,7 @@ export default function ACCanvas() {
   function handleTabChange(cat: ViewId) {
     setActiveTab(cat);
     setQuery('');
+    setExpandedId(null);
   }
 
   if (loadError) {
@@ -271,16 +276,37 @@ export default function ACCanvas() {
                 />
                 <div className="space-y-3">
                   {filtered.map(item => (
-                    <CollectibleRow
-                      key={item.id}
-                      item={item}
-                      category={activeCat!}
-                      checked={!!activeTownDonated[item.id]}
-                      onToggle={() => toggle(item.id)}
-                      onClick={() =>
-                        setSelected({ item, category: activeCat! })
-                      }
-                    />
+                    <div key={item.id}>
+                      <CollectibleRow
+                        item={item}
+                        category={activeCat!}
+                        checked={!!activeTownDonated[item.id]}
+                        onToggle={() => toggle(item.id)}
+                        onClick={() => {
+                          if (activeCat === 'art') {
+                            setSelected({ item, category: activeCat! });
+                          } else {
+                            setExpandedId(prev =>
+                              prev === item.id ? null : item.id
+                            );
+                          }
+                        }}
+                        expanded={
+                          activeCat !== 'art'
+                            ? expandedId === item.id
+                            : undefined
+                        }
+                      />
+                      {activeCat !== 'art' && expandedId === item.id && (
+                        <ItemExpandPanel
+                          item={item}
+                          category={activeCat!}
+                          checked={!!activeTownDonated[item.id]}
+                          donatedAt={activeTownDonatedAt[item.id]}
+                          onToggle={() => toggle(item.id)}
+                        />
+                      )}
+                    </div>
                   ))}
                   {filtered.length === 0 && (
                     <EmptyState

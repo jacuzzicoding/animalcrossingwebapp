@@ -6,6 +6,9 @@ All notable changes to this project are documented here.
 
 ### Added
 - Game selector in Create Town modal — players can now choose Animal Crossing (GCN), Wild World, or City Folk when creating a new town
+- **Item detail view (inline expand)** — clicking a fish, bug, or fossil row now expands it in-place to show full detail: month availability grid, sell value, habitat (fish), and notes. Art still opens the existing bottom-sheet modal. Donate/undonate button is included in the expand panel so the user never needs to leave the list.
+  - `src/components/ItemExpandPanel.tsx` — new inline expand panel component
+  - `CollectibleRow` updated with optional chevron indicator and rounded-top-only corners when expanded
 
 ## [v0.7.0-alpha] — 2026-04-17
 
