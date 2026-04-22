@@ -331,7 +331,7 @@ export default function ACCanvas() {
               letterSpacing: '0.05em',
             }}
           >
-            {import.meta.env.VITE_APP_VERSION}
+            v0.8.0-alpha · fix/town-switcher
           </span>
         </div>
       </div>
