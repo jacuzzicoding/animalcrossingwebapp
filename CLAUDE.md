@@ -187,7 +187,8 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
 - Add React Router for game URLs and item detail routes
 
 ### v0.8 — Full game coverage + item details
-- Add New Leaf and New Horizons item data
+- ~~Add New Horizons item data~~ — done (81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures; NH/SH hemisphere months)
+- Add New Leaf item data
 - Item detail views (inline expand for fish/bugs/fossils, bottom sheet for art)
 - Seasonal/time-based filtering
 

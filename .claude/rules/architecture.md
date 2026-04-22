@@ -23,7 +23,7 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist middleware)
 - `src/components/views/` — AnalyticsView, ActivityFeed, SectionCard
 - `src/components/search/` — GlobalSearchBar, GlobalSearchResults, SearchHistoryPopover
 - `src/components/CollectibleRow.tsx`, `TownSwitcher.tsx`, `MuseumHeader.tsx`, `TabBar.tsx`
-- `public/data/<gameId>/` — item data files per game (acgcn/, acww/, accf/ exist; acnl/, acnh/ pending)
+- `public/data/<gameId>/` — item data files per game (acgcn/, acww/, accf/, acnh/ exist; acnl/ pending)
 
 ## Store Schema (v2)
 ```
