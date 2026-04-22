@@ -28,7 +28,7 @@ export function CreateTownModal({
       style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
       onClick={required ? undefined : onClose}
     >
-      <div className="flex min-h-full items-center justify-center p-4">
+      <div className="flex min-h-[100dvh] items-center justify-center p-4">
         <div
           className="w-full max-w-sm rounded-[20px] overflow-hidden"
           style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4' }}
@@ -65,16 +65,16 @@ export function CreateTownModal({
                 Town Name
               </label>
               <input
-                autoFocus
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="e.g. Plumeria"
-                className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
+                className="w-full rounded-[10px] border px-3 py-2 outline-none"
                 style={{
                   borderColor: '#E7DAC4',
                   backgroundColor: '#FFFDF6',
                   color: '#2A2A2A',
+                  fontSize: '16px',
                 }}
               />
             </div>
@@ -90,11 +90,12 @@ export function CreateTownModal({
                 value={playerName}
                 onChange={e => setPlayerName(e.target.value)}
                 placeholder="e.g. Brock"
-                className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
+                className="w-full rounded-[10px] border px-3 py-2 outline-none"
                 style={{
                   borderColor: '#E7DAC4',
                   backgroundColor: '#FFFDF6',
                   color: '#2A2A2A',
+                  fontSize: '16px',
                 }}
               />
             </div>
