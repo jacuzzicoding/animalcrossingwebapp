@@ -11,6 +11,10 @@ All notable changes to this project are documented here.
   - `src/components/ItemExpandPanel.tsx` — new inline expand panel component
   - `CollectibleRow` updated with optional chevron indicator and rounded-top-only corners when expanded
 
+### Fixed
+- **Town switcher dropdown shows selected town twice / GCN town disappears (#30)** — The dropdown's open/closed state is local React state. When `setActiveTown` triggered a re-render before `setOpen(false)` was processed, the dropdown could remain open with stale state: the newly-active town appeared highlighted in both the header button and the list while the previous entry seemed to vanish. Fixed by adding a `useEffect` in `TownSwitcher` that calls `setOpen(false)` whenever `activeTownId` changes.
+- **New Town button disappears after switching towns (#30)** — The early `return null` guard in `TownSwitcher` silently removed the `+` and edit buttons during any brief state transition where `activeTown` couldn't be resolved. Fixed by replacing the full null-return with a minimal fallback that always renders the `+` button.
+
 ## [v0.7.0-alpha] — 2026-04-17
 
 ### Added

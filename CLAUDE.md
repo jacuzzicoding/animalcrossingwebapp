@@ -156,6 +156,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **ACCanvas.tsx decomposition** — completed in v0.7 (PRs #25); file is now ~298-line orchestration shell
 - **useMuseumData hardcoded to ACGCN paths** — **fixed in v0.7.0-alpha** (PR #27); now accepts `gameId` and fetches from the correct `/data/<game>/` directory
 - **issue #26** — Art tab shows persistent large item name label after clicking an item; low priority, open
+- **issue #30** — Town switcher dropdown showed selected town twice and "New Town" button disappeared after switching — **fixed** (`TownSwitcher` `useEffect` closes dropdown on `activeTownId` change; fallback renders `+` button when `activeTown` unresolved)
 
 ## ACCanvas.tsx
 
