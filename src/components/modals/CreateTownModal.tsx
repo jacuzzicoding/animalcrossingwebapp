@@ -115,7 +115,7 @@ export function CreateTownModal({
                   color: '#2A2A2A',
                 }}
               >
-                {(['ACGCN', 'ACWW', 'ACCF'] as GameId[]).map(id => (
+                {(Object.keys(GAMES) as GameId[]).map(id => (
                   <option key={id} value={id}>
                     {GAMES[id].name}
                   </option>
