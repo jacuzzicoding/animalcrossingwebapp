@@ -128,6 +128,27 @@ describe('itemMonths', () => {
   it('returns undefined for art', () => {
     expect(itemMonths(artItem, 'art')).toBeUndefined();
   });
+
+  it('returns months_nh when hemisphere is NH and months_nh is present', () => {
+    const nhFish = { ...fishItem, months_nh: [1, 2, 3], months_sh: [7, 8, 9] };
+    expect(itemMonths(nhFish, 'fish', 'NH')).toEqual([1, 2, 3]);
+  });
+
+  it('returns months_sh when hemisphere is SH and months_sh is present', () => {
+    const nhFish = { ...fishItem, months_nh: [1, 2, 3], months_sh: [7, 8, 9] };
+    expect(itemMonths(nhFish, 'fish', 'SH')).toEqual([7, 8, 9]);
+  });
+
+  it('falls back to months when months_nh is absent (non-hemisphere game)', () => {
+    expect(itemMonths(fishItem, 'fish', 'NH')).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+    ]);
+  });
+
+  it('falls back to months_nh when SH requested but months_sh absent', () => {
+    const nhOnlyFish = { ...fishItem, months_nh: [1, 2, 3] };
+    expect(itemMonths(nhOnlyFish, 'fish', 'SH')).toEqual([1, 2, 3]);
+  });
 });
 
 // ─── formatTimestamp ──────────────────────────────────────────────────────────

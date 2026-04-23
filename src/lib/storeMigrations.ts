@@ -49,7 +49,14 @@ export function migrateStore(persisted: unknown, fromVersion: number): unknown {
     };
   }
 
-  // Future: if (fromVersion < 3) { ... }
+  if (fromVersion < 3) {
+    // v2 → v3: backfill hemisphere: 'NH' on all towns
+    const towns = (state.towns as Town[] | undefined) ?? [];
+    state = {
+      ...state,
+      towns: towns.map(t => ({ ...t, hemisphere: t.hemisphere ?? 'NH' })),
+    };
+  }
 
   return state;
 }

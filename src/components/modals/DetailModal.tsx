@@ -20,6 +20,7 @@ export function DetailModal({
   donatedAt,
   onToggle,
   onClose,
+  hemisphere,
 }: {
   item: AnyItem;
   category: CategoryId;
@@ -27,12 +28,13 @@ export function DetailModal({
   donatedAt?: string;
   onToggle: () => void;
   onClose: () => void;
+  hemisphere?: 'NH' | 'SH';
 }) {
   const { Icon, label } = CATEGORY_META[category];
   const name = displayName(item, category);
   const subtitle = rowSubtitle(item, category);
   const bells = itemBells(item, category);
-  const months = itemMonths(item, category);
+  const months = itemMonths(item, category, hemisphere);
   const notes = itemNotes(item);
 
   return (
