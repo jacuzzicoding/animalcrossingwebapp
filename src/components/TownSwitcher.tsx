@@ -39,7 +39,7 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
   return (
     <>
       <div className="relative">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative z-20">
           {towns.length > 1 ? (
             <button
               onClick={() => setOpen(o => !o)}
@@ -95,28 +95,29 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
                 minWidth: '160px',
               }}
             >
-              {towns.map((town, i) => (
-                <button
-                  key={town.id}
-                  onClick={() => {
-                    navigate(`/town/${town.id}/home`);
-                    setOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2.5 text-sm transition"
-                  style={{
-                    backgroundColor:
-                      town.id === activeTownId ? '#F5E9D4' : 'transparent',
-                    color: '#2A2A2A',
-                    borderTop: i > 0 ? '1px solid #E7DAC4' : 'none',
-                    fontWeight: town.id === activeTownId ? '600' : '400',
-                  }}
-                >
-                  <div>{town.name}</div>
-                  <div className="text-[11px] opacity-60">
-                    {town.playerName}
-                  </div>
-                </button>
-              ))}
+              {towns
+                .filter(t => t.id !== activeTownId)
+                .map((town, i) => (
+                  <button
+                    key={town.id}
+                    onClick={() => {
+                      navigate(`/town/${town.id}/home`);
+                      setOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-sm transition"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: '#2A2A2A',
+                      borderTop: i > 0 ? '1px solid #E7DAC4' : 'none',
+                      fontWeight: '400',
+                    }}
+                  >
+                    <div>{town.name}</div>
+                    <div className="text-[11px] opacity-60">
+                      {town.playerName}
+                    </div>
+                  </button>
+                ))}
             </div>
           </>
         )}
