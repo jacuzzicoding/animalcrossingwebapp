@@ -35,6 +35,7 @@ npm install       # Install dependencies
 **Framework:** Vite + React 19 + TypeScript  
 **Styling:** Tailwind CSS v4 (utility classes only; design tokens via `src/lib/colors.ts` — inline hex)  
 **State:** Zustand ^5 with `persist` middleware (localStorage key: `ac-web`, schema v2)  
+**Routing:** React Router v6 (`BrowserRouter`); URL structure: `/` → redirect, `/town/:townId` → home tab, `/town/:townId/:tab` → specific tab  
 **Tests:** Vitest  
 **Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7)  
 **Migration:** Zustand persist v2 + `bootstrapMigration.ts` — zero data loss for existing users
@@ -43,8 +44,8 @@ npm install       # Install dependencies
 
 ```
 src/
-  App.tsx                   # Root component — hydration guard + ErrorBoundary + ACCanvas
-  main.tsx                  # Entry point — runs bootstrapMigration before React mounts
+  App.tsx                   # Root component — hydration guard + ErrorBoundary + Routes (/, /town/:townId/:tab)
+  main.tsx                  # Entry point — runs bootstrapMigration, wraps app in BrowserRouter
   components/
     ACCanvas.tsx            # Orchestration shell ~298 lines. Mounts active tab view,
                             # wires modals and global search. Decomposition complete (v0.7).
@@ -184,7 +185,7 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
   - Game-aware data loading in `useMuseumData` (PR #27)
 
 ### v0.7 — Multi-game foundation (remaining)
-- Add React Router for game URLs and item detail routes
+- ~~Add React Router for game URLs and item detail routes~~ — shipped in v0.8 (PR #react-router)
 
 ### v0.8 — Full game coverage + item details
 - ~~Add New Horizons item data~~ — done (81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures; NH/SH hemisphere months)

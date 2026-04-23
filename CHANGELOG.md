@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 ## [v0.8.0-alpha] — In Progress
 
 ### Added
+- **React Router v6** — URL-based navigation replaces single-page state; each town and museum tab now has a shareable URL
+  - Route structure: `/` → redirects to active town; `/town/:townId` → home tab; `/town/:townId/:tab` → specific tab
+  - `BrowserRouter` wraps the app in `main.tsx`; `vercel.json` adds a catch-all SPA rewrite for preview/branch deploys
+  - Tab switching and town switching both update the URL via `useNavigate`; browser back/forward navigate between tabs and towns
+  - Deep links work — visiting `/town/<id>/fish` loads that town's fish tab directly
+  - `CreateTownModal` navigates to the new town's URL after creation
+
+
+
+### Added
 - **New Horizons data** — `public/data/acnh/` with 81 fish, 80 bugs, 86 fossil pieces, 43 art pieces, and 40 sea creatures; fish/bugs/sea creatures include both Northern and Southern Hemisphere month availability (`months_nh` / `months_sh`); art pieces include `hasFake` flag for counterfeit detection
 - Game selector in Create Town modal — players can now choose Animal Crossing (GCN), Wild World, City Folk, New Leaf, or New Horizons when creating a new town; `CreateTownModal` now derives game list from the `GAMES` registry rather than a hardcoded array
 - `categoryMeta.ts` — added ACNL and ACNH data directory paths and art support for both games

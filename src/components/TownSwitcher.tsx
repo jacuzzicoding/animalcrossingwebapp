@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Plus, Pencil } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
 import { EditTownModal } from './modals/EditTownModal';
 
 export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
-  const setActiveTown = useAppStore(s => s.setActiveTown);
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
 
@@ -98,7 +99,7 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
                 <button
                   key={town.id}
                   onClick={() => {
-                    setActiveTown(town.id);
+                    navigate(`/town/${town.id}/home`);
                     setOpen(false);
                   }}
                   className="w-full text-left px-4 py-2.5 text-sm transition"
