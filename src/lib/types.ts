@@ -41,7 +41,7 @@ export const GAMES: Record<GameId, Game> = {
     shortName: 'New Leaf',
     year: 2012,
     platform: 'Nintendo 3DS',
-    hasHemispheres: true,
+    hasHemispheres: false,
   },
   ACNH: {
     id: 'ACNH',
