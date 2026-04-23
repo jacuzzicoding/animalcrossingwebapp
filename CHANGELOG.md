@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## [v0.8.0-alpha] — In Progress
 
 ### Added
+- **ACNH hemisphere toggle** — per-town Northern / Southern Hemisphere setting stored in Zustand (persist v3). NH/SH pill toggle appears in the museum header only when the active town's game has hemisphere-specific availability (New Horizons, New Leaf). `itemMonths` now resolves `months_nh` / `months_sh` from critter data based on the active hemisphere; non-hemisphere games continue using `months` with no behaviour change. Store migrated to v3 with `hemisphere: 'NH'` backfilled for all existing towns.
 - **React Router v6** (PR #38) — URL-based navigation replaces single-page state; each town and museum tab now has a shareable URL
   - Route structure: `/` → redirects to active town; `/town/:townId` → home tab; `/town/:townId/:tab` → specific tab
   - `BrowserRouter` wraps the app in `main.tsx`; `vercel.json` adds a catch-all SPA rewrite for preview/branch deploys

@@ -1,17 +1,26 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 import { TownSwitcher } from './TownSwitcher';
+import type { GameId } from '../lib/types';
+import { GAMES } from '../lib/types';
+import type { Hemisphere } from '../lib/store';
 
 export function MuseumHeader({
   donatedCount,
   totalCount,
   onCreateTown,
   onExport,
+  gameId,
+  hemisphere,
+  onHemisphereChange,
 }: {
   donatedCount: number;
   totalCount: number;
   onCreateTown: () => void;
   onExport: () => void;
+  gameId?: GameId;
+  hemisphere?: Hemisphere;
+  onHemisphereChange?: (h: Hemisphere) => void;
 }) {
   const pct = totalCount ? Math.round((donatedCount / totalCount) * 100) : 0;
   return (
@@ -37,6 +46,25 @@ export function MuseumHeader({
             Museum Tracker
           </h1>
           <div className="flex items-center gap-2">
+            {gameId && GAMES[gameId].hasHemispheres && onHemisphereChange && (
+              <div className="flex rounded-[8px] overflow-hidden" style={{ border: '1px solid rgba(245,233,212,0.3)' }}>
+                {(['NH', 'SH'] as const).map(h => (
+                  <button
+                    key={h}
+                    onClick={() => onHemisphereChange(h)}
+                    aria-pressed={hemisphere === h}
+                    title={h === 'NH' ? 'Northern Hemisphere' : 'Southern Hemisphere'}
+                    className="px-2.5 py-1.5 text-[12px] font-medium transition-colors"
+                    style={{
+                      backgroundColor: hemisphere === h ? 'rgba(245,233,212,0.3)' : 'transparent',
+                      color: '#F5E9D4',
+                    }}
+                  >
+                    {h}
+                  </button>
+                ))}
+              </div>
+            )}
             <button
               onClick={onExport}
               title="Export CSV"

@@ -3,11 +3,14 @@ import { persist } from 'zustand/middleware';
 import type { GameId } from './types';
 import { migrateStore } from './storeMigrations';
 
+export type Hemisphere = 'NH' | 'SH';
+
 export interface Town {
   id: string;
   name: string;
   playerName: string;
   gameId: GameId;
+  hemisphere: Hemisphere;
   createdAt: string;
 }
 
@@ -21,6 +24,7 @@ interface AppState {
 
   createTown: (name: string, playerName: string, gameId?: GameId) => Town;
   updateTown: (id: string, name: string, playerName: string) => void;
+  setTownHemisphere: (id: string, hemisphere: Hemisphere) => void;
   setActiveTown: (id: string) => void;
   deleteTown: (id: string) => void;
   toggle: (itemId: string) => void;
@@ -47,6 +51,7 @@ export const useAppStore = create<AppState>()(
           name,
           playerName,
           gameId,
+          hemisphere: 'NH',
           createdAt: new Date().toISOString(),
         };
         set(state => ({
@@ -61,6 +66,11 @@ export const useAppStore = create<AppState>()(
           towns: state.towns.map(t =>
             t.id === id ? { ...t, name, playerName } : t
           ),
+        })),
+
+      setTownHemisphere: (id, hemisphere) =>
+        set(state => ({
+          towns: state.towns.map(t => (t.id === id ? { ...t, hemisphere } : t)),
         })),
 
       setActiveTown: id => set({ activeTownId: id }),
@@ -136,7 +146,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'ac-web',
-      version: 2,
+      version: 3,
       migrate: migrateStore,
     }
   )

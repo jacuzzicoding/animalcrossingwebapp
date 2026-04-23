@@ -49,10 +49,14 @@ export function itemBells(item: AnyItem, category: CategoryId): number | null {
 
 export function itemMonths(
   item: AnyItem,
-  category: CategoryId
+  category: CategoryId,
+  hemisphere?: 'NH' | 'SH'
 ): number[] | undefined {
   if (category === 'fossils' || category === 'art') return undefined;
-  return (item as FishType | BugItem).months;
+  const critter = item as FishType | BugItem;
+  if (hemisphere === 'SH' && critter.months_sh) return critter.months_sh;
+  if (critter.months_nh) return critter.months_nh;
+  return critter.months;
 }
 
 export function itemNotes(item: AnyItem): string | undefined {

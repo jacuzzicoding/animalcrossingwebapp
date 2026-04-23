@@ -34,11 +34,11 @@ npm install       # Install dependencies
 
 **Framework:** Vite + React 19 + TypeScript  
 **Styling:** Tailwind CSS v4 (utility classes only; design tokens via `src/lib/colors.ts` — inline hex)  
-**State:** Zustand ^5 with `persist` middleware (localStorage key: `ac-web`, schema v2)  
+**State:** Zustand ^5 with `persist` middleware (localStorage key: `ac-web`, schema v3)  
 **Routing:** React Router v6 (`BrowserRouter`); URL structure: `/` → redirect, `/town/:townId` → home tab, `/town/:townId/:tab` → specific tab; `vercel.json` has catch-all SPA rewrite for preview/branch deploys  
 **Tests:** Vitest  
-**Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7)  
-**Migration:** Zustand persist v2 + `bootstrapMigration.ts` — zero data loss for existing users  
+**Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7); `Town` includes `hemisphere: 'NH' | 'SH'` (as of v0.8)  
+**Migration:** Zustand persist v3 + `bootstrapMigration.ts` — zero data loss for existing users  
 **Modal pattern:** `CreateTownModal` and `EditTownModal` use always-mounted `isOpen` prop pattern; overlay is a single `flex items-center justify-center` wrapper — no `overflow-y-auto`  
 **TownSwitcher dropdown:** `position: fixed` with `getBoundingClientRect()` anchor to escape `overflow-hidden` header; z-index: dismiss overlay `z-40`, dropdown panel `z-50`, action buttons row `relative z-20`; active town filtered out of list
 

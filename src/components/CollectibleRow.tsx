@@ -20,6 +20,7 @@ export function CollectibleRow({
   onToggle,
   onClick,
   expanded,
+  hemisphere,
 }: {
   item: AnyItem;
   category: CategoryId;
@@ -27,12 +28,13 @@ export function CollectibleRow({
   onToggle: () => void;
   onClick: () => void;
   expanded?: boolean;
+  hemisphere?: 'NH' | 'SH';
 }) {
   const { Icon } = CATEGORY_META[category];
   const name = displayName(item, category);
   const subtitle = rowSubtitle(item, category);
   const bells = itemBells(item, category);
-  const months = itemMonths(item, category);
+  const months = itemMonths(item, category, hemisphere);
   const notes = itemNotes(item);
 
   return (

@@ -76,6 +76,7 @@ export default function ACCanvas() {
     return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
   });
   const toggle = useAppStore(s => s.toggle);
+  const setTownHemisphere = useAppStore(s => s.setTownHemisphere);
 
   // Sync URL townId → Zustand activeTownId
   useEffect(() => {
@@ -224,6 +225,11 @@ export default function ACCanvas() {
           totalCount={totalItems}
           onCreateTown={() => setShowCreateTown(true)}
           onExport={handleExport}
+          gameId={activeTown?.gameId}
+          hemisphere={activeTown?.hemisphere ?? 'NH'}
+          onHemisphereChange={h => {
+            if (activeTown) setTownHemisphere(activeTown.id, h);
+          }}
         />
 
         {banner && (
@@ -322,6 +328,7 @@ export default function ACCanvas() {
                       onClick={() =>
                         setSelected({ item, category: activeCat! })
                       }
+                      hemisphere={activeTown?.hemisphere ?? 'NH'}
                     />
                   ))}
                   {filtered.length === 0 && (
@@ -366,6 +373,7 @@ export default function ACCanvas() {
           donatedAt={activeTownDonatedAt[selected.item.id]}
           onToggle={() => toggle(selected.item.id)}
           onClose={() => setSelected(null)}
+          hemisphere={activeTown?.hemisphere ?? 'NH'}
         />
       )}
     </div>
