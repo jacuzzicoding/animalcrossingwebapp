@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
@@ -10,6 +10,8 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // Close the dropdown whenever the active town changes so stale-open state
   // can't persist across town switches (fixes duplicate-entry visual bug).
@@ -42,7 +44,14 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
         <div className="flex items-center gap-2 relative z-20">
           {towns.length > 1 ? (
             <button
-              onClick={() => setOpen(o => !o)}
+              ref={triggerRef}
+              onClick={() => {
+                if (!open && triggerRef.current) {
+                  const r = triggerRef.current.getBoundingClientRect();
+                  setDropdownPos({ top: r.bottom + 6, left: r.left });
+                }
+                setOpen(o => !o);
+              }}
               className="flex items-center gap-1.5 rounded-[10px] px-3 py-1.5 text-sm font-medium transition"
               style={{
                 backgroundColor: '#EDE3D0',
@@ -84,15 +93,17 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
         {open && towns.length > 1 && (
           <>
             <div
-              className="fixed inset-0 z-10"
+              className="fixed inset-0 z-40"
               onClick={() => setOpen(false)}
             />
             <div
-              className="absolute left-0 top-full mt-1.5 z-20 rounded-[12px] overflow-hidden shadow-lg"
+              className="fixed z-50 rounded-[12px] overflow-hidden shadow-lg"
               style={{
                 backgroundColor: '#FDF9F1',
                 border: '1px solid #E7DAC4',
                 minWidth: '160px',
+                top: dropdownPos.top,
+                left: dropdownPos.left,
               }}
             >
               {towns
