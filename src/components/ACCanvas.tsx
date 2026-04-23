@@ -352,12 +352,11 @@ export default function ACCanvas() {
         </div>
       </div>
 
-      {(noTowns || showCreateTown) && (
-        <CreateTownModal
-          required={noTowns}
-          onClose={() => setShowCreateTown(false)}
-        />
-      )}
+      <CreateTownModal
+        isOpen={noTowns || showCreateTown}
+        required={noTowns}
+        onClose={() => setShowCreateTown(false)}
+      />
 
       {selected && !noTowns && (
         <DetailModal
