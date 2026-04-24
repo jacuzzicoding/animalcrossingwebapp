@@ -1,4 +1,11 @@
-import type { CategoryId, Fish, BugItem, FossilItem, ArtPiece } from './types';
+import type {
+  CategoryId,
+  Fish,
+  BugItem,
+  FossilItem,
+  ArtPiece,
+  SeaCreature,
+} from './types';
 
 export type ViewId = CategoryId | 'home' | 'activity' | 'search' | 'analytics';
 
@@ -7,4 +14,5 @@ export interface AllData {
   bugs: BugItem[];
   fossils: FossilItem[];
   art: ArtPiece[];
+  sea_creatures: SeaCreature[];
 }
