@@ -20,9 +20,16 @@ export const CATEGORY_LABELS: Record<CategoryId, string> = {
   bugs: 'Bugs',
   fossils: 'Fossils',
   art: 'Art',
+  sea_creatures: 'Sea Creatures',
 };
 
-export const CATEGORY_ORDER: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
+export const CATEGORY_ORDER: CategoryId[] = [
+  'fish',
+  'bugs',
+  'fossils',
+  'art',
+  'sea_creatures',
+];
 
 export const SEASONS = [
   { label: 'Spring', months: [3, 4, 5], color: '#3CA370' },

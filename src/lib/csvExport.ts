@@ -3,17 +3,25 @@
  *
  * Output structure (three sections, each separated by a blank line):
  *   1. Donation Activity Log   — one row per donated item, sorted by date
- *   2. Category Completion     — totals and % for fish, bugs, fossils, art
+ *   2. Category Completion     — totals and % for fish, bugs, fossils, art, sea creatures
  *   3. Monthly Activity        — per-month donation counts broken down by category
  */
 
-import type { Fish, BugItem, FossilItem, ArtPiece, CategoryId } from './types';
+import type {
+  Fish,
+  BugItem,
+  FossilItem,
+  ArtPiece,
+  SeaCreature,
+  CategoryId,
+} from './types';
 
 interface AllData {
   fish: Fish[];
   bugs: BugItem[];
   fossils: FossilItem[];
   art: ArtPiece[];
+  sea_creatures: SeaCreature[];
 }
 
 function escapeCell(value: string | number | null | undefined): string {
@@ -137,6 +145,17 @@ export function buildCSV(
       });
     }
   }
+  for (const item of data.sea_creatures) {
+    if (donatedMap[item.id]) {
+      const iso = donatedAtMap[item.id] ?? '';
+      activity.push({
+        name: item.name,
+        category: 'Sea Creatures',
+        iso,
+        formatted: fmtDate(iso),
+      });
+    }
+  }
 
   // Sort by date ascending (empty dates go last)
   activity.sort((a, b) => {
@@ -155,12 +174,20 @@ export function buildCSV(
   sections.push(activityLines.join('\n'));
 
   // ── 3. Category Completion ─────────────────────────────────────────────────
-  const cats: { id: CategoryId; label: string }[] = [
+  const baseCats: { id: CategoryId; label: string }[] = [
     { id: 'fish', label: 'Fish' },
     { id: 'bugs', label: 'Bugs' },
     { id: 'fossils', label: 'Fossils' },
     { id: 'art', label: 'Art' },
   ];
+  // Only include sea creatures if this game has them
+  const cats =
+    data.sea_creatures.length > 0
+      ? [
+          ...baseCats,
+          { id: 'sea_creatures' as CategoryId, label: 'Sea Creatures' },
+        ]
+      : baseCats;
 
   const completionLines = [
     row('CATEGORY COMPLETION'),
@@ -187,7 +214,6 @@ export function buildCSV(
   sections.push(completionLines.join('\n'));
 
   // ── 4. Monthly Activity ───────────────────────────────────────────────────
-  // Map: "YYYY-MM" -> { fish, bugs, fossils, art }
   const monthMap: Record<string, Record<CategoryId, number>> = {};
 
   function tally(items: { id: string }[], cat: CategoryId) {
@@ -198,7 +224,13 @@ export function buildCSV(
       const d = new Date(iso);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (!monthMap[key])
-        monthMap[key] = { fish: 0, bugs: 0, fossils: 0, art: 0 };
+        monthMap[key] = {
+          fish: 0,
+          bugs: 0,
+          fossils: 0,
+          art: 0,
+          sea_creatures: 0,
+        };
       monthMap[key][cat]++;
     }
   }
@@ -207,11 +239,26 @@ export function buildCSV(
   tally(data.bugs, 'bugs');
   tally(data.fossils, 'fossils');
   tally(data.art, 'art');
+  tally(data.sea_creatures, 'sea_creatures');
 
-  const monthlyLines = [
-    row('MONTHLY ACTIVITY'),
-    row('Month', 'Fish', 'Bugs', 'Fossils', 'Art', 'Total'),
-  ];
+  const hasSea = data.sea_creatures.length > 0;
+  const monthlyLines = hasSea
+    ? [
+        row('MONTHLY ACTIVITY'),
+        row(
+          'Month',
+          'Fish',
+          'Bugs',
+          'Fossils',
+          'Art',
+          'Sea Creatures',
+          'Total'
+        ),
+      ]
+    : [
+        row('MONTHLY ACTIVITY'),
+        row('Month', 'Fish', 'Bugs', 'Fossils', 'Art', 'Total'),
+      ];
 
   const sortedMonths = Object.keys(monthMap).sort();
   for (const key of sortedMonths) {
@@ -224,8 +271,14 @@ export function buildCSV(
         year: 'numeric',
       }
     );
-    const total = m.fish + m.bugs + m.fossils + m.art;
-    monthlyLines.push(row(label, m.fish, m.bugs, m.fossils, m.art, total));
+    const total = m.fish + m.bugs + m.fossils + m.art + m.sea_creatures;
+    if (hasSea) {
+      monthlyLines.push(
+        row(label, m.fish, m.bugs, m.fossils, m.art, m.sea_creatures, total)
+      );
+    } else {
+      monthlyLines.push(row(label, m.fish, m.bugs, m.fossils, m.art, total));
+    }
   }
 
   if (sortedMonths.length === 0) {
