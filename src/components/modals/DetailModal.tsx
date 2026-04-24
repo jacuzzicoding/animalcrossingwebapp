@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { CheckCircle2, X } from 'lucide-react';
 import { CATEGORY_META } from '../../lib/categoryMeta';
 import { MonthGrid } from '../shared/MonthGrid';
@@ -37,11 +37,24 @@ export function DetailModal({
   const months = itemMonths(item, category, hemisphere);
   const notes = itemNotes(item);
 
+  // Guard against ghost-clicks: the same click that opens the modal can land on
+  // the newly-mounted backdrop before the browser event loop settles. Defer
+  // closeability by one tick so backdrop clicks only register on subsequent taps.
+  const closeable = useRef(false);
+  useEffect(() => {
+    const id = setTimeout(() => {
+      closeable.current = true;
+    }, 0);
+    return () => clearTimeout(id);
+  }, []);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center"
       style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
-      onClick={onClose}
+      onClick={() => {
+        if (closeable.current) onClose();
+      }}
     >
       <div
         className="w-full max-w-3xl rounded-t-[20px] overflow-hidden"
