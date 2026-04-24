@@ -20,6 +20,7 @@ All notable changes to this project are documented here.
   - `CollectibleRow` updated with optional chevron indicator and rounded-top-only corners when expanded
 
 ### Fixed
+- **Detail view regression** — clicking a collectible row now reliably opens the bottom-sheet `DetailModal` for all categories (fish, bugs, fossils, art). The modal's backdrop was receiving the same click event that mounted it (ghost-click timing issue in React 18), causing it to open and immediately close. Fixed by deferring backdrop click-to-close by one event-loop tick after mount via `useRef` + `setTimeout(0)`. Also added `type="button"` to `CollectibleRow`.
 - **Create Town modal centering + iOS zoom** (PR #41) — modal overlay now uses a single `flex items-center justify-center` wrapper with no `overflow-y-auto`; eliminates iOS Safari zoom/scroll issues and off-center rendering on small screens
 - **Town switcher dropdown escapes header clip** (PR #41) — dropdown panel uses `position: fixed` with a `getBoundingClientRect()` anchor so it renders above the `overflow-hidden` header stacking context; z-index layering: dismiss overlay `z-40`, dropdown `z-50`, action buttons row `relative z-20`
 - **Active town no longer appears in switcher list** (PR #41) — current town is filtered out of the dropdown to prevent selecting the already-active town
