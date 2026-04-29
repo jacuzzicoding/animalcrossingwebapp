@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [v0.8.0-alpha] — In Progress
 
+> **2026-04-29 audit:** see [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full bucketed status (shipped / in-flight / blocked / deferred) and the proposed v0.8.0 definition-of-done. Active blocker: dropdown detail-view wiring deleted in commit `2d844c9` — `ItemExpandPanel.tsx` is currently orphaned and must be re-mounted before v0.8.0 can ship. Sea Creatures tab is shipped as data only (PR #35); UI wiring is in flight on PR #44.
+
 ### Added
 - **React Router v6** — URL-based navigation replaces single-page state; each town and museum tab now has a shareable URL
   - Route structure: `/` → redirects to active town; `/town/:townId` → home tab; `/town/:townId/:tab` → specific tab

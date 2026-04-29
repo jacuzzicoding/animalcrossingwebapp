@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Cozy parchment/GameCube museum aesthetic. **Current version: v0.7.0-alpha**
+Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.0-alpha** (production: v0.7.0-alpha)
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -167,37 +167,7 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
 
 ## Roadmap
 
-### Shipped
-- v0.1–v0.2: Initial release, basic museum tracking, town management
-- v0.3: Town management improvements
-- v0.4: Global search, analytics/stats tab
-- v0.5: CSV export, error handling UI, Vitest tests, Vercel Analytics, monthly availability chart, enriched JSON data
-- v0.6: Home screen (available this month, leaving-soon, progress cards, recent activity)
-- v0.6.1: Hotfix — restore files deleted by bad v0.6.0 merge, fix corrupted main branch
-- v0.7.0-alpha — **shipped 2026-04-17**:
-  - Edit/rename town, documentation overhaul (CLAUDE.md, README, CHANGELOG, CI fix)
-  - Seasonal analytics fix (#1), edit modal visual polish, @vercel/analytics fix
-  - v0.7 architecture proposal and codebase audit
-  - Wild World + City Folk data in `public/data/acww/` and `public/data/accf/`
-  - Type safety pass: AppErrorKind, type guards, ErrorBoundary, pre-commit hooks
-  - 3-level donation schema (townId→gameId→itemId), Zustand v2 migration, hydration guard
-  - Game selection UI (PR #23), ACCanvas decomposition (PR #25)
-  - Game-aware data loading in `useMuseumData` (PR #27)
-
-### v0.7 — Multi-game foundation (remaining)
-- ~~Add React Router for game URLs and item detail routes~~ — shipped in v0.8 (PR #react-router)
-
-### v0.8 — Full game coverage + item details
-- ~~Add New Horizons item data~~ — done (81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures; NH/SH hemisphere months)
-- Add New Leaf item data
-- Item detail views (inline expand for fish/bugs/fossils, bottom sheet for art)
-- Seasonal/time-based filtering
-
-### v0.9 — Polish, onboarding, and PWA
-- UI redesign pass; PWA support; mobile-first responsive pass; first-run onboarding
-
-### v1.0 — Launch ready
-- Branding, SEO, accessibility, performance audit
+The canonical roadmap lives in **[`docs/ROADMAP.md`](docs/ROADMAP.md)** — including the v0.8.0-alpha bucket breakdown (shipped / in-flight / blocked / deferred), the proposed v0.8.0 definition-of-done, and v0.9 + v1.0 scope. Update that file (not this section) when scope changes.
 
 ## Sister Project
 
