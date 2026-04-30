@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [v0.8.1] — In Progress
+## [v0.8.1-alpha] — 2026-04-30
 
 ### Added
 - `public/version-history.html` — styled version history &amp; roadmap page, now served at `/version-history.html` on the live site (previously untracked at repo root)
