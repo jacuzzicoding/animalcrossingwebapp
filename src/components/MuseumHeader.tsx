@@ -9,6 +9,7 @@ export function MuseumHeader({
   donatedCount,
   totalCount,
   onCreateTown,
+  onEditTown,
   onExport,
   gameId,
   hemisphere,
@@ -17,6 +18,7 @@ export function MuseumHeader({
   donatedCount: number;
   totalCount: number;
   onCreateTown: () => void;
+  onEditTown: () => void;
   onExport: () => void;
   gameId?: GameId;
   hemisphere?: Hemisphere;
@@ -94,7 +96,7 @@ export function MuseumHeader({
               <Download className="w-3.5 h-3.5" />
               <span>Export CSV</span>
             </button>
-            <TownSwitcher onCreateNew={onCreateTown} />
+            <TownSwitcher onCreateNew={onCreateTown} onEditTown={onEditTown} />
           </div>
         </div>
       </div>
