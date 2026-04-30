@@ -1,4 +1,4 @@
-# Dev Process Rules (v0.7+)
+# Dev Process Rules (v0.8+)
 
 Every feature, fix, or change must follow this checklist before the PR is complete:
 

@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here.
 
+## [v0.8.1] — In Progress
+
+### Added
+- `public/version-history.html` — styled version history &amp; roadmap page, now served at `/version-history.html` on the live site (previously untracked at repo root)
+- `package.json` description field populated with project summary and live URL
+
+### Fixed
+- `docs/architecture.md` — header bumped to v0.8; stale ACCanvas block (described ~1500-line monolith scheduled for decomposition) replaced with post-decomposition reality (405 lines, orchestration shell)
+- `docs/dev-process.md` and `.claude/rules/dev-process.md` — heading bumped from v0.7+ to v0.8+
+
+> More entries will be added before v0.8.1 ships (edit-town-name bug fix is being scoped separately).
+
 ## [v0.8.0-alpha] — 2026-04-29
 
 ### Added

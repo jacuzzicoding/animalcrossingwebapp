@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.0-alpha**
+Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.0-alpha shipped 2026-04-29; v0.8.1 in progress**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
