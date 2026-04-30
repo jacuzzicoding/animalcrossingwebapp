@@ -17,6 +17,7 @@ import ErrorState from './ErrorState';
 import { MuseumHeader } from './MuseumHeader';
 import { TabBar } from './TabBar';
 import { CollectibleRow } from './CollectibleRow';
+import { ItemExpandPanel } from './ItemExpandPanel';
 import { CategoryProgress } from './shared/CategoryProgress';
 import { SearchBar } from './shared/SearchBar';
 import { EmptyState } from './shared/EmptyState';
@@ -99,6 +100,7 @@ export default function ACCanvas() {
     category: CategoryId;
   } | null>(null);
   const [showCreateTown, setShowCreateTown] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { data, loading, loadError, reload } = useMuseumData(
     activeTown?.gameId ?? 'ACGCN'
@@ -124,9 +126,10 @@ export default function ACCanvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.art.length, loading, activeTab]);
 
-  // Reset per-tab search query when tab changes
+  // Reset per-tab search query and expanded item when tab changes
   useEffect(() => {
     setQuery('');
+    setExpandedId(null);
   }, [activeTab]);
 
   const totalItems = CATEGORY_ORDER.reduce(
@@ -319,17 +322,38 @@ export default function ACCanvas() {
                 />
                 <div className="space-y-3">
                   {filtered.map(item => (
-                    <CollectibleRow
-                      key={item.id}
-                      item={item}
-                      category={activeCat!}
-                      checked={!!activeTownDonated[item.id]}
-                      onToggle={() => toggle(item.id)}
-                      onClick={() =>
-                        setSelected({ item, category: activeCat! })
-                      }
-                      hemisphere={activeTown?.hemisphere ?? 'NH'}
-                    />
+                    <div key={item.id}>
+                      <CollectibleRow
+                        item={item}
+                        category={activeCat!}
+                        checked={!!activeTownDonated[item.id]}
+                        onToggle={() => toggle(item.id)}
+                        onClick={() => {
+                          if (activeCat === 'art') {
+                            setSelected({ item, category: activeCat! });
+                          } else {
+                            setExpandedId(prev =>
+                              prev === item.id ? null : item.id
+                            );
+                          }
+                        }}
+                        expanded={
+                          activeCat !== 'art'
+                            ? expandedId === item.id
+                            : undefined
+                        }
+                        hemisphere={activeTown?.hemisphere ?? 'NH'}
+                      />
+                      {activeCat !== 'art' && expandedId === item.id && (
+                        <ItemExpandPanel
+                          item={item}
+                          category={activeCat!}
+                          checked={!!activeTownDonated[item.id]}
+                          donatedAt={activeTownDonatedAt[item.id]}
+                          onToggle={() => toggle(item.id)}
+                        />
+                      )}
+                    </div>
                   ))}
                   {filtered.length === 0 && (
                     <EmptyState
@@ -354,7 +378,8 @@ export default function ACCanvas() {
               letterSpacing: '0.05em',
             }}
           >
-            {import.meta.env.VITE_APP_VERSION}
+            {import.meta.env.VITE_APP_VERSION} ·
+            fix/restore-item-detail-dropdown
           </span>
         </div>
       </div>
