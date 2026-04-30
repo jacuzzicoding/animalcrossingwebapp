@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animal Crossing Web App — Version History & Roadmap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --wood:    #7B5E3B;
+      --paper:   #F5E9D4;
+      --ink:     #2A2A2A;
+      --leaf:    #3CA370;
+      --leaf-lt: #d4f0e3;
+      --border:  #E7DAC4;
+      --muted:   #5a4a35;
+      --sky:     #b8ddf5;
+      --sky-dk:  #5b9ec9;
+      --gold:    #c9922e;
+      --gold-lt: #fdf0d5;
+      --future:  #e8dff5;
+      --future-dk:#7a5fa0;
+    }
+
+    body {
+      font-family: 'Varela Round', sans-serif;
+      background: #eef7ee;
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .leaf-deco {
+      font-size: 2.5rem;
+      margin-bottom: .5rem;
+      display: block;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: var(--wood);
+      margin-bottom: .25rem;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    section > h2 {
+      font-size: 1.1rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    section > h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Velocity banner ── */
+    .velocity-banner {
+      background: var(--wood);
+      color: #fff8ee;
+      border-radius: 14px;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .velocity-banner .headline {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .velocity-banner .sub {
+      font-size: .85rem;
+      opacity: .8;
+      margin-top: .2rem;
+    }
+
+    .vel-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .vel-stat {
+      text-align: center;
+    }
+
+    .vel-stat .num {
+      font-size: 1.6rem;
+      color: #a8e6c5;
+      line-height: 1;
+    }
+
+    .vel-stat .label {
+      font-size: .72rem;
+      opacity: .75;
+      margin-top: .15rem;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tl-entry {
+      display: grid;
+      grid-template-columns: 80px 28px 1fr;
+      gap: 0 .75rem;
+      align-items: start;
+    }
+
+    .tl-date {
+      text-align: right;
+      font-size: .8rem;
+      color: var(--muted);
+      padding-top: .65rem;
+      line-height: 1.3;
+    }
+
+    .tl-spine {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tl-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--leaf);
+      border: 3px solid #eef7ee;
+      box-shadow: 0 0 0 2px var(--leaf);
+      flex-shrink: 0;
+      margin-top: .55rem;
+      z-index: 1;
+    }
+
+    .tl-dot.hotfix {
+      background: var(--gold);
+      box-shadow: 0 0 0 2px var(--gold);
+    }
+
+    .tl-line {
+      width: 2px;
+      flex: 1;
+      background: var(--border);
+      min-height: 18px;
+    }
+
+    .tl-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .tl-card.hotfix {
+      border-color: #e8d0a0;
+      background: var(--gold-lt);
+    }
+
+    .tl-card-head {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      margin-bottom: .55rem;
+      flex-wrap: wrap;
+    }
+
+    .version-badge {
+      font-size: .95rem;
+      font-weight: bold;
+      color: var(--leaf);
+    }
+
+    .version-badge.hotfix { color: var(--gold); }
+
+    .version-title {
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    .velocity-chip {
+      margin-left: auto;
+      font-size: .72rem;
+      background: var(--leaf-lt);
+      color: var(--leaf);
+      border-radius: 20px;
+      padding: .1rem .55rem;
+    }
+
+    .velocity-chip.fast { background: #fff0d0; color: var(--gold); }
+
+    .tl-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+    }
+
+    .tl-bullets li {
+      font-size: .85rem;
+      color: var(--ink);
+      padding-left: 1.1rem;
+      position: relative;
+    }
+
+    .tl-bullets li::before {
+      content: '🍃';
+      position: absolute;
+      left: 0;
+      font-size: .7rem;
+      top: .1rem;
+    }
+
+    /* ── Currently building ── */
+    .building-card {
+      background: #fff;
+      border: 2px solid var(--leaf);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+
+    .building-head {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .building-badge {
+      background: var(--leaf);
+      color: #fff;
+      font-size: .8rem;
+      border-radius: 6px;
+      padding: .25rem .65rem;
+    }
+
+    .building-head h3 {
+      font-size: 1.1rem;
+      color: var(--ink);
+    }
+
+    .building-note {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: .45rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      font-size: .88rem;
+    }
+
+    .check-item .box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+    }
+
+    .check-item.done .box {
+      background: var(--leaf);
+      color: #fff;
+    }
+
+    .check-item.todo .box {
+      background: #fff;
+      border: 2px solid var(--border);
+      color: transparent;
+    }
+
+    .check-item.done .text {
+      color: var(--muted);
+    }
+
+    .check-item.todo .text {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .checklist-section {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin: .75rem 0 .3rem;
+    }
+
+    /* ── Roadmap lanes ── */
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .lane {
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      border: 1px solid transparent;
+    }
+
+    .lane.v09 {
+      background: var(--sky);
+      border-color: #9fcde8;
+    }
+
+    .lane.v10 {
+      background: #ffe8b0;
+      border-color: #e8c76a;
+    }
+
+    .lane.vpost {
+      background: var(--future);
+      border-color: #c3b0e0;
+    }
+
+    .lane-head {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .85rem;
+    }
+
+    .lane-badge {
+      font-size: .75rem;
+      font-weight: bold;
+      border-radius: 5px;
+      padding: .2rem .5rem;
+    }
+
+    .lane.v09 .lane-badge { background: var(--sky-dk); color: #fff; }
+    .lane.v10 .lane-badge { background: #c9922e; color: #fff; }
+    .lane.vpost .lane-badge { background: var(--future-dk); color: #fff; }
+
+    .lane-title {
+      font-size: .88rem;
+      font-weight: bold;
+    }
+
+    .lane-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+
+    .lane-items li {
+      font-size: .82rem;
+      padding-left: 1rem;
+      position: relative;
+      color: var(--ink);
+    }
+
+    .lane-items li::before {
+      content: '◦';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+
+    footer a { color: var(--leaf); text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <span class="leaf-deco">🍃</span>
+    <h1>Animal Crossing Web App</h1>
+    <p>Version history &amp; roadmap · Updated April 29, 2026</p>
+  </header>
+
+  <!-- Velocity banner -->
+  <div class="velocity-banner">
+    <div>
+      <div class="headline">🚀 v0.1 → v0.8 in 19 days</div>
+      <div class="sub">Nine releases. Blathers can't keep up.</div>
+    </div>
+    <div class="vel-stats">
+      <div class="vel-stat">
+        <div class="num">9</div>
+        <div class="label">releases shipped</div>
+      </div>
+      <div class="vel-stat">
+        <div class="num">19</div>
+        <div class="label">days elapsed</div>
+      </div>
+      <div class="vel-stat">
+        <div class="num">5</div>
+        <div class="label">games supported</div>
+      </div>
+      <div class="vel-stat">
+        <div class="num">1,000+</div>
+        <div class="label">items catalogued</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shipped timeline -->
+  <section>
+    <h2>🏅 Shipped versions</h2>
+    <div class="timeline">
+
+      <!-- v0.8.0-alpha -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 29<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.8.0-alpha</span>
+            <span class="version-title">Full game coverage + item details</span>
+            <span class="velocity-chip">12 days after v0.7</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>New Leaf data — 72 fish, 70 bugs, 72 fossils, 36 art, 35 sea creatures</li>
+            <li>New Horizons data — 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures with NH/SH hemisphere months</li>
+            <li>All five games now fully selectable in Create Town modal</li>
+            <li>Hemisphere toggle — per-town NH/SH selector for ACNH towns; month grids respect hemisphere</li>
+            <li>Item detail inline expand — fish, bugs, and fossils expand in-place with month grid, sell value, habitat, and notes; art opens bottom-sheet modal</li>
+            <li>React Router v6 — every town and tab now has a shareable URL; browser back/forward works</li>
+            <li>Detail modal backdrop fix — modal no longer closes immediately after opening</li>
+            <li>Town switcher fixes — no duplicate entries, dropdown escapes clipped header via fixed positioning</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.7.0-alpha -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 17<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.7.0-alpha</span>
+            <span class="version-title">Multi-game foundation</span>
+            <span class="velocity-chip">2 days after v0.6.1</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Multi-game store schema — 3-level donation tracking (townId → gameId → itemId)</li>
+            <li>Wild World &amp; City Folk data added (40–56 fish, bugs; 52 fossils each)</li>
+            <li>Game selector in Create Town modal with visual card UI</li>
+            <li>ACCanvas decomposed from ~2175 lines → 298-line orchestration shell (14 new modules)</li>
+            <li>Zustand v2 migration with lossless backfill for existing towns</li>
+            <li>Edit/rename town with inline modal</li>
+            <li>ErrorBoundary, type guards, hydration guard, pre-commit hooks</li>
+            <li>Seasonal analytics bug fixed — was counting all donations as Spring</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.6.1 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 15<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot hotfix"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card hotfix">
+          <div class="tl-card-head">
+            <span class="version-badge hotfix">v0.6.1</span>
+            <span class="version-title">Hotfix</span>
+            <span class="velocity-chip fast">1 day after v0.6.0</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Restored files deleted during bad v0.6.0 merge into main</li>
+            <li>Fixed corrupted main branch state</li>
+            <li>Home tab routing stability improvements</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.6.0 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 14<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.6.0</span>
+            <span class="version-title">Home screen</span>
+            <span class="velocity-chip fast">1 day after v0.5</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>New Home tab — seasonal availability overview</li>
+            <li>"Available this month" — fish &amp; bugs catchable right now</li>
+            <li>"Leaving soon" — creatures departing at month's end</li>
+            <li>Progress overview cards for all four museum categories</li>
+            <li>Recent donation activity feed</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.5.0 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 13<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.5.0</span>
+            <span class="version-title">Polish &amp; observability</span>
+            <span class="velocity-chip fast">same day as v0.4</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>CSV export — download donations as a spreadsheet</li>
+            <li>Error banner &amp; full-page error state UI</li>
+            <li>Vitest unit tests — store &amp; utils</li>
+            <li>Vercel Analytics wired up</li>
+            <li>Monthly availability chart for fish &amp; bugs</li>
+            <li>Enriched JSON with <code>months[]</code> availability arrays</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.4.0 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 13<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.4.0</span>
+            <span class="version-title">Search &amp; stats</span>
+            <span class="velocity-chip fast">same day as v0.3</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Global search across all museum categories with history popover</li>
+            <li>Stats tab — analytics dashboard, monthly timeline, seasonal breakdown</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.3.0 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 13<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.3.0</span>
+            <span class="version-title">Multi-town</span>
+            <span class="velocity-chip fast">1 day after v0.2</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Create and switch between multiple towns</li>
+            <li>TownSwitcher in header + Create Town modal</li>
+            <li>Donations keyed by townId in Zustand store</li>
+            <li>Activity feed per town; <code>vercel.json</code> added</li>
+            <li>Expo/React Native parallel app removed — Vite only</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.2.0 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 12<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.2.0</span>
+            <span class="version-title">Detail &amp; search</span>
+            <span class="velocity-chip fast">2 days after v0.1</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Item detail modal</li>
+            <li>Per-category search &amp; filter</li>
+            <li>Donation timestamps</li>
+            <li>Full four-category museum tracking UI in ACCanvas</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.1.0 -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 10<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line" style="display:none"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.1.0</span>
+            <span class="version-title">Initial release 🎉</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Basic museum donation tracking (Fish, Bugs, Fossils, Art)</li>
+            <li>Zustand + localStorage persistence</li>
+            <li>Cozy parchment/GameCube aesthetic</li>
+            <li>40 fish · 40 bugs · 25 fossils · 13 art pieces</li>
+            <li>GitHub CI + Vercel deployment</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Currently building -->
+  <section>
+    <h2>🔨 Currently building — v0.9</h2>
+    <div class="building-card">
+      <div class="building-head">
+        <span class="building-badge">UP NEXT</span>
+        <h3>Polish, onboarding &amp; PWA</h3>
+        <span class="building-note">making it feel at home</span>
+      </div>
+
+      <p class="checklist-section">⬜ Planned</p>
+      <div class="checklist">
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">Sea creatures tab — data exists for ACNH, UI not built yet</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">UI redesign pass — cozy-er, more expressive</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">PWA support — install to home screen</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">Mobile-first responsive layout pass</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">First-run onboarding / empty state improvements</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">Seasonal / time-based filtering in list views</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">Improved accessibility — keyboard nav, focus rings</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap lanes -->
+  <section>
+    <h2>🗺️ Roadmap</h2>
+    <div class="lanes">
+
+      <div class="lane v09">
+        <div class="lane-head">
+          <span class="lane-badge">v0.9</span>
+          <span class="lane-title">Polish &amp; PWA</span>
+        </div>
+        <ul class="lane-items">
+          <li>Sea creatures tab for ACNH towns</li>
+          <li>UI redesign pass — cozy-er, more expressive</li>
+          <li>PWA support — install to home screen</li>
+          <li>Mobile-first responsive layout</li>
+          <li>First-run onboarding / empty states</li>
+          <li>Improved accessibility (keyboard nav, focus rings)</li>
+        </ul>
+      </div>
+
+      <div class="lane v10">
+        <div class="lane-head">
+          <span class="lane-badge">v1.0</span>
+          <span class="lane-title">Launch ready 🌟</span>
+        </div>
+        <ul class="lane-items">
+          <li>Branding &amp; identity polish</li>
+          <li>SEO metadata + Open Graph</li>
+          <li>Full accessibility audit (WCAG)</li>
+          <li>Performance pass — Lighthouse green</li>
+          <li>Stable release — remove alpha label</li>
+        </ul>
+      </div>
+
+      <div class="lane vpost">
+        <div class="lane-head">
+          <span class="lane-badge">Post-1.0</span>
+          <span class="lane-title">What's next ✨</span>
+        </div>
+        <ul class="lane-items">
+          <li>Cloud sync / account support</li>
+          <li>Share town progress with friends</li>
+          <li>New Horizons critterpedia features</li>
+          <li>Price guide &amp; art authenticity tracker</li>
+          <li>Seasonal event calendar</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Velocity detail -->
+  <section>
+    <h2>⚡ Velocity detail</h2>
+    <div style="background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
+      <table style="width:100%; border-collapse:collapse; font-size:.85rem;">
+        <thead>
+          <tr style="background:var(--paper);">
+            <th style="padding:.65rem 1rem; text-align:left; color:var(--muted); font-weight:normal;">Release</th>
+            <th style="padding:.65rem 1rem; text-align:left; color:var(--muted); font-weight:normal;">Date</th>
+            <th style="padding:.65rem 1rem; text-align:left; color:var(--muted); font-weight:normal;">Days since last</th>
+            <th style="padding:.65rem 1rem; text-align:left; color:var(--muted); font-weight:normal;">Highlight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.1.0</td>
+            <td style="padding:.6rem 1rem;">Apr 10</td>
+            <td style="padding:.6rem 1rem;">—</td>
+            <td style="padding:.6rem 1rem;">First commit → live app</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.2.0</td>
+            <td style="padding:.6rem 1rem;">Apr 12</td>
+            <td style="padding:.6rem 1rem;">2 days</td>
+            <td style="padding:.6rem 1rem;">Detail modal + donation timestamps</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.3.0</td>
+            <td style="padding:.6rem 1rem;">Apr 13</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Multi-town support</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.4.0</td>
+            <td style="padding:.6rem 1rem;">Apr 13</td>
+            <td style="padding:.6rem 1rem;">&lt;1 day</td>
+            <td style="padding:.6rem 1rem;">Global search + stats tab</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.5.0</td>
+            <td style="padding:.6rem 1rem;">Apr 13</td>
+            <td style="padding:.6rem 1rem;">&lt;1 day</td>
+            <td style="padding:.6rem 1rem;">CSV export + tests + Vercel Analytics</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.6.0</td>
+            <td style="padding:.6rem 1rem;">Apr 14</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Home screen tab</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--gold); font-weight:bold;">v0.6.1 🔧</td>
+            <td style="padding:.6rem 1rem;">Apr 15</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Hotfix — main branch restored</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.7.0-alpha</td>
+            <td style="padding:.6rem 1rem;">Apr 17</td>
+            <td style="padding:.6rem 1rem;">2 days</td>
+            <td style="padding:.6rem 1rem;">Multi-game foundation — largest refactor yet</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.8.0-alpha</td>
+            <td style="padding:.6rem 1rem;">Apr 29</td>
+            <td style="padding:.6rem 1rem;">12 days</td>
+            <td style="padding:.6rem 1rem;">Full game coverage — ACNL + ACNH, 1,000+ items, inline details, React Router</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9 in progress · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

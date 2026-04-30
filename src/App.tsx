@@ -66,7 +66,9 @@ function App() {
               pointerEvents: 'none',
             }}
           >
-            {import.meta.env.VITE_APP_VERSION}+{import.meta.env.VITE_GIT_SHA}
+            v{import.meta.env.VITE_APP_VERSION}
+            {'·'}
+            {import.meta.env.VITE_GIT_BRANCH}
           </div>
         )}
     </ErrorBoundary>

@@ -18,10 +18,24 @@ function getGitSha(): string {
 
 const gitSha = getGitSha();
 
+function getGitBranch(): string {
+  if (process.env.VERCEL_GIT_COMMIT_REF) {
+    return process.env.VERCEL_GIT_COMMIT_REF;
+  }
+  try {
+    return execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+const gitBranch = getGitBranch();
+
 export default defineConfig({
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(version),
     'import.meta.env.VITE_GIT_SHA': JSON.stringify(gitSha),
+    'import.meta.env.VITE_GIT_BRANCH': JSON.stringify(gitBranch),
   },
   plugins: [react()],
 });

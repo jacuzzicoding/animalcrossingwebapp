@@ -1,4 +1,4 @@
-# Dev Process Rules (v0.7+)
+# Dev Process Rules (v0.8+)
 
 Every feature, fix, or change must follow this checklist before the PR is complete:
 
@@ -39,3 +39,19 @@ What was verified before submitting (build, tests, manual checks).
 - `main` is production — only merge `development` → `main` for releases
 - Use merge commits (not squash) to preserve history
 - Commit messages should state intent, not just action ("fix: prevent donation state leaking across towns" not "fix: update store.ts")
+
+## Filing & Closing Bugs
+
+Every bug fix MUST have a GitHub Issue. The flow is:
+
+1. **Discover a bug** (Bea reports it, regression caught in dev, etc.)
+2. **File an issue immediately** with `gh issue create` BEFORE starting the fix:
+   - Title: descriptive ("X happens when Y" not "fix X")
+   - Body: reproduction steps, severity, root cause if known
+   - Labels: `bug`, plus `regression` if introduced by a recent change, plus version label (`v0.8`, `v0.9`) if deferred to a later release
+3. **Reference the issue from the fix PR** using `Closes #N` (or `Fixes #N` / `Resolves #N`) in the PR body. This auto-closes the issue when the PR merges.
+4. **Verify auto-close** after merge — if the issue is still open, close manually with `gh issue close N --comment "Fixed by PR #M."`
+
+For bugs where the architectural fix is deferred (e.g. v0.8.1 grey-out instead of the proper v0.9 lift), keep the issue open with a label for the target release and a comment explaining what was shipped vs what's still pending.
+
+For retro filing — bugs we fixed in past PRs without ever creating an issue — file a brief issue (title + symptom + fix PR reference) and immediately close. Searchable history is the goal.
