@@ -47,16 +47,24 @@ export function MuseumHeader({
           </h1>
           <div className="flex items-center gap-2">
             {gameId && GAMES[gameId].hasHemispheres && onHemisphereChange && (
-              <div className="flex rounded-[8px] overflow-hidden" style={{ border: '1px solid rgba(245,233,212,0.3)' }}>
+              <div
+                className="flex rounded-[8px] overflow-hidden"
+                style={{ border: '1px solid rgba(245,233,212,0.3)' }}
+              >
                 {(['NH', 'SH'] as const).map(h => (
                   <button
                     key={h}
                     onClick={() => onHemisphereChange(h)}
                     aria-pressed={hemisphere === h}
-                    title={h === 'NH' ? 'Northern Hemisphere' : 'Southern Hemisphere'}
+                    title={
+                      h === 'NH' ? 'Northern Hemisphere' : 'Southern Hemisphere'
+                    }
                     className="px-2.5 py-1.5 text-[12px] font-medium transition-colors"
                     style={{
-                      backgroundColor: hemisphere === h ? 'rgba(245,233,212,0.3)' : 'transparent',
+                      backgroundColor:
+                        hemisphere === h
+                          ? 'rgba(245,233,212,0.3)'
+                          : 'transparent',
                       color: '#F5E9D4',
                     }}
                   >

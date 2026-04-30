@@ -39,6 +39,7 @@ export function CollectibleRow({
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className="w-full text-left flex items-center gap-3 border px-4 py-3 transition"
       style={{
