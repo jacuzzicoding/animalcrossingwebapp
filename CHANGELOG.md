@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 - `public/version-history.html` — styled version history &amp; roadmap page, now served at `/version-history.html` on the live site (previously untracked at repo root)
+- `docs/decisions.md` — initial decision log with two entries: Sea Creatures data/UI split (v0.8 scope deferral, 2026-04-23) and edit-town modal grey-out on category tabs (PR #50, 2026-04-30)
 - `package.json` description field populated with project summary and live URL
 
 ### Fixed
