@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Plus, Pencil } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
+
+// Museum category tabs where the edit/new-town modals can't render (ACCanvas
+// is not yet in the layout tree on these routes). Greyed out as a v0.8.1
+// stopgap; proper fix deferred to the v0.9 UI revamp.
+const MODAL_BLOCKED_TABS = new Set(['fish', 'bugs', 'fossils']);
+const BLOCKED_TOOLTIP =
+  'Switch to Home, Search, or Recent Donations to edit your town';
 
 export function TownSwitcher({
   onCreateNew,
@@ -13,6 +20,8 @@ export function TownSwitcher({
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
   const navigate = useNavigate();
+  const { tab } = useParams<{ tab?: string }>();
+  const modalBlocked = MODAL_BLOCKED_TABS.has(tab ?? '');
   const [open, setOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -76,19 +85,35 @@ export function TownSwitcher({
           )}
 
           <button
-            onClick={onEditTown}
-            className="flex items-center justify-center rounded-[10px] p-1.5 transition"
-            style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+            onClick={modalBlocked ? undefined : onEditTown}
+            disabled={modalBlocked}
+            aria-disabled={modalBlocked}
+            title={modalBlocked ? BLOCKED_TOOLTIP : 'Edit town'}
             aria-label="Edit town"
+            className="flex items-center justify-center rounded-[10px] p-1.5 transition"
+            style={{
+              backgroundColor: '#EDE3D0',
+              border: '1px solid #E7DAC4',
+              opacity: modalBlocked ? 0.4 : 1,
+              cursor: modalBlocked ? 'not-allowed' : 'pointer',
+            }}
           >
             <Pencil className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
           </button>
 
           <button
-            onClick={onCreateNew}
-            className="flex items-center justify-center rounded-[10px] p-1.5 transition"
-            style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
+            onClick={modalBlocked ? undefined : onCreateNew}
+            disabled={modalBlocked}
+            aria-disabled={modalBlocked}
+            title={modalBlocked ? BLOCKED_TOOLTIP : 'Add town'}
             aria-label="Add town"
+            className="flex items-center justify-center rounded-[10px] p-1.5 transition"
+            style={{
+              backgroundColor: '#EDE3D0',
+              border: '1px solid #E7DAC4',
+              opacity: modalBlocked ? 0.4 : 1,
+              cursor: modalBlocked ? 'not-allowed' : 'pointer',
+            }}
           >
             <Plus className="w-3.5 h-3.5" style={{ color: '#5a4a35' }} />
           </button>
