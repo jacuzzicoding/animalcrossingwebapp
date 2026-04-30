@@ -169,6 +169,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **Town switcher dropdown clipped by `overflow-hidden` header** — **fixed in v0.8 (PR #41)**; now uses `position: fixed` anchor
 - **issue #26** — Art tab shows persistent large item name label after clicking an item; low priority, open
 - **issue #31** — Create-town edge case; low priority, open
+- **Sea creatures tab** — ACNH data includes 40 sea creatures but no UI tab exists yet; tracked for v0.9
 
 ## ACCanvas.tsx
 
@@ -196,19 +197,19 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
   - Game selection UI (PR #23), ACCanvas decomposition (PR #25)
   - Game-aware data loading in `useMuseumData` (PR #27)
 
-### v0.8 — Full game coverage + item details (in progress)
-- ~~React Router v6 — URL-based navigation~~ — shipped (PR #38)
-- ~~ACNL + ACNH added to game selector (dynamic `Object.keys(GAMES)`)~~ — shipped (PR #36)
-- ~~Modal centering + iOS fix, town switcher fixes~~ — shipped (PR #41)
-- ~~New Horizons item data~~ — done (81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures; NH/SH hemisphere months)
-- Sea creatures tab — pending (data exists, UI not built)
-- ACNH hemisphere-aware month display (`months_nh`/`months_sh`) — pending
-- Add New Leaf item data
-- Item detail views (inline expand for fish/bugs/fossils, bottom sheet for art)
-- Seasonal/time-based filtering
-- Item descriptions (data not yet gathered)
+- v0.8.0-alpha — **shipped 2026-04-29**:
+  - React Router v6 — URL-based navigation, shareable URLs per town/tab (PR #38)
+  - New Leaf item data in `public/data/acnl/` (PR #34)
+  - New Horizons data: 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures (PR #35)
+  - ACNL + ACNH game support in game selector (PR #36)
+  - Hemisphere toggle for ACNH towns; store migrated to persist v3 (PR #42)
+  - Item detail inline expand for fish/bugs/fossils; art opens bottom-sheet modal (PR #33, restored PR #46)
+  - Detail modal backdrop fix — modal no longer closes immediately on open (PR #43)
+  - Modal/switcher fixes: centering, iOS zoom, active-town duplicate, z-index (PR #41)
 
-### v0.9 — Polish, onboarding, and PWA
+### v0.9 — Polish, onboarding, and PWA (next)
+- Sea creatures tab (ACNH data exists, UI not built yet)
+- Seasonal/time-based filtering
 - UI redesign pass; PWA support; mobile-first responsive pass; first-run onboarding
 
 ### v1.0 — Launch ready

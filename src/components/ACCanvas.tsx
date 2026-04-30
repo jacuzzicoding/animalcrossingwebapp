@@ -378,8 +378,7 @@ export default function ACCanvas() {
               letterSpacing: '0.05em',
             }}
           >
-            {import.meta.env.VITE_APP_VERSION} ·
-            fix/restore-item-detail-dropdown
+            {import.meta.env.VITE_APP_VERSION}
           </span>
         </div>
       </div>
