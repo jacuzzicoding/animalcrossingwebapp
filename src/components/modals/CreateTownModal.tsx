@@ -1,33 +1,42 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../lib/store';
+import { type GameId, GAMES } from '../../lib/types';
 
 export function CreateTownModal({
+  isOpen,
   onClose,
   required,
 }: {
+  isOpen: boolean;
   onClose: () => void;
   required: boolean;
 }) {
   const createTown = useAppStore(s => s.createTown);
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [gameId, setGameId] = useState<GameId>('ACGCN');
+
+  if (!isOpen) return null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !playerName.trim()) return;
-    createTown(name.trim(), playerName.trim());
+    const town = createTown(name.trim(), playerName.trim(), gameId);
     onClose();
+    navigate(`/town/${town.id}/home`);
   }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
       onClick={required ? undefined : onClose}
     >
       <div
-        className="w-full max-w-sm mx-4 rounded-[20px] overflow-hidden"
+        className="w-full max-w-sm rounded-[20px] overflow-hidden"
         style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4' }}
         onClick={e => e.stopPropagation()}
       >
@@ -91,6 +100,30 @@ export function CreateTownModal({
                 color: '#2A2A2A',
               }}
             />
+          </div>
+          <div>
+            <label
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: '#5a4a35' }}
+            >
+              Game
+            </label>
+            <select
+              value={gameId}
+              onChange={e => setGameId(e.target.value as GameId)}
+              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
+              style={{
+                borderColor: '#E7DAC4',
+                backgroundColor: '#FFFDF6',
+                color: '#2A2A2A',
+              }}
+            >
+              {(Object.keys(GAMES) as GameId[]).map(id => (
+                <option key={id} value={id}>
+                  {GAMES[id].name}
+                </option>
+              ))}
+            </select>
           </div>
           <button
             type="submit"

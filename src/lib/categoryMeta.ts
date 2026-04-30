@@ -16,12 +16,16 @@ const GAME_DATA_DIR: Partial<Record<GameId, string>> = {
   ACGCN: '/data/acgcn',
   ACWW: '/data/acww',
   ACCF: '/data/accf',
+  ACNL: '/data/acnl',
+  ACNH: '/data/acnh',
 };
 
-const GAMES_WITH_ART = new Set<GameId>(['ACGCN']);
+const GAMES_WITH_ART = new Set<GameId>(['ACGCN', 'ACNL', 'ACNH']);
 
 /** Returns per-category fetch paths for the given game. Art is null for games without art data. */
-export function getDataPaths(gameId: GameId): Record<CategoryId, string | null> {
+export function getDataPaths(
+  gameId: GameId
+): Record<CategoryId, string | null> {
   const dir = GAME_DATA_DIR[gameId] ?? '/data/acgcn';
   return {
     fish: `${dir}/fish.json`,

@@ -41,7 +41,7 @@ export const GAMES: Record<GameId, Game> = {
     shortName: 'New Leaf',
     year: 2012,
     platform: 'Nintendo 3DS',
-    hasHemispheres: true,
+    hasHemispheres: false,
   },
   ACNH: {
     id: 'ACNH',
@@ -63,6 +63,8 @@ export interface Fish {
   value: number | null;
   habitat: Habitat;
   months?: number[];
+  months_nh?: number[];
+  months_sh?: number[];
   hours?: number[];
   notes?: string;
 }
@@ -72,6 +74,8 @@ export interface BugItem {
   name: string;
   value: number | null;
   months?: number[];
+  months_nh?: number[];
+  months_sh?: number[];
   notes?: string;
 }
 

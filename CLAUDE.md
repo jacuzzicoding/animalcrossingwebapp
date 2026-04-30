@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Cozy parchment/GameCube museum aesthetic. **Current version: v0.7.0-alpha**
+Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.0-alpha**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -34,23 +34,27 @@ npm install       # Install dependencies
 
 **Framework:** Vite + React 19 + TypeScript  
 **Styling:** Tailwind CSS v4 (utility classes only; design tokens via `src/lib/colors.ts` — inline hex)  
-**State:** Zustand ^5 with `persist` middleware (localStorage key: `ac-web`, schema v2)  
+**State:** Zustand ^5 with `persist` middleware (localStorage key: `ac-web`, schema v3)  
+**Routing:** React Router v6 (`BrowserRouter`); URL structure: `/` → redirect, `/town/:townId` → home tab, `/town/:townId/:tab` → specific tab; `vercel.json` has catch-all SPA rewrite for preview/branch deploys  
 **Tests:** Vitest  
-**Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7)  
-**Migration:** Zustand persist v2 + `bootstrapMigration.ts` — zero data loss for existing users
+**Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7); `Town` includes `hemisphere: 'NH' | 'SH'` (as of v0.8)  
+**Migration:** Zustand persist v3 + `bootstrapMigration.ts` — zero data loss for existing users  
+**Modal pattern:** `CreateTownModal` and `EditTownModal` use always-mounted `isOpen` prop pattern; overlay is a single `flex items-center justify-center` wrapper — no `overflow-y-auto`  
+**TownSwitcher dropdown:** `position: fixed` with `getBoundingClientRect()` anchor to escape `overflow-hidden` header; z-index: dismiss overlay `z-40`, dropdown panel `z-50`, action buttons row `relative z-20`; active town filtered out of list
 
 ### File Structure
 
 ```
 src/
-  App.tsx                   # Root component — hydration guard + ErrorBoundary + ACCanvas
-  main.tsx                  # Entry point — runs bootstrapMigration before React mounts
+  App.tsx                   # Root component — hydration guard + ErrorBoundary + Routes (/, /town/:townId/:tab)
+  main.tsx                  # Entry point — runs bootstrapMigration, wraps app in BrowserRouter
   components/
     ACCanvas.tsx            # Orchestration shell ~298 lines. Mounts active tab view,
                             # wires modals and global search. Decomposition complete (v0.7).
     HomeTab.tsx             # Home screen: seasonal availability, leaving-soon,
                             # progress cards, recent activity
-    CollectibleRow.tsx      # Single item row with donate toggle
+    CollectibleRow.tsx      # Single item row with donate toggle; shows chevron + rounded-top when expanded
+    ItemExpandPanel.tsx     # Inline accordion panel shown below CollectibleRow for fish/bugs/fossils
     MuseumHeader.tsx        # Header bar + TownSwitcher dropdown
     TabBar.tsx              # Tab navigation strip
     TownSwitcher.tsx        # Town dropdown with game badge per town
@@ -109,6 +113,12 @@ public/data/accf/
   fish.json                 # 40 species (City Folk)
   bugs.json                 # 40 species (City Folk)
   fossils.json              # 52 fossil items (City Folk)
+public/data/acnh/
+  fish.json                 # 81 species (NH/SH months_nh/months_sh)
+  bugs.json                 # 80 species (NH/SH months_nh/months_sh)
+  fossils.json              # 86 fossil pieces
+  art.json                  # 43 paintings (hasFake flag)
+  sea_creatures.json        # 40 sea creatures (NH/SH months)
 docs/
   dev-process.md            # PR checklist and dev process rules for Claude Code sessions
   architecture.md           # Deep architectural context: store schema, migrations, multi-game types
@@ -137,9 +147,13 @@ Inline hex constants via `src/lib/colors.ts` — **no Tailwind design tokens**:
 
 ## Deployment
 
+See `.claude/rules/vercel.md` for full deployment rules. Key points:
+
 - **Vercel** auto-deploys from `main` to https://animalcrossingwebapp.vercel.app
 - `development` branch auto-deploys to https://development-animalcrossingwebapp.vercel.app
-- Manual: `vercel --prod` from repo root
+- **Preview URLs** come from the PR's GitHub Checks — never run `vercel` CLI manually
+- **NEVER** run `vercel --prod` unless Bea explicitly says "ship to production"
+- **NEVER** run `vercel link` from a worktree directory
 - `vercel.json`: `buildCommand: npm run build`, `outputDirectory: dist`, `installCommand: npm install`
 - Project: `animalcrossingwebapp` under `jacuzzicodings-projects`
 
@@ -150,6 +164,12 @@ Inline hex constants via `src/lib/colors.ts` — **no Tailwind design tokens**:
 - **@vercel/analytics missing** — package was missing from dependencies — **fixed in v0.7**
 - **ACCanvas.tsx decomposition** — completed in v0.7 (PRs #25); file is now ~298-line orchestration shell
 - **useMuseumData hardcoded to ACGCN paths** — **fixed in v0.7.0-alpha** (PR #27); now accepts `gameId` and fetches from the correct `/data/<game>/` directory
+- **Create Town modal centering + iOS zoom** — **fixed in v0.8 (PR #41)**; overlay uses single `flex items-center justify-center`, no `overflow-y-auto`
+- **Town switcher showing active town in dropdown** — **fixed in v0.8 (PR #41)**
+- **Town switcher dropdown clipped by `overflow-hidden` header** — **fixed in v0.8 (PR #41)**; now uses `position: fixed` anchor
+- **issue #26** — Art tab shows persistent large item name label after clicking an item; low priority, open
+- **issue #31** — Create-town edge case; low priority, open
+- **Sea creatures tab** — ACNH data includes 40 sea creatures but no UI tab exists yet; tracked for v0.9
 
 ## ACCanvas.tsx
 
@@ -177,15 +197,19 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
   - Game selection UI (PR #23), ACCanvas decomposition (PR #25)
   - Game-aware data loading in `useMuseumData` (PR #27)
 
-### v0.7 — Multi-game foundation (remaining)
-- Add React Router for game URLs and item detail routes
+- v0.8.0-alpha — **shipped 2026-04-29**:
+  - React Router v6 — URL-based navigation, shareable URLs per town/tab (PR #38)
+  - New Leaf item data in `public/data/acnl/` (PR #34)
+  - New Horizons data: 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures (PR #35)
+  - ACNL + ACNH game support in game selector (PR #36)
+  - Hemisphere toggle for ACNH towns; store migrated to persist v3 (PR #42)
+  - Item detail inline expand for fish/bugs/fossils; art opens bottom-sheet modal (PR #33, restored PR #46)
+  - Detail modal backdrop fix — modal no longer closes immediately on open (PR #43)
+  - Modal/switcher fixes: centering, iOS zoom, active-town duplicate, z-index (PR #41)
 
-### v0.8 — Full game coverage + item details
-- Add New Leaf and New Horizons item data
-- Item detail views (inline expand for fish/bugs/fossils, bottom sheet for art)
+### v0.9 — Polish, onboarding, and PWA (next)
+- Sea creatures tab (ACNH data exists, UI not built yet)
 - Seasonal/time-based filtering
-
-### v0.9 — Polish, onboarding, and PWA
 - UI redesign pass; PWA support; mobile-first responsive pass; first-run onboarding
 
 ### v1.0 — Launch ready

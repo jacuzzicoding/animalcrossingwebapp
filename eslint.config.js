@@ -59,4 +59,11 @@ export default [
       },
     },
   },
+  // Node config files get Node.js globals
+  {
+    files: ['vite.config.ts', 'vite.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ];
