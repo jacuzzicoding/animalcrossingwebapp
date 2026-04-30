@@ -8,10 +8,17 @@ All notable changes to this project are documented here.
 - `public/version-history.html` — styled version history &amp; roadmap page, now served at `/version-history.html` on the live site (previously untracked at repo root)
 - `docs/decisions.md` — initial decision log with two entries: Sea Creatures data/UI split (v0.8 scope deferral, 2026-04-23) and edit-town modal grey-out on category tabs (PR #50, 2026-04-30)
 - `package.json` description field populated with project summary and live URL
+- **Filing & Closing Bugs** workflow documented in `docs/dev-process.md` (and `.claude/rules/dev-process.md`) — every bug-fix PR must have a corresponding issue using `Closes #N` for auto-close
 
 ### Fixed
 - `docs/architecture.md` — header bumped to v0.8; stale ACCanvas block (described ~1500-line monolith scheduled for decomposition) replaced with post-decomposition reality (405 lines, orchestration shell)
 - `docs/dev-process.md` and `.claude/rules/dev-process.md` — heading bumped from v0.7+ to v0.8+
+
+### Process
+- Backfilled GitHub Issues for bugs fixed without tracking: #51 (edit-town modal bubble, PR #50), #52 (DetailModal backdrop bubble, PR #43 — closed), #53 (inline-expand regression, PR #46 — closed)
+- Closed stale issue #30 (town switcher duplicate — fixed by PR #41)
+- Broadened scope of issue #31 (modal positioning affects all floating modals, not just create-town); labelled `v0.9`; labelled issue #26 `v0.9`
+- Created `regression` and `v0.9` labels in GitHub
 
 > More entries will be added before v0.8.1 ships (edit-town-name bug fix is being scoped separately).
 
