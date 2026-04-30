@@ -66,3 +66,5 @@ Museum data lives in `public/data/<game>/`:
 ## Version
 
 Current release: **v0.8.0-alpha** — see [CHANGELOG.md](CHANGELOG.md) for history.
+
+Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).

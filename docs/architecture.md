@@ -1,4 +1,4 @@
-# Architecture Reference (v0.7)
+# Architecture Reference (v0.8)
 
 Key architectural context for Claude Code sessions. See also `docs/v0.7-architecture-proposal.md`.
 
@@ -36,10 +36,9 @@ donatedAt[townId][gameId][itemId] = ISO timestamp
 
 ## ACCanvas.tsx
 
-- **~1500 lines** — contains all tab navigation, all four museum tabs (Fish/Bugs/Fossils/Art), town switcher, search, and modal
-- **Scheduled for decomposition** into focused components (planned for v0.7)
-- **Highly conflict-prone** in multi-session work — read the whole file before editing, make surgical changes only
-- See `docs/v0.7-architecture-proposal.md` for the decomposition plan
+- **405 lines** — orchestration shell after the v0.7 decomposition; mounts the active tab view, wires modals, and handles global search
+- All data fetching, filtering, and sub-component logic lives in dedicated hooks and components
+- Do not add new top-level tabs without updating the tab switch and `TabBar` props
 
 ## Data Files
 

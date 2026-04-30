@@ -1,7 +1,7 @@
 {
   "name": "animalcrossingwebapp",
-  "version": "0.8.0-alpha",
-  "description": "",
+  "version": "0.8.1-alpha",
+  "description": "Web companion app for tracking museum donations across all five Animal Crossing main-line games (GCN, WW, CF, NL, NH). Live at https://animalcrossingwebapp.vercel.app/",
   "type": "module",
   "main": "index.js",
   "scripts": {

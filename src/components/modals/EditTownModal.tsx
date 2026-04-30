@@ -1,34 +1,49 @@
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
+import { TownNameFields } from '../shared/TownNameFields';
 
-export function EditTownModal({
-  town,
-  onClose,
-}: {
-  town: { id: string; name: string; playerName: string };
+interface Props {
+  isOpen: boolean;
+  town: { id: string; name: string; playerName: string } | null;
   onClose: () => void;
-}) {
+}
+
+export function EditTownModal({ isOpen, town, onClose }: Props) {
   const updateTown = useAppStore(s => s.updateTown);
-  const [name, setName] = useState(town.name);
-  const [playerName, setPlayerName] = useState(town.playerName);
+  const [name, setName] = useState('');
+  const [playerName, setPlayerName] = useState('');
+
+  // Sync form state when a different town is opened for editing.
+  // Depend on the stable primitive id so the effect only fires when the town
+  // actually changes, not on every parent re-render.
+  const townId = town?.id;
+  const townName = town?.name;
+  const townPlayerName = town?.playerName;
+  useEffect(() => {
+    if (townId) {
+      setName(townName ?? '');
+      setPlayerName(townPlayerName ?? '');
+    }
+  }, [townId, townName, townPlayerName]);
+
+  if (!isOpen || !town) return null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !playerName.trim()) return;
+    if (!name.trim() || !playerName.trim() || !town) return;
     updateTown(town.id, name.trim(), playerName.trim());
     onClose();
   }
 
-  return createPortal(
+  return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(42,32,20,0.55)' }}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm mx-4 rounded-[20px] overflow-hidden"
+        className="w-full max-w-sm rounded-[20px] overflow-hidden"
         style={{ backgroundColor: '#FDF9F1', border: '1px solid #E7DAC4' }}
         onClick={e => e.stopPropagation()}
       >
@@ -47,45 +62,12 @@ export function EditTownModal({
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          <div>
-            <label
-              className="block text-xs font-medium mb-1.5"
-              style={{ color: '#5a4a35' }}
-            >
-              Town Name
-            </label>
-            <input
-              autoFocus
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{
-                borderColor: '#E7DAC4',
-                backgroundColor: '#FFFDF6',
-                color: '#2A2A2A',
-              }}
-            />
-          </div>
-          <div>
-            <label
-              className="block text-xs font-medium mb-1.5"
-              style={{ color: '#5a4a35' }}
-            >
-              Your Name
-            </label>
-            <input
-              type="text"
-              value={playerName}
-              onChange={e => setPlayerName(e.target.value)}
-              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{
-                borderColor: '#E7DAC4',
-                backgroundColor: '#FFFDF6',
-                color: '#2A2A2A',
-              }}
-            />
-          </div>
+          <TownNameFields
+            name={name}
+            playerName={playerName}
+            onNameChange={setName}
+            onPlayerNameChange={setPlayerName}
+          />
           <button
             type="submit"
             disabled={!name.trim() || !playerName.trim()}
@@ -100,7 +82,6 @@ export function EditTownModal({
           </button>
         </form>
       </div>
-    </div>,
-    document.body
+    </div>
   );
 }

@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.0-alpha**
+Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.1-alpha shipped 2026-04-30; v0.9 in progress**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -170,6 +170,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **issue #26** — Art tab shows persistent large item name label after clicking an item; low priority, open
 - **issue #31** — Create-town edge case; low priority, open
 - **Sea creatures tab** — ACNH data includes 40 sea creatures but no UI tab exists yet; tracked for v0.9
+- **Edit/new-town buttons greyed out on Fish, Bugs, Fossils tabs** — intentional v0.8.1 stopgap. Modals (EditTownModal, CreateTownModal) are mounted in ACCanvas, which sits below the router layout; on museum category tabs the modal renders fine but overlapping scroll context causes visual issues. Buttons show `opacity: 0.4` + tooltip directing users to Home/Search/Recent Donations instead. Proper fix (lift modals to layout level) deferred to v0.9 UI revamp.
 
 ## ACCanvas.tsx
 

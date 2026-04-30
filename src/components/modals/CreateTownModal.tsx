@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../lib/store';
 import { type GameId, GAMES } from '../../lib/types';
+import { TownNameFields } from '../shared/TownNameFields';
 
 export function CreateTownModal({
   isOpen,
@@ -60,47 +61,14 @@ export function CreateTownModal({
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          <div>
-            <label
-              className="block text-xs font-medium mb-1.5"
-              style={{ color: '#5a4a35' }}
-            >
-              Town Name
-            </label>
-            <input
-              autoFocus
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="e.g. Plumeria"
-              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{
-                borderColor: '#E7DAC4',
-                backgroundColor: '#FFFDF6',
-                color: '#2A2A2A',
-              }}
-            />
-          </div>
-          <div>
-            <label
-              className="block text-xs font-medium mb-1.5"
-              style={{ color: '#5a4a35' }}
-            >
-              Your Name
-            </label>
-            <input
-              type="text"
-              value={playerName}
-              onChange={e => setPlayerName(e.target.value)}
-              placeholder="e.g. Brock"
-              className="w-full rounded-[10px] border px-3 py-2 text-sm outline-none"
-              style={{
-                borderColor: '#E7DAC4',
-                backgroundColor: '#FFFDF6',
-                color: '#2A2A2A',
-              }}
-            />
-          </div>
+          <TownNameFields
+            name={name}
+            playerName={playerName}
+            onNameChange={setName}
+            onPlayerNameChange={setPlayerName}
+            namePlaceholder="e.g. Plumeria"
+            playerPlaceholder="e.g. Brock"
+          />
           <div>
             <label
               className="block text-xs font-medium mb-1.5"

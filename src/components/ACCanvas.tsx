@@ -23,6 +23,7 @@ import { SearchBar } from './shared/SearchBar';
 import { EmptyState } from './shared/EmptyState';
 
 import { CreateTownModal } from './modals/CreateTownModal';
+import { EditTownModal } from './modals/EditTownModal';
 import { DetailModal } from './modals/DetailModal';
 
 import { GlobalSearchBar } from './search/GlobalSearchBar';
@@ -100,6 +101,7 @@ export default function ACCanvas() {
     category: CategoryId;
   } | null>(null);
   const [showCreateTown, setShowCreateTown] = useState(false);
+  const [showEditTown, setShowEditTown] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { data, loading, loadError, reload } = useMuseumData(
@@ -227,6 +229,7 @@ export default function ACCanvas() {
           donatedCount={totalDonated}
           totalCount={totalItems}
           onCreateTown={() => setShowCreateTown(true)}
+          onEditTown={() => setShowEditTown(true)}
           onExport={handleExport}
           gameId={activeTown?.gameId}
           hemisphere={activeTown?.hemisphere ?? 'NH'}
@@ -387,6 +390,12 @@ export default function ACCanvas() {
         isOpen={noTowns || showCreateTown}
         required={noTowns}
         onClose={() => setShowCreateTown(false)}
+      />
+
+      <EditTownModal
+        isOpen={showEditTown}
+        town={activeTown ?? null}
+        onClose={() => setShowEditTown(false)}
       />
 
       {selected && !noTowns && (
