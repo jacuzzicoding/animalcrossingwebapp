@@ -2,14 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Plus, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
-import { EditTownModal } from './modals/EditTownModal';
 
-export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
+export function TownSwitcher({
+  onCreateNew,
+  onEditTown,
+}: {
+  onCreateNew: () => void;
+  onEditTown: () => void;
+}) {
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -72,7 +76,7 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
           )}
 
           <button
-            onClick={() => setEditing(true)}
+            onClick={onEditTown}
             className="flex items-center justify-center rounded-[10px] p-1.5 transition"
             style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
             aria-label="Edit town"
@@ -133,9 +137,6 @@ export function TownSwitcher({ onCreateNew }: { onCreateNew: () => void }) {
           </>
         )}
       </div>
-      {editing && (
-        <EditTownModal town={activeTown} onClose={() => setEditing(false)} />
-      )}
     </>
   );
 }
