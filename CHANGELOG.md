@@ -2,29 +2,31 @@
 
 All notable changes to this project are documented here.
 
-## [v0.8.0-alpha] — In Progress
+## [v0.8.0-alpha] — 2026-04-29
 
 ### Added
-- **ACNH hemisphere toggle** — per-town Northern / Southern Hemisphere setting stored in Zustand (persist v3). NH/SH pill toggle appears in the museum header only when the active town's game has hemisphere-specific availability (New Horizons, New Leaf). `itemMonths` now resolves `months_nh` / `months_sh` from critter data based on the active hemisphere; non-hemisphere games continue using `months` with no behaviour change. Store migrated to v3 with `hemisphere: 'NH'` backfilled for all existing towns.
 - **React Router v6** (PR #38) — URL-based navigation replaces single-page state; each town and museum tab now has a shareable URL
   - Route structure: `/` → redirects to active town; `/town/:townId` → home tab; `/town/:townId/:tab` → specific tab
   - `BrowserRouter` wraps the app in `main.tsx`; `vercel.json` adds a catch-all SPA rewrite for preview/branch deploys
   - Tab switching and town switching both update the URL via `useNavigate`; browser back/forward navigate between tabs and towns
   - Deep links work — visiting `/town/<id>/fish` loads that town's fish tab directly
   - `CreateTownModal` navigates to the new town's URL after creation
-- **New Horizons data** — `public/data/acnh/` with 81 fish, 80 bugs, 86 fossil pieces, 43 art pieces, and 40 sea creatures; fish/bugs/sea creatures include both Northern and Southern Hemisphere month availability (`months_nh` / `months_sh`); art pieces include `hasFake` flag for counterfeit detection
-- **ACNL + ACNH game selector** (PR #36) — players can now choose Animal Crossing (GCN), Wild World, City Folk, New Leaf, or New Horizons when creating a new town; `CreateTownModal` derives game list dynamically from `Object.keys(GAMES)` rather than a hardcoded array
-- `categoryMeta.ts` — added ACNL and ACNH data directory paths and art support for both games
-- **Item detail view (inline expand)** — clicking a fish, bug, or fossil row now expands it in-place to show full detail: month availability grid, sell value, habitat (fish), and notes. Art still opens the existing bottom-sheet modal. Donate/undonate button is included in the expand panel so the user never needs to leave the list.
-  - `src/components/ItemExpandPanel.tsx` — new inline expand panel component
-  - `CollectibleRow` updated with optional chevron indicator and rounded-top-only corners when expanded
+- **New Leaf data** (PR #34) — `public/data/acnl/` with fish, bugs, and fossil data for Animal Crossing: New Leaf
+- **New Horizons data** (PR #35) — `public/data/acnh/` with 81 fish, 80 bugs, 86 fossil pieces, 43 art pieces, and 40 sea creatures; fish/bugs/sea creatures include both Northern and Southern Hemisphere month availability (`months_nh` / `months_sh`); art pieces include `hasFake` flag for counterfeit detection
+- **ACNL + ACNH game selector** (PR #36) — players can now choose Animal Crossing (GCN), Wild World, City Folk, New Leaf, or New Horizons when creating a new town; `CreateTownModal` derives game list dynamically from `Object.keys(GAMES)` rather than a hardcoded array; `categoryMeta.ts` updated with ACNL and ACNH data paths and art support
+- **Hemisphere toggle** (PR #42) — per-town NH/SH toggle in the museum header for ACNH towns; `itemMonths` resolves `months_nh` / `months_sh` based on the active hemisphere; ACNL correctly marked as non-hemisphere-aware; store migrated to persist v3 with `hemisphere: 'NH'` backfilled for all existing towns
+- **Item detail inline expand** (PR #33, restored in PR #46) — clicking a fish, bug, or fossil row expands it in-place: month availability grid, sell value, habitat (fish), and notes. Art rows open the existing bottom-sheet modal. Donate/undonate button included in the expand panel. Expand state resets on tab change.
+  - `src/components/ItemExpandPanel.tsx` — inline accordion panel component
+  - `CollectibleRow` — chevron indicator and rounded-top-only corners when expanded
 
 ### Fixed
-- **Detail view regression** — clicking a collectible row now reliably opens the bottom-sheet `DetailModal` for all categories (fish, bugs, fossils, art). The modal's backdrop was receiving the same click event that mounted it (ghost-click timing issue in React 18), causing it to open and immediately close. Fixed by deferring backdrop click-to-close by one event-loop tick after mount via `useRef` + `setTimeout(0)`. Also added `type="button"` to `CollectibleRow`.
-- **Create Town modal centering + iOS zoom** (PR #41) — modal overlay now uses a single `flex items-center justify-center` wrapper with no `overflow-y-auto`; eliminates iOS Safari zoom/scroll issues and off-center rendering on small screens
-- **Town switcher dropdown escapes header clip** (PR #41) — dropdown panel uses `position: fixed` with a `getBoundingClientRect()` anchor so it renders above the `overflow-hidden` header stacking context; z-index layering: dismiss overlay `z-40`, dropdown `z-50`, action buttons row `relative z-20`
-- **Active town no longer appears in switcher list** (PR #41) — current town is filtered out of the dropdown to prevent selecting the already-active town
-- **Town switcher modal stale-state duplicates** (PR #41) — modals now use always-mounted `isOpen` pattern instead of conditional render, eliminating duplicate entry rendering on re-open
+- **Inline expand regression** (PR #46) — `ItemExpandPanel` import, `expandedId` state, and expand/collapse logic were stripped from `ACCanvas.tsx` during the React Router refactor; fully restored
+- **Detail modal backdrop closes immediately** (PR #43) — modal backdrop received the same click event that mounted it (React 18 synchronous flush); fixed by deferring backdrop `onClick` by one event-loop tick via `useRef` + `setTimeout(0)`; also added `type="button"` to `CollectibleRow`
+- **Create Town modal centering + iOS zoom** (PR #41) — overlay uses `flex items-center justify-center`; input font-size set to 16px to prevent iOS auto-zoom
+- **Town switcher dropdown escapes header clip** (PR #41) — panel uses `position: fixed` with `getBoundingClientRect()` anchor; z-index layering: dismiss overlay `z-40`, dropdown `z-50`
+- **Active town duplicate in switcher** (PR #41) — active town filtered out of dropdown list
+- **Town switcher stale-state duplicates** (PR #41) — modals use always-mounted `isOpen` pattern instead of conditional render
+- **Vite build in Vercel preview environments** — `vite.config.ts` falls back to `'unknown'` when `git rev-parse` fails (no `.git` in Vercel build sandbox)
 
 ## [v0.7.0-alpha] — 2026-04-17
 
