@@ -7,7 +7,7 @@ Every feature, fix, or change must follow this checklist before the PR is comple
 3. CHANGELOG.md updated with entry under the current version section
 4. CLAUDE.md updated if any of these changed: file structure, new components/hooks/utils, architecture, commands, known issues, version number
 5. Tests pass — run `npm run build` and `npm test` before pushing
-6. Dev preview tested at https://animalcrossingwebapp-git-development-jacuzzicodings-projects.vercel.app for any user-visible changes
+6. Dev preview tested at https://development-animalcrossingwebapp.vercel.app for any user-visible changes
 7. Version references kept current (CLAUDE.md, README.md)
 
 ## PR Description Requirements

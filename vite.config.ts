@@ -4,12 +4,19 @@ import { readFileSync } from 'fs';
 import { execSync } from 'child_process';
 
 const { version } = JSON.parse(readFileSync('./package.json', 'utf-8'));
-let gitSha = 'unknown';
-try {
-  gitSha = execSync('git rev-parse --short HEAD').toString().trim();
-} catch {
-  // not a git repo (e.g. Vercel build environment)
+
+function getGitSha(): string {
+  if (process.env.VERCEL_GIT_COMMIT_SHA) {
+    return process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7);
+  }
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'unknown';
+  }
 }
+
+const gitSha = getGitSha();
 
 export default defineConfig({
   define: {
