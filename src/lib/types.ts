@@ -55,7 +55,7 @@ export const GAMES: Record<GameId, Game> = {
 
 export type Habitat = 'river' | 'ocean' | 'pond' | 'lake' | 'other';
 
-export type CategoryId = 'fish' | 'bugs' | 'fossils' | 'art';
+export type CategoryId = 'fish' | 'bugs' | 'fossils' | 'art' | 'sea_creatures';
 
 export interface Fish {
   id: string;
@@ -92,6 +92,17 @@ export interface ArtPiece {
   basedOn: string;
 }
 
+export interface SeaCreature {
+  id: string;
+  name: string;
+  value: number | null;
+  shadow?: string;
+  time?: string;
+  months?: number[];
+  months_nh?: number[];
+  months_sh?: number[];
+}
+
 // ─── Error types ─────────────────────────────────────────────────────────────
 
 export type AppErrorKind =
@@ -114,4 +125,8 @@ export interface CollectibleDetail {
   basedOn?: string;
   months?: number[];
   notes?: string;
+  /** shadow size (sea creatures) */
+  shadow?: string;
+  /** time availability (sea creatures) */
+  time?: string;
 }

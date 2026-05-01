@@ -40,32 +40,36 @@ export function TabBar({
             ·
           </span>
         </button>
-        {CATEGORY_ORDER.filter(cat => cat !== 'art' || data.art.length > 0).map(
-          cat => {
-            const { label, Icon } = CATEGORY_META[cat];
-            const isActive = cat === active;
-            const total = data[cat].length;
-            const donated = catCounts[cat];
-            return (
-              <button
-                key={cat}
-                onClick={() => onChange(cat)}
-                className="flex-1 min-w-[52px] flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
-                style={{
-                  backgroundColor: isActive ? '#7B5E3B' : 'transparent',
-                  color: isActive ? '#F5E9D4' : '#7B5E3B',
-                  borderRight: '1px solid #E7DAC4',
-                }}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{label}</span>
-                <span className="opacity-70" style={{ fontSize: '10px' }}>
-                  {donated}/{total}
-                </span>
-              </button>
-            );
-          }
-        )}
+        {CATEGORY_ORDER.filter(
+          cat =>
+            (cat !== 'art' || data.art.length > 0) &&
+            (cat !== 'sea_creatures' || data.sea_creatures.length > 0)
+        ).map(cat => {
+          const meta = CATEGORY_META[cat];
+          const tabLabel = cat === 'sea_creatures' ? 'Sea' : meta.label;
+          const { Icon } = meta;
+          const isActive = cat === active;
+          const total = data[cat].length;
+          const donated = catCounts[cat];
+          return (
+            <button
+              key={cat}
+              onClick={() => onChange(cat)}
+              className="flex-1 min-w-[52px] flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"
+              style={{
+                backgroundColor: isActive ? '#7B5E3B' : 'transparent',
+                color: isActive ? '#F5E9D4' : '#7B5E3B',
+                borderRight: '1px solid #E7DAC4',
+              }}
+            >
+              <Icon className="w-4 h-4" />
+              <span>{tabLabel}</span>
+              <span className="opacity-70" style={{ fontSize: '10px' }}>
+                {donated}/{total}
+              </span>
+            </button>
+          );
+        })}
         <button
           onClick={() => onChange('activity')}
           className="flex-1 min-w-[52px] flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors"

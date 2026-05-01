@@ -12,6 +12,7 @@ export function useMuseumData(gameId: GameId = 'ACGCN') {
     bugs: [],
     fossils: [],
     art: [],
+    sea_creatures: [],
   });
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<AppErrorKind | null>(null);
@@ -30,8 +31,8 @@ export function useMuseumData(gameId: GameId = 'ACGCN') {
         });
       })
     )
-      .then(([fish, bugs, fossils, art]) => {
-        setData({ fish, bugs, fossils, art });
+      .then(([fish, bugs, fossils, art, sea_creatures]) => {
+        setData({ fish, bugs, fossils, art, sea_creatures });
         setLoading(false);
       })
       .catch(err => {
