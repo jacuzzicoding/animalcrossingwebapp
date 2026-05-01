@@ -399,6 +399,7 @@ export default function ACCanvas() {
             {import.meta.env.VITE_GIT_BRANCH &&
               import.meta.env.VITE_GIT_BRANCH !== 'main' &&
               import.meta.env.VITE_GIT_BRANCH !== 'development' &&
+              !import.meta.env.VITE_GIT_BRANCH.startsWith('release/') &&
               ` · ${import.meta.env.VITE_GIT_BRANCH}`}
           </span>
         </div>

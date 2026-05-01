@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here.
 
+## [v0.8.2-alpha] — 2026-05-01
+
+### Added
+- **Sea Creatures tab** (PR #44, Closes #56) — surfaces the 40-species sea creature data that shipped in v0.8.0 (PRs #34/#35). Tab appears in the TabBar for ACNL and ACNH towns only; hidden for all other games. Switching to a non-sea-creature game while on the Sea tab redirects to Home.
+  - Sea creatures reuse the `CollectibleRow` + `ItemExpandPanel` path: month availability grid, sell value, and shadow size shown in the expand panel
+  - Donation toggles persist to the 3-level store schema; donations carry through CSV export
+  - Home tab progress grid includes a Sea Creatures card for ACNL/ACNH towns
+  - Global search includes sea creatures
+  - `SeaCreature` interface, `isSeaCreature` type guard, updated `AnyItem` union, `CategoryId`, `AllData`, `CATEGORY_ORDER`, `globalFilter`, `useCategoryStats`, and `csvExport` all extended
+  - Tab label shortened to "Sea" in the TabBar to fit the narrow tab strip
+- Branch-label footer suffix in the version display (`v0.8.2-alpha · feature/...`) — auto-hidden on `main`, `development`, and `release/` branches
+
+### Fixed
+- **Art tab persistent label** (PR #57, Closes #26) — clicking an art piece then switching tabs without closing the `DetailModal` left the bottom-sheet overlay rendered across all tabs. Root cause: the tab-change `useEffect` reset `query` and `expandedId` but not `selected`. Adding `setSelected(null)` to the effect ensures the modal tears down on every tab transition.
+
 ## [v0.8.1-alpha] — 2026-04-30
 
 ### Added

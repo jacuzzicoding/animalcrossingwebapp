@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.1-alpha shipped 2026-04-30; v0.9 in progress**
+Cozy parchment/GameCube museum aesthetic. **Current version: v0.8.2-alpha shipped 2026-05-01; v0.9 in progress**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -167,9 +167,9 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **Create Town modal centering + iOS zoom** — **fixed in v0.8 (PR #41)**; overlay uses single `flex items-center justify-center`, no `overflow-y-auto`
 - **Town switcher showing active town in dropdown** — **fixed in v0.8 (PR #41)**
 - **Town switcher dropdown clipped by `overflow-hidden` header** — **fixed in v0.8 (PR #41)**; now uses `position: fixed` anchor
-- **issue #26** — Art tab shows persistent large item name label after clicking an item; low priority, open
+- **issue #26** — Art tab persistent label — **fixed in v0.8.2 (PR #57)**; `setSelected(null)` added to tab-change `useEffect`
 - **issue #31** — Create-town edge case; low priority, open
-- **Sea creatures tab** — ACNH data includes 40 sea creatures but no UI tab exists yet; tracked for v0.9
+- **Sea creatures tab** — **shipped in v0.8.2 (PR #44, Closes #56)**; Sea tab visible for ACNL and ACNH towns
 - **Edit/new-town buttons greyed out on Fish, Bugs, Fossils tabs** — intentional v0.8.1 stopgap. Modals (EditTownModal, CreateTownModal) are mounted in ACCanvas, which sits below the router layout; on museum category tabs the modal renders fine but overlapping scroll context causes visual issues. Buttons show `opacity: 0.4` + tooltip directing users to Home/Search/Recent Donations instead. Proper fix (lift modals to layout level) deferred to v0.9 UI revamp.
 
 ## ACCanvas.tsx
@@ -208,8 +208,18 @@ Do not add new top-level tabs without updating the tab switch and `TabBar` props
   - Detail modal backdrop fix — modal no longer closes immediately on open (PR #43)
   - Modal/switcher fixes: centering, iOS zoom, active-town duplicate, z-index (PR #41)
 
+- v0.8.1-alpha — **shipped 2026-04-30**:
+  - Edit Town modal fix — state lifted to ACCanvas, always-mounted pattern (PR #50, Closes #51)
+  - TownNameFields shared component extracted
+  - Edit/new-town buttons greyed out on museum category tabs (v0.8.1 stopgap, PR #50)
+  - Issue tracking hygiene: bug filing workflow documented, backfilled issues #51–#53
+
+- v0.8.2-alpha — **shipped 2026-05-01**:
+  - Sea Creatures tab for ACNL and ACNH towns (PR #44, Closes #56)
+  - Art tab persistent label fix — `setSelected(null)` on tab change (PR #57, Closes #26)
+  - Branch-label footer suffix for non-main/development/release builds
+
 ### v0.9 — Polish, onboarding, and PWA (next)
-- Sea creatures tab (ACNH data exists, UI not built yet)
 - Seasonal/time-based filtering
 - UI redesign pass; PWA support; mobile-first responsive pass; first-run onboarding
 

@@ -1,4 +1,4 @@
-# Architecture Reference (v0.8)
+# Architecture Reference (v0.8.2)
 
 Key architectural context for Claude Code sessions. See also `docs/v0.7-architecture-proposal.md`.
 
