@@ -141,10 +141,11 @@ export default function ACCanvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.sea_creatures.length, loading, activeTab]);
 
-  // Reset per-tab search query and expanded item when tab changes
+  // Reset per-tab search query, expanded item, and selected detail on tab changes
   useEffect(() => {
     setQuery('');
     setExpandedId(null);
+    setSelected(null);
   }, [activeTab]);
 
   const totalItems = CATEGORY_ORDER.reduce(
