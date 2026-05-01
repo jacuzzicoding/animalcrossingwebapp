@@ -21,7 +21,7 @@ export function GlobalSearchResults({
 }) {
   if (!results) {
     return (
-      <EmptyState message="Type above to search fish, bugs, fossils, and art at once." />
+      <EmptyState message="Type above to search fish, bugs, fossils, art, and sea creatures at once." />
     );
   }
 

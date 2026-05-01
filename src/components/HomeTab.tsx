@@ -4,6 +4,7 @@ import {
   Bug,
   Bone,
   Palette,
+  Waves,
   BarChart2,
   Clock,
   AlertTriangle,
@@ -14,6 +15,7 @@ import type {
   BugItem,
   FossilItem,
   ArtPiece,
+  SeaCreature,
   CategoryId,
 } from '../lib/types';
 import { displayName, formatRelativeDate, type AnyItem } from '../lib/utils';
@@ -38,6 +40,7 @@ const CAT_ICON: Record<CategoryId, ElementType> = {
   bugs: Bug,
   fossils: Bone,
   art: Palette,
+  sea_creatures: Waves,
 };
 
 const CAT_LABEL: Record<CategoryId, string> = {
@@ -45,6 +48,7 @@ const CAT_LABEL: Record<CategoryId, string> = {
   bugs: 'Bugs',
   fossils: 'Fossils',
   art: 'Art',
+  sea_creatures: 'Sea Creatures',
 };
 
 export interface HomeTabProps {
@@ -53,6 +57,7 @@ export interface HomeTabProps {
     bugs: BugItem[];
     fossils: FossilItem[];
     art: ArtPiece[];
+    sea_creatures: SeaCreature[];
   };
   donated: Record<string, boolean>;
   donatedAt: Record<string, string>;
@@ -108,7 +113,9 @@ export default function HomeTab({
 
   const recent = useMemo(() => {
     const nameMap: Record<string, { name: string; category: CategoryId }> = {};
-    (['fish', 'bugs', 'fossils', 'art'] as CategoryId[]).forEach(cat => {
+    (
+      ['fish', 'bugs', 'fossils', 'art', 'sea_creatures'] as CategoryId[]
+    ).forEach(cat => {
       for (const item of data[cat]) {
         nameMap[item.id] = {
           name: displayName(item as AnyItem, cat),
@@ -128,6 +135,7 @@ export default function HomeTab({
     bugs: data.bugs.length,
     fossils: data.fossils.length,
     art: data.art.length,
+    sea_creatures: data.sea_creatures.length,
   };
 
   return (
@@ -220,42 +228,44 @@ export default function HomeTab({
 
       {/* Per-category progress grid */}
       <div className="grid grid-cols-2 gap-3">
-        {(['fish', 'bugs', 'fossils', 'art'] as CategoryId[]).map(cat => {
-          const Icon = CAT_ICON[cat];
-          const done = catCounts[cat];
-          const total = totals[cat];
-          const pct = total ? Math.round((done / total) * 100) : 0;
-          return (
-            <button
-              key={cat}
-              onClick={() => onNavigate(cat)}
-              className="text-left rounded-[14px] border px-4 py-3 transition-colors hover:bg-[#FDF9F1]"
-              style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
-            >
-              <div className="flex items-center gap-2 mb-1.5">
-                <Icon className="w-4 h-4" style={{ color: '#7B5E3B' }} />
-                <div
-                  className="text-sm font-semibold"
-                  style={{ color: '#2A2A2A' }}
-                >
-                  {CAT_LABEL[cat]}
-                </div>
-              </div>
-              <div className="text-xs mb-1.5" style={{ color: '#5a4a35' }}>
-                {done} / {total} donated
-              </div>
-              <div
-                className="h-1.5 w-full rounded-full overflow-hidden"
-                style={{ backgroundColor: '#e9dcc3' }}
+        {(['fish', 'bugs', 'fossils', 'art', 'sea_creatures'] as CategoryId[])
+          .filter(cat => totals[cat] > 0)
+          .map(cat => {
+            const Icon = CAT_ICON[cat];
+            const done = catCounts[cat];
+            const total = totals[cat];
+            const pct = total ? Math.round((done / total) * 100) : 0;
+            return (
+              <button
+                key={cat}
+                onClick={() => onNavigate(cat)}
+                className="text-left rounded-[14px] border px-4 py-3 transition-colors hover:bg-[#FDF9F1]"
+                style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
               >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Icon className="w-4 h-4" style={{ color: '#7B5E3B' }} />
+                  <div
+                    className="text-sm font-semibold"
+                    style={{ color: '#2A2A2A' }}
+                  >
+                    {CAT_LABEL[cat]}
+                  </div>
+                </div>
+                <div className="text-xs mb-1.5" style={{ color: '#5a4a35' }}>
+                  {done} / {total} donated
+                </div>
                 <div
-                  className="h-full transition-all duration-500"
-                  style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
-                />
-              </div>
-            </button>
-          );
-        })}
+                  className="h-1.5 w-full rounded-full overflow-hidden"
+                  style={{ backgroundColor: '#e9dcc3' }}
+                >
+                  <div
+                    className="h-full transition-all duration-500"
+                    style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
+                  />
+                </div>
+              </button>
+            );
+          })}
       </div>
 
       {/* Recent activity */}
