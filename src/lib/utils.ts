@@ -3,10 +3,11 @@ import type {
   BugItem,
   FossilItem,
   ArtPiece,
+  SeaCreature,
   CategoryId,
 } from './types';
 
-export type AnyItem = FishType | BugItem | FossilItem | ArtPiece;
+export type AnyItem = FishType | BugItem | FossilItem | ArtPiece | SeaCreature;
 
 // ─── Type guards ──────────────────────────────────────────────────────────────
 
@@ -20,6 +21,15 @@ export function isFossil(item: AnyItem): item is FossilItem {
 
 export function isArtPiece(item: AnyItem): item is ArtPiece {
   return 'basedOn' in item;
+}
+
+export function isSeaCreature(item: AnyItem): item is SeaCreature {
+  return (
+    !('habitat' in item) &&
+    !('basedOn' in item) &&
+    !('part' in item) &&
+    ('shadow' in item || 'time' in item)
+  );
 }
 
 // ─── Item accessors ───────────────────────────────────────────────────────────
@@ -39,12 +49,13 @@ export function rowSubtitle(
   if (category === 'fish') return (item as FishType).habitat;
   if (category === 'fossils') return null;
   if (category === 'art') return (item as ArtPiece).basedOn;
+  if (category === 'sea_creatures') return (item as SeaCreature).shadow ?? null;
   return null;
 }
 
 export function itemBells(item: AnyItem, category: CategoryId): number | null {
   if (category === 'art') return null;
-  return (item as FishType | BugItem | FossilItem).value ?? null;
+  return (item as FishType | BugItem | FossilItem | SeaCreature).value ?? null;
 }
 
 export function itemMonths(
@@ -53,13 +64,18 @@ export function itemMonths(
   hemisphere?: 'NH' | 'SH'
 ): number[] | undefined {
   if (category === 'fossils' || category === 'art') return undefined;
-  const critter = item as FishType | BugItem;
+  const critter = item as FishType | BugItem | SeaCreature;
   if (hemisphere === 'SH' && critter.months_sh) return critter.months_sh;
   if (critter.months_nh) return critter.months_nh;
   return critter.months;
 }
 
-export function itemNotes(item: AnyItem): string | undefined {
+export function itemNotes(
+  item: AnyItem,
+  category?: CategoryId
+): string | undefined {
+  if (category === 'sea_creatures' || isSeaCreature(item))
+    return (item as SeaCreature).time;
   return isFish(item) ? item.notes : undefined;
 }
 
@@ -116,7 +132,13 @@ export function globalFilter(
   data: Record<CategoryId, AnyItem[]>,
   query: string
 ): Record<CategoryId, AnyItem[]> {
-  const categories: CategoryId[] = ['fish', 'bugs', 'fossils', 'art'];
+  const categories: CategoryId[] = [
+    'fish',
+    'bugs',
+    'fossils',
+    'art',
+    'sea_creatures',
+  ];
   const q = query.trim().toLowerCase();
   const results = {} as Record<CategoryId, AnyItem[]>;
   for (const cat of categories) {

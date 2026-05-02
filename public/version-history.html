@@ -422,22 +422,22 @@
   <header>
     <span class="leaf-deco">🍃</span>
     <h1>Animal Crossing Web App</h1>
-    <p>Version history &amp; roadmap · Updated April 29, 2026</p>
+    <p>Version history &amp; roadmap · Updated May 1, 2026</p>
   </header>
 
   <!-- Velocity banner -->
   <div class="velocity-banner">
     <div>
-      <div class="headline">🚀 v0.1 → v0.8 in 19 days</div>
-      <div class="sub">Nine releases. Blathers can't keep up.</div>
+      <div class="headline">🚀 v0.1 → v0.8.2 in 21 days</div>
+      <div class="sub">Eleven releases. Blathers can't keep up.</div>
     </div>
     <div class="vel-stats">
       <div class="vel-stat">
-        <div class="num">9</div>
+        <div class="num">11</div>
         <div class="label">releases shipped</div>
       </div>
       <div class="vel-stat">
-        <div class="num">19</div>
+        <div class="num">21</div>
         <div class="label">days elapsed</div>
       </div>
       <div class="vel-stat">
@@ -455,6 +455,48 @@
   <section>
     <h2>🏅 Shipped versions</h2>
     <div class="timeline">
+
+      <!-- v0.8.2-alpha -->
+      <div class="tl-entry">
+        <div class="tl-date">May 1<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.8.2-alpha</span>
+            <span class="version-title">Sea Creatures tab + cleanup</span>
+            <span class="velocity-chip">1 day after v0.8.1</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Sea Creatures tab — surfaces 40-species ACNH data (and ACNL) with the same expand-panel UX as Fish and Bugs; tab hidden for other games</li>
+            <li>Sea creatures included in Home tab progress grid, global search, and CSV export</li>
+            <li>Detail modal now resets on tab change — defensive state cleanup (Closes #26)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- v0.8.1-alpha -->
+      <div class="tl-entry">
+        <div class="tl-date">Apr 30<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.8.1-alpha</span>
+            <span class="version-title">Edit Town modal fix + issue hygiene</span>
+            <span class="velocity-chip">1 day after v0.8.0</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Edit Town modal no longer dismisses immediately on open — state lifted to ACCanvas, always-mounted pattern</li>
+            <li>Edit/new-town buttons greyed out on museum category tabs (stopgap until v0.9 layout revamp)</li>
+            <li>Bug filing workflow documented; backfilled issues #51–#53</li>
+          </ul>
+        </div>
+      </div>
 
       <!-- v0.8.0-alpha -->
       <div class="tl-entry">
@@ -676,12 +718,16 @@
         <span class="building-note">making it feel at home</span>
       </div>
 
+      <p class="checklist-section">✅ Recently shipped (v0.8.2)</p>
+      <div class="checklist">
+        <div class="check-item done">
+          <div class="box">✓</div>
+          <span class="text">Sea creatures tab — ACNH + ACNL, inline expand panel, Home tab cards, search, CSV</span>
+        </div>
+      </div>
+
       <p class="checklist-section">⬜ Planned</p>
       <div class="checklist">
-        <div class="check-item todo">
-          <div class="box">·</div>
-          <span class="text">Sea creatures tab — data exists for ACNH, UI not built yet</span>
-        </div>
         <div class="check-item todo">
           <div class="box">·</div>
           <span class="text">UI redesign pass — cozy-er, more expressive</span>
@@ -721,7 +767,6 @@
           <span class="lane-title">Polish &amp; PWA</span>
         </div>
         <ul class="lane-items">
-          <li>Sea creatures tab for ACNH towns</li>
           <li>UI redesign pass — cozy-er, more expressive</li>
           <li>PWA support — install to home screen</li>
           <li>Mobile-first responsive layout</li>
@@ -829,13 +874,25 @@
             <td style="padding:.6rem 1rem;">12 days</td>
             <td style="padding:.6rem 1rem;">Full game coverage — ACNL + ACNH, 1,000+ items, inline details, React Router</td>
           </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.8.1-alpha</td>
+            <td style="padding:.6rem 1rem;">Apr 30</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Edit Town modal fix + issue tracking hygiene</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.8.2-alpha</td>
+            <td style="padding:.6rem 1rem;">May 1</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Sea Creatures tab (ACNH + ACNL)</td>
+          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <footer>
-    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9 in progress · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.8.2-alpha shipped · v0.9 in progress · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
   </footer>
 
 </div>

@@ -4,13 +4,21 @@ import {
   rowSubtitle,
   itemBells,
   itemMonths,
+  isSeaCreature,
   formatTimestamp,
   formatRelativeDate,
   filterByQuery,
   globalFilter,
 } from './utils';
 import type { AnyItem } from './utils';
-import type { Fish, BugItem, FossilItem, ArtPiece, CategoryId } from './types';
+import type {
+  Fish,
+  BugItem,
+  FossilItem,
+  ArtPiece,
+  SeaCreature,
+  CategoryId,
+} from './types';
 
 // ─── Sample fixtures ──────────────────────────────────────────────────────────
 
@@ -234,6 +242,45 @@ describe('filterByQuery', () => {
   });
 });
 
+// ─── isSeaCreature ────────────────────────────────────────────────────────────
+
+describe('isSeaCreature', () => {
+  const seaCreature: SeaCreature = {
+    id: 'sc-001',
+    name: 'Sea Star',
+    value: 500,
+    shadow: 'medium',
+    time: 'all day',
+    months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  };
+
+  it('returns true for a sea creature with shadow', () => {
+    expect(isSeaCreature(seaCreature)).toBe(true);
+  });
+
+  it('returns true for a sea creature with time but no shadow', () => {
+    const minimal: SeaCreature = {
+      id: 'sc-002',
+      name: 'Octopus',
+      value: 1200,
+      time: 'all day',
+    };
+    expect(isSeaCreature(minimal)).toBe(true);
+  });
+
+  it('returns false for fish (has habitat)', () => {
+    expect(isSeaCreature(fishItem)).toBe(false);
+  });
+
+  it('returns false for an art piece', () => {
+    expect(isSeaCreature(artItem)).toBe(false);
+  });
+
+  it('returns false for a fossil', () => {
+    expect(isSeaCreature(fossilWithPart)).toBe(false);
+  });
+});
+
 // ─── globalFilter ─────────────────────────────────────────────────────────────
 
 describe('globalFilter', () => {
@@ -242,15 +289,25 @@ describe('globalFilter', () => {
     bugs: [{ id: 'b1', name: 'Dace Beetle', value: 100, months: [6] }],
     fossils: [{ id: 'fo1', name: 'Dace Fossil', value: 500 }],
     art: [{ id: 'a1', name: 'Fake Painting', basedOn: 'The Last Supper' }],
+    sea_creatures: [
+      {
+        id: 'sc1',
+        name: 'Dace Slug',
+        value: 600,
+        shadow: 'small',
+        time: 'all day',
+      },
+    ],
   };
 
   it('returns matches across all categories for a shared query term', () => {
     const results = globalFilter(data, 'Dace');
-    // fish: Dace; bugs: Dace Beetle; fossils: Dace Fossil; art: 0
+    // fish: Dace; bugs: Dace Beetle; fossils: Dace Fossil; art: 0; sea_creatures: Dace Slug
     expect(results.fish).toHaveLength(1);
     expect(results.bugs).toHaveLength(1);
     expect(results.fossils).toHaveLength(1);
     expect(results.art).toHaveLength(0);
+    expect(results.sea_creatures).toHaveLength(1);
   });
 
   it('returns all items per category when query is empty', () => {

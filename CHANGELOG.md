@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here.
 
+## [v0.8.2-alpha] — 2026-05-01
+
+### Added
+- **Sea Creatures tab** (PR #44, Closes #56) — surfaces the 40-species sea creature data that shipped in v0.8.0 (PRs #34/#35). Tab appears in the TabBar for ACNL and ACNH towns only; hidden for all other games. Switching to a non-sea-creature game while on the Sea tab redirects to Home.
+  - Sea creatures reuse the `CollectibleRow` + `ItemExpandPanel` path: month availability grid and sell value shown in the expand panel
+  - Donation toggles persist to the 3-level store schema; donations carry through CSV export
+  - Home tab progress grid includes a Sea Creatures card for ACNL/ACNH towns
+  - Global search includes sea creatures
+  - `SeaCreature` interface, `isSeaCreature` type guard, updated `AnyItem` union, `CategoryId`, `AllData`, `CATEGORY_ORDER`, `globalFilter`, `useCategoryStats`, and `csvExport` all extended
+  - Tab label shortened to "Sea" in the TabBar to fit the narrow tab strip
+- Branch-label footer suffix in the version display (`v0.8.2-alpha · feature/...`) — auto-hidden on `main`, `development`, and `release/` branches
+
+### Cleanup
+- **Detail modal now resets on tab change** (PR #57, Closes #26) — `setSelected(null)` added to the tab-change `useEffect` so an open art detail doesn't linger across tab switches. The original #26 repro (persistent label on the art tab) appears to have been resolved by the v0.8.0 backdrop fix (PR #43); this PR closes the issue since the reported symptom is no longer reproducible.
+
 ## [v0.8.1-alpha] — 2026-04-30
 
 ### Added

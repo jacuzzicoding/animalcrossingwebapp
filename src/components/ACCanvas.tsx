@@ -42,6 +42,7 @@ const VALID_TABS: ViewId[] = [
   'bugs',
   'fossils',
   'art',
+  'sea_creatures',
   'activity',
   'search',
   'analytics',
@@ -128,10 +129,23 @@ export default function ACCanvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.art.length, loading, activeTab]);
 
-  // Reset per-tab search query and expanded item when tab changes
+  // If the user was on the sea_creatures tab and switches to a game without sea creatures, go home.
+  useEffect(() => {
+    if (
+      activeTab === 'sea_creatures' &&
+      data.sea_creatures.length === 0 &&
+      !loading
+    ) {
+      handleTabChange('home');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.sea_creatures.length, loading, activeTab]);
+
+  // Reset per-tab search query, expanded item, and selected detail on tab changes
   useEffect(() => {
     setQuery('');
     setExpandedId(null);
+    setSelected(null);
   }, [activeTab]);
 
   const totalItems = CATEGORY_ORDER.reduce(

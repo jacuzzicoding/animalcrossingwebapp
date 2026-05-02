@@ -4,6 +4,36 @@ Reverse-chronological record of significant design and scope decisions. Newest f
 
 ---
 
+## 2026-05-01 — Shadow size not surfaced in any UI — defer to v0.9 (Issue #59)
+
+**Decision:** Defer adding shadow size display to v0.9. Do not add it to v0.8.2.
+
+**Why:** During v0.8.2 release testing, Bea flagged that shadow size is absent from the UI. Investigation confirmed: `shadow` is present in the data (fish + sea creatures JSON) and in the `SeaCreature` type, but neither `CollectibleRow` nor `ItemExpandPanel` renders it. Adding the chip would be a net-new feature, not a bug fix — wrong scope for a release already in testing. Tracked as Issue #59.
+
+**Relevant files:** `src/components/ItemExpandPanel.tsx` (add shadow chip here alongside habitat), `src/lib/types.ts` (add `shadow` field to `Fish` interface), `src/lib/utils.ts` (`rowSubtitle` returns `shadow` for sea_creatures but CollectibleRow never renders it for that category).
+
+**Reversibility:** Straightforward addition in v0.9 — Issue #59 has the full implementation plan.
+
+---
+
+## 2026-05-01 — Issue #26 (art tab label) closed as cleanup, not a new fix
+
+**Decision:** Close Issue #26 via PR #57 with a "cleanup" framing rather than claiming a new fix.
+
+**Why:** During release testing, Bea couldn't reproduce the original #26 bug in v0.8.0 either, confirming the root repro was already fixed by PR #43's backdrop ghost-click fix (v0.8.0). PR #57 adds `setSelected(null)` to the tab-change `useEffect` as defensive state hygiene — it prevents an open art detail from lingering across tab switches — but it doesn't fix the originally reported symptom. Claiming "Fixed" would be misleading. The issue is closed because the symptom is gone, not because we fixed the described repro.
+
+---
+
+## 2026-05-01 — Ship Sea Creatures tab UI in v0.8.2 (supersedes 2026-04-23 deferral)
+
+**Decision:** Ship the Sea Creatures tab in v0.8.2-alpha, not v0.9.
+
+**Why:** v0.8.2 is a small incremental release explicitly scoped to deferred v0.8 work. The `feature/sea-creatures-tab` branch had a complete working implementation; the only work needed was conflict resolution against the v0.8.1 state (ItemExpandPanel, EditTownModal). With Bea working remotely and v0.9 gated on design collaboration, shipping sea creatures now was the right call — it's contained, well-tested, and the data has been live since v0.8.0.
+
+**Supersedes:** 2026-04-23 entry below.
+
+---
+
 ## 2026-04-30 — Grey out edit/new-town buttons on museum category tabs
 
 **Decision:** Grey out (disable, not hide) the edit (pencil) and new-town (+) buttons in `TownSwitcher` when the active tab is a museum category tab (Fish, Bugs, Fossils, Art, Sea Creatures).
@@ -20,7 +50,7 @@ Reverse-chronological record of significant design and scope decisions. Newest f
 
 ---
 
-## 2026-04-23 — Ship Sea Creatures data without the UI tab in v0.8
+## 2026-04-23 — Ship Sea Creatures data without the UI tab in v0.8 *(superseded — tab shipped in v0.8.2, see 2026-05-01)*
 
 **Decision:** Include Sea Creatures item data (40 ACNH entries, 35 ACNL entries) in the v0.8 release but hold the Sea Creatures tab UI for v0.9.
 
@@ -30,6 +60,6 @@ Reverse-chronological record of significant design and scope decisions. Newest f
 - **(a) Ship full Sea Creatures (data + UI tab) in v0.8** — deferred; would have pushed the release date and added risk to a version already touching React Router, hemispheres, and two new game datasets.
 - **(b) Omit Sea Creatures data entirely from v0.8** — rejected; the data ships as inert JSON with no downside, and having it in the repo lets the tab UI be built and tested against real data in v0.9.
 
-**Implementation:** Data shipped via PRs #34 (ACNL) and #35 (ACNH). UI work lives on `origin/feature/sea-creatures-tab` (open as of 2026-04-30) — that branch is the starting point for v0.9 pickup.
+**Implementation:** Data shipped via PRs #34 (ACNL) and #35 (ACNH). UI shipped in v0.8.2 via PR #44 (Closes #56).
 
-**Reversibility:** Pickup in v0.9 — `origin/feature/sea-creatures-tab` already has a working prototype; merge it when v0.9 work begins.
+**Reversibility:** N/A — shipped.
