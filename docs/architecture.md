@@ -36,17 +36,25 @@ donatedAt[townId][gameId][itemId] = ISO timestamp
 
 ## ACCanvas.tsx
 
-- **405 lines** — orchestration shell after the v0.7 decomposition; mounts the active tab view, wires modals, and handles global search
-- All data fetching, filtering, and sub-component logic lives in dedicated hooks and components
-- Do not add new top-level tabs without updating the tab switch and `TabBar` props
+- Orchestration shell; mounts the active tab view, wires modals, and handles global search
+- Do not add new top-level tabs without updating `VALID_TABS`, the tab-switch render, and `TabBar` props
+
+## Categories
+
+`CategoryId = 'fish' | 'bugs' | 'fossils' | 'art' | 'sea_creatures'` (added v0.8.2)
+
+`CATEGORY_ORDER` and `AllData` both include `sea_creatures`. Sea creatures are loaded for ACNL and ACNH only (`GAMES_WITH_SEA_CREATURES` set in `categoryMeta.ts`); the tab is hidden for other games via data-length check.
 
 ## Data Files
 
 Museum data lives in `public/data/<gameId>/`:
 - `public/data/acgcn/` — Animal Crossing GCN (40 fish, 40 bugs, 25 fossils, 13 art)
 - `public/data/acww/` — Animal Crossing Wild World (56 fish, 56 bugs, 52 fossils) — added v0.7
+- `public/data/accf/` — City Folk (40 fish, 40 bugs, 52 fossils) — added v0.7
+- `public/data/acnl/` — New Leaf (fish, bugs, fossils, art, sea creatures) — added v0.8
+- `public/data/acnh/` — New Horizons (81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures; NH/SH months) — added v0.8
 
-Item IDs are shared across games where species overlap (e.g. `sea-bass` is the same ID in GCN and WW). The store scopes by `gameId`, so this is safe.
+Item IDs are shared across games where species overlap. The store scopes by `gameId`, so this is safe.
 
 ## Multi-Game Types
 

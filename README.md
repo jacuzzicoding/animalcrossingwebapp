@@ -8,7 +8,7 @@ A cozy companion web app for tracking Animal Crossing museum donations across mu
 
 ## Features
 
-- Track donations for all museum categories: Fish, Bugs, Fossils, and Art
+- Track donations for all museum categories: Fish, Bugs, Fossils, Art, and Sea Creatures
 - Manage multiple towns — create, switch, and rename them at any time
 - **Five games supported:** Animal Crossing (GCN), Wild World, City Folk, New Leaf, New Horizons
 - **Item inline expand** — tap a Fish, Bug, or Fossil row to expand it in-place: month availability grid, sell value, habitat, and donate/undonate button (powered by `ItemExpandPanel`)
@@ -59,7 +59,7 @@ Museum data lives in `public/data/<game>/`:
 - `public/data/acnl/` — New Leaf: fish, bugs, fossils
 - `public/data/acnh/` — New Horizons: 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures (NH/SH month availability)
 
-> Sea creatures data is loaded for New Horizons but a dedicated Sea Creatures tab is not yet implemented — tracked for v0.9.
+> Sea creatures are fully supported for New Horizons and New Leaf — a dedicated Sea tab appears in the TabBar for those games (shipped in v0.8.2).
 
 ---
 
