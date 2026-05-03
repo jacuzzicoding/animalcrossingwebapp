@@ -59,12 +59,12 @@ Museum data lives in `public/data/<game>/`:
 - `public/data/acnl/` — New Leaf: fish, bugs, fossils
 - `public/data/acnh/` — New Horizons: 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures (NH/SH month availability)
 
-> Sea creatures are fully supported for New Horizons and New Leaf — a dedicated Sea tab appears in the TabBar for those games (shipped in v0.8.2).
+> Sea creatures are fully supported for New Horizons and New Leaf — a dedicated Sea entry appears in the sidebar nav for those games (shipped in v0.8.2).
 
 ---
 
 ## Version
 
-Current release: **v0.8.2-alpha** — see [CHANGELOG.md](CHANGELOG.md) for history.
+Current release: **v0.8.2-alpha** (last stable). Active development: **v0.9.0-beta** — see [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the in-progress plan.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).
