@@ -31,6 +31,19 @@ All notable changes to this project are documented here.
 - Hemisphere toggle relocated to the sidebar town card to avoid regressing the v0.8 functionality that lived in `MuseumHeader`. Phase 4 moves it into `TownManager`.
 - Brand wordmark uses **"Museum Tracker"** (matching the prior MuseumHeader) — not "Curator", per the codename note in `docs/v0.9-plan.md` (no user-facing copy says "Curator").
 
+### Added — Phase 3: settings page
+- **`SettingsPage` component** (`src/components/SettingsPage.tsx`) — full-page settings route with two sections: **About** (version, source link, live storage summary, credits) and **Danger zone** (reset donations for active town, reset everything). No Appearance section per locked decision #3.
+- **`SettingsRoute` wrapper** (`src/components/SettingsRoute.tsx`) — renders the Sidebar + SettingsPage in the same shell layout as `ACCanvas`, so the sidebar (active town, nav, footer) stays in place when at `/settings`.
+- **`/settings` route** added to `App.tsx`. Sidebar Settings link now navigates to it; Esc and the close button navigate back to `/town/:id/home` (or `/` if there's no active town).
+- **Store reset actions** in `src/lib/store.ts`: `resetActiveTownDonations()` clears `donated` and `donatedAt` for the active town only; `resetAll()` empties towns + donations + clears `ac-curator-search-history` from localStorage. Both are gated behind native `confirm()` per locked decision #7.
+- **Settings page styles** in `src/index.css` (`.ac-settings`, `.ac-settings-head`, `.ac-settings-eyebrow`, `.ac-settings-title`, `.ac-settings-close`, `.ac-settings-section`, `.ac-settings-card`, `.ac-about-list`, `.ac-settings-danger`, `.ac-danger-row`, `.ac-danger-btn`, `.ac-danger-btn-strong`, `ac-fade-up` keyframe). Responsive collapse at ≤700px (title 56→40px, About list single-column, Danger rows stack with full-width buttons).
+
+### Decisions — Phase 3
+- **No Appearance section** — locked decision #3. Meadow is the only theme in v0.9, so a one-card theme switcher would feel hollow. Brought back when there are real alternatives.
+- **Eyebrow text on Settings header** is "Museum Tracker" rather than "Curator" — matches the brand-wordmark decision from Phase 2 (the codename note in `docs/v0.9-plan.md`).
+- **Reset donations is disabled** when there's no active town, instead of being hidden — keeps the Danger zone shape stable across states.
+- **Settings is a top-level route** (`/settings`) rather than nested under `/town/:townId/settings`. The settings page is a property of the app, not the town — and a user mid-reset-everything wouldn't have an active town to nest under.
+
 ## [v0.8.2-alpha] — 2026-05-01
 
 ### Added

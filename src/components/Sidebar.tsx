@@ -223,7 +223,7 @@ export function Sidebar({
         <button
           className="ac-foot-link"
           onClick={() => navigate('/settings')}
-          title="Settings (coming in Phase 3)"
+          title="Settings"
         >
           Settings
         </button>

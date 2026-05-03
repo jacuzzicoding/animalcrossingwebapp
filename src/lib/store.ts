@@ -31,6 +31,8 @@ interface AppState {
   isDonated: (itemId: string) => boolean;
   getDonatedAt: (itemId: string) => string | undefined;
   getActiveTown: () => Town | undefined;
+  resetActiveTownDonations: () => void;
+  resetAll: () => void;
 }
 
 function generateId(): string {
@@ -142,6 +144,31 @@ export const useAppStore = create<AppState>()(
       getActiveTown: () => {
         const { towns, activeTownId } = get();
         return towns.find(t => t.id === activeTownId);
+      },
+
+      resetActiveTownDonations: () =>
+        set(state => {
+          const { activeTownId } = state;
+          if (!activeTownId) return state;
+          const donated = { ...state.donated };
+          const donatedAt = { ...state.donatedAt };
+          delete donated[activeTownId];
+          delete donatedAt[activeTownId];
+          return { donated, donatedAt };
+        }),
+
+      resetAll: () => {
+        try {
+          localStorage.removeItem('ac-curator-search-history');
+        } catch {
+          // ignore — localStorage may be unavailable (SSR / privacy mode)
+        }
+        set({
+          towns: [],
+          activeTownId: null,
+          donated: {},
+          donatedAt: {},
+        });
       },
     }),
     {
