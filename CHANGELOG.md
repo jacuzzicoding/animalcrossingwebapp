@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased] — v0.9.0-beta (in progress)
+
+### Added — Phase 1: tokens + fonts
+- **Meadow design tokens** — full palette added to `src/index.css` `@theme` block as CSS custom properties (`--bg`, `--surface`, `--surface-alt`, `--ink`, `--ink-soft`, `--ink-muted`, `--border`, `--border-strong`, `--accent`, `--accent-soft`, `--accent-ink`, `--warn`, `--warn-soft`, `--chip-fish`, `--chip-bugs`, `--chip-fossils`, `--chip-art`, `--chip-sea`). Mirrored in `src/lib/colors.ts` as the new `meadow` export.
+- **Fraunces** (variable, opsz 9..144, weights 400/500/600 + italic 400/500) and **Inter** (400/500/600/700) loaded via Google Fonts in `index.html` and `src/index.css`. Registered as `--font-display` and `--font-sans` in `@theme`. New `fontStacks` export in `src/lib/colors.ts`.
+
+### Removed — Phase 1
+- **Varela Round** — fully retired. `@import` removed from `src/index.css`, `index.html`, and `public/version-history.html`. Inline `fontFamily: 'Varela Round, ...'` reference in `src/App.tsx` loading state replaced with Inter. Per locked decision #2 in `docs/v0.9-plan.md`, Fraunces + Inter is the sole type stack.
+
+### Notes
+- This phase is plumbing only. No components consume the new tokens yet; visual output is intentionally near-identical to v0.8.2-alpha. Component restyles begin in Phase 5.
+- **Parchment, Midnight, and Sakura themes are intentionally excluded** per locked decision #2 in `docs/v0.9-plan.md` ("ship Meadow only"). The legacy `colors` export in `src/lib/colors.ts` is kept untouched until later phases retire its consumers.
+
 ## [v0.8.2-alpha] — 2026-05-01
 
 ### Added
