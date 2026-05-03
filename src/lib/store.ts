@@ -8,10 +8,14 @@ export type Hemisphere = 'NH' | 'SH';
 export interface Town {
   id: string;
   name: string;
-  playerName: string;
   gameId: GameId;
   hemisphere: Hemisphere;
   createdAt: string;
+}
+
+export interface TownPatch {
+  name?: string;
+  hemisphere?: Hemisphere | null;
 }
 
 interface AppState {
@@ -22,8 +26,8 @@ interface AppState {
   // donatedAt[townId][gameId][itemId] = ISO string
   donatedAt: Record<string, Record<string, Record<string, string>>>;
 
-  createTown: (name: string, playerName: string, gameId?: GameId) => Town;
-  updateTown: (id: string, name: string, playerName: string) => void;
+  createTown: (name: string, gameId: GameId, hemisphere?: Hemisphere) => Town;
+  updateTown: (id: string, patch: TownPatch) => void;
   setTownHemisphere: (id: string, hemisphere: Hemisphere) => void;
   setActiveTown: (id: string) => void;
   deleteTown: (id: string) => void;
@@ -47,13 +51,12 @@ export const useAppStore = create<AppState>()(
       donated: {},
       donatedAt: {},
 
-      createTown: (name, playerName, gameId = 'ACGCN') => {
+      createTown: (name, gameId, hemisphere = 'NH') => {
         const town: Town = {
           id: generateId(),
           name,
-          playerName,
           gameId,
-          hemisphere: 'NH',
+          hemisphere,
           createdAt: new Date().toISOString(),
         };
         set(state => ({
@@ -63,11 +66,17 @@ export const useAppStore = create<AppState>()(
         return town;
       },
 
-      updateTown: (id, name, playerName) =>
+      updateTown: (id, patch) =>
         set(state => ({
-          towns: state.towns.map(t =>
-            t.id === id ? { ...t, name, playerName } : t
-          ),
+          towns: state.towns.map(t => {
+            if (t.id !== id) return t;
+            const next: Town = { ...t };
+            if (patch.name !== undefined) next.name = patch.name;
+            if (patch.hemisphere !== undefined && patch.hemisphere !== null) {
+              next.hemisphere = patch.hemisphere;
+            }
+            return next;
+          }),
         })),
 
       setTownHemisphere: (id, hemisphere) =>

@@ -1,10 +1,13 @@
+import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import ACCanvas from './components/ACCanvas';
 import SettingsRoute from './components/SettingsRoute';
+import { TownManager } from './components/TownManager';
 import { useHydration } from './hooks/useHydration';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAppStore } from './lib/store';
+import { useUIStore } from './lib/uiStore';
 
 function RootRedirect() {
   const towns = useAppStore(s => s.towns);
@@ -20,6 +23,16 @@ function RootRedirect() {
 
 function App() {
   const hydrated = useHydration();
+  const towns = useAppStore(s => s.towns);
+  const openTownManager = useUIStore(s => s.openTownManager);
+  const townManagerOpen = useUIStore(s => s.townManagerOpen);
+
+  // Force the TownManager open in create mode whenever there are no towns.
+  useEffect(() => {
+    if (hydrated && towns.length === 0 && !townManagerOpen) {
+      openTownManager(true);
+    }
+  }, [hydrated, towns.length, townManagerOpen, openTownManager]);
 
   if (!hydrated) {
     return (
@@ -54,6 +67,7 @@ function App() {
         <Route path="/town/:townId/:tab" element={<ACCanvas />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <TownManager />
       <Analytics />
       {typeof window !== 'undefined' && (
         <div

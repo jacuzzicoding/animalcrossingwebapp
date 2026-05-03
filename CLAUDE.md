@@ -39,7 +39,7 @@ npm install       # Install dependencies
 **Tests:** Vitest  
 **Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7); `Town` includes `hemisphere: 'NH' | 'SH'` (as of v0.8)  
 **Migration:** Zustand persist v3 + `bootstrapMigration.ts` — zero data loss for existing users  
-**Modal pattern:** `CreateTownModal` and `EditTownModal` use always-mounted `isOpen` prop pattern; overlay is a single `flex items-center justify-center` wrapper — no `overflow-y-auto`  
+**Town CRUD (v0.9 Phase 4):** `TownManager` drawer mounts at the App layout level (above the router), opened via `useUIStore.openTownManager()`. Replaces `CreateTownModal`, `EditTownModal`, and the `TownSwitcher` dropdown. When `towns.length === 0`, App.tsx auto-opens it in `forceCreate` mode (no close/Esc/scrim dismissal). Per Decision 1, edit form has no game `<select>` — game is read-only post-create.  
 **Shell layout (v0.9 Phase 2):** `Sidebar` (280px left, sticky) + `<main className="ac-main">` in CSS grid `280px 1fr`, max-width 1440px centered. Below 980px sidebar stacks above main. `MuseumHeader`, `TabBar`, `TownSwitcher` retired — nav lives in the sidebar.
 
 ### File Structure
@@ -69,9 +69,8 @@ src/
       MonthGrid.tsx         # 12-cell month availability grid
       SearchBar.tsx         # Per-tab inline search input
     modals/
-      CreateTownModal.tsx   # New town form with game selector
-      EditTownModal.tsx     # Rename town form (gameId immutable)
       DetailModal.tsx       # Item detail sheet
+    TownManager.tsx         # Right-side drawer for switch/edit/create/delete towns (v0.9 Phase 4)
     views/
       AnalyticsView.tsx     # Charts + stats tab content
       ActivityFeed.tsx      # Recent donations list
@@ -170,7 +169,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **issue #26** — Art tab persistent label — **fixed in v0.8.2 (PR #57)**; `setSelected(null)` added to tab-change `useEffect`
 - **issue #31** — Create-town edge case; low priority, open
 - **Sea creatures tab** — **shipped in v0.8.2 (PR #44, Closes #56)**; Sea tab visible for ACNL and ACNH towns
-- **Edit/new-town buttons greyed out on Fish, Bugs, Fossils tabs** — intentional v0.8.1 stopgap. Modals (EditTownModal, CreateTownModal) are mounted in ACCanvas, which sits below the router layout; on museum category tabs the modal renders fine but overlapping scroll context causes visual issues. Buttons show `opacity: 0.4` + tooltip directing users to Home/Search/Recent Donations instead. Proper fix (lift modals to layout level) deferred to v0.9 UI revamp.
+- **Edit/new-town buttons greyed out on Fish, Bugs, Fossils tabs** — **resolved in v0.9 Phase 4**. The `TownManager` drawer mounts at the App layout level and renders correctly on every route, so the overflow/z-index issues that motivated the stopgap no longer apply.
 
 ## ACCanvas.tsx
 

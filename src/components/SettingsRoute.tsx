@@ -1,9 +1,6 @@
-import { useState } from 'react';
 import { useAppStore } from '../lib/store';
 import { Sidebar } from './Sidebar';
 import { SettingsPage } from './SettingsPage';
-import { CreateTownModal } from './modals/CreateTownModal';
-import { EditTownModal } from './modals/EditTownModal';
 import { useMuseumData } from '../hooks/useMuseumData';
 import { useCategoryStats } from '../hooks/useCategoryStats';
 import { downloadCSV } from '../lib/csvExport';
@@ -30,21 +27,12 @@ export default function SettingsRoute() {
     return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
   });
 
-  const [showCreateTown, setShowCreateTown] = useState(false);
-  const [showEditTown, setShowEditTown] = useState(false);
-
   const { data } = useMuseumData(activeTown?.gameId ?? 'ACGCN');
   const catCounts = useCategoryStats(data, activeTownDonated);
 
   function handleExport() {
     if (!activeTown) return;
-    downloadCSV(
-      data,
-      activeTownDonated,
-      activeTownDonatedAt,
-      activeTown.name,
-      activeTown.playerName
-    );
+    downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name);
   }
 
   return (
@@ -54,25 +42,12 @@ export default function SettingsRoute() {
           townId={activeTownId}
           data={data}
           catCounts={catCounts}
-          onOpenCreateTown={() => setShowCreateTown(true)}
-          onOpenEditTown={() => setShowEditTown(true)}
           onExport={handleExport}
         />
       )}
       <main className="ac-main">
         <SettingsPage />
       </main>
-
-      <CreateTownModal
-        isOpen={showCreateTown}
-        required={false}
-        onClose={() => setShowCreateTown(false)}
-      />
-      <EditTownModal
-        isOpen={showEditTown}
-        town={activeTown ?? null}
-        onClose={() => setShowEditTown(false)}
-      />
     </div>
   );
 }
