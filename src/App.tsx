@@ -34,7 +34,7 @@ function App() {
         <span
           style={{
             color: '#7B5E3B',
-            fontFamily: 'Varela Round, sans-serif',
+            fontFamily: "'Inter', system-ui, sans-serif",
             fontSize: 18,
           }}
         >

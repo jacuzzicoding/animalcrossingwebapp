@@ -1,7 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+  --color-bg: #F4EFE3;
+  --color-surface: #FFFDF7;
+  --color-surface-alt: #F8F2E2;
+  --color-ink: #23241F;
+  --color-ink-soft: #5C5848;
+  --color-ink-muted: #8A8470;
+  --color-border: #E2D9C3;
+  --color-border-strong: #CFC4A8;
+  --color-accent: oklch(0.55 0.09 150);
+  --color-accent-soft: oklch(0.55 0.09 150 / 0.12);
+  --color-accent-ink: oklch(0.32 0.06 150);
+  --color-warn: oklch(0.62 0.12 50);
+  --color-warn-soft: oklch(0.62 0.12 50 / 0.14);
+  --color-chip-fish: oklch(0.62 0.08 230);
+  --color-chip-bugs: oklch(0.6 0.1 130);
+  --color-chip-fossils: oklch(0.55 0.06 60);
+  --color-chip-art: oklch(0.58 0.08 320);
+  --color-chip-sea: oklch(0.58 0.09 200);
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+:root {
+  --bg: #F4EFE3;
+  --surface: #FFFDF7;
+  --surface-alt: #F8F2E2;
+  --ink: #23241F;
+  --ink-soft: #5C5848;
+  --ink-muted: #8A8470;
+  --border: #E2D9C3;
+  --border-strong: #CFC4A8;
+  --accent: oklch(0.55 0.09 150);
+  --accent-soft: oklch(0.55 0.09 150 / 0.12);
+  --accent-ink: oklch(0.32 0.06 150);
+  --warn: oklch(0.62 0.12 50);
+  --warn-soft: oklch(0.62 0.12 50 / 0.14);
+  --chip-fish: oklch(0.62 0.08 230);
+  --chip-bugs: oklch(0.6 0.1 130);
+  --chip-fossils: oklch(0.55 0.06 60);
+  --chip-art: oklch(0.58 0.08 320);
+  --chip-sea: oklch(0.58 0.09 200);
+}
+
 * {
-  font-family: 'Varela Round', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }
