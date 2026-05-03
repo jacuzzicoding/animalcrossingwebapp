@@ -126,7 +126,11 @@ export function CollectibleRow({
           <div className="ac-row-name">
             <span>{name}</span>
             {checked && (
-              <span className="ac-row-checkmark" aria-label="donated">
+              <span
+                className="ac-row-checkmark"
+                role="img"
+                aria-label="donated"
+              >
                 ●
               </span>
             )}
