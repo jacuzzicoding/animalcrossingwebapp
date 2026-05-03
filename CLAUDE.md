@@ -40,7 +40,7 @@ npm install       # Install dependencies
 **Store schema:** 3-level `donated[townId][gameId][itemId]` (as of v0.7); `Town` includes `hemisphere: 'NH' | 'SH'` (as of v0.8)  
 **Migration:** Zustand persist v3 + `bootstrapMigration.ts` — zero data loss for existing users  
 **Modal pattern:** `CreateTownModal` and `EditTownModal` use always-mounted `isOpen` prop pattern; overlay is a single `flex items-center justify-center` wrapper — no `overflow-y-auto`  
-**TownSwitcher dropdown:** `position: fixed` with `getBoundingClientRect()` anchor to escape `overflow-hidden` header; z-index: dismiss overlay `z-40`, dropdown panel `z-50`, action buttons row `relative z-20`; active town filtered out of list
+**Shell layout (v0.9 Phase 2):** `Sidebar` (280px left, sticky) + `<main className="ac-main">` in CSS grid `280px 1fr`, max-width 1440px centered. Below 980px sidebar stacks above main. `MuseumHeader`, `TabBar`, `TownSwitcher` retired — nav lives in the sidebar.
 
 ### File Structure
 
@@ -55,9 +55,7 @@ src/
                             # progress cards, recent activity
     CollectibleRow.tsx      # Single item row with donate toggle; shows chevron + rounded-top when expanded
     ItemExpandPanel.tsx     # Inline accordion panel shown below CollectibleRow for fish/bugs/fossils
-    MuseumHeader.tsx        # Header bar + TownSwitcher dropdown
-    TabBar.tsx              # Tab navigation strip
-    TownSwitcher.tsx        # Town dropdown with game badge per town
+    Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
     ErrorBanner.tsx         # Dismissible inline error notification
     ErrorBoundary.tsx       # Top-level React error boundary; crashes render ErrorState
     ErrorState.tsx          # Full-page error fallback UI
@@ -177,7 +175,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 `src/components/ACCanvas.tsx` was decomposed in v0.7 and is now ~298 lines (orchestration shell only).
 It mounts the active tab view, wires modals, and handles global search. All data fetching,
 filtering, and sub-component logic lives in dedicated hooks and components.
-Do not add new top-level tabs without updating the tab switch and `TabBar` props.
+Do not add new top-level tabs without updating the tab switch in ACCanvas and the nav list in `Sidebar`.
 
 ## Roadmap
 
