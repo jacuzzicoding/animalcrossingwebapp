@@ -601,6 +601,13 @@
 }
 
 /* ── Phase 5: Item rows + expand panel ── */
+.ac-list {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
 .ac-row { border-bottom: 1px solid var(--border); }
 .ac-row:last-child { border-bottom: none; }
 
@@ -621,6 +628,11 @@
   cursor: pointer;
 }
 .ac-row-main:hover { background: var(--surface-alt); }
+.ac-row-main:focus { outline: none; }
+.ac-row-main:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
 .ac-row-expanded > .ac-row-main { background: var(--surface-alt); }
 .ac-row-donated .ac-row-name { color: var(--ink-muted); }
 .ac-row-donated .ac-row-name span:first-child {
@@ -695,8 +707,9 @@
   gap: 28px;
   padding: 4px 18px 22px 64px;
   background: var(--surface-alt);
-  border-top: 1px solid var(--border);
 }
+.ac-expand-no-months { grid-template-columns: 1fr; }
+.ac-expand-section { min-width: 0; }
 .ac-expand-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
   color: var(--ink-muted); margin-bottom: 10px; margin-top: 14px;

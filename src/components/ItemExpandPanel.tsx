@@ -34,12 +34,14 @@ export function ItemExpandPanel({
   const shadow = isSeaCreature(item) ? item.shadow : undefined;
   const time = isSeaCreature(item) ? item.time : undefined;
 
+  const hasMonths = !!(months && months.length > 0);
+
   return (
-    <div className="ac-expand">
-      {months && months.length > 0 && (
+    <div className={`ac-expand${hasMonths ? '' : ' ac-expand-no-months'}`}>
+      {hasMonths && (
         <div className="ac-expand-section">
           <div className="ac-expand-label">Available in</div>
-          <MonthGrid months={months} current={cm} />
+          <MonthGrid months={months!} current={cm} />
         </div>
       )}
       <div className="ac-expand-side">
