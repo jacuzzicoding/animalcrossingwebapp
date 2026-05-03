@@ -74,8 +74,7 @@ export function itemNotes(
   item: AnyItem,
   category?: CategoryId
 ): string | undefined {
-  if (category === 'sea_creatures' || isSeaCreature(item))
-    return (item as SeaCreature).time;
+  if (category === 'sea_creatures' || isSeaCreature(item)) return undefined;
   return isFish(item) ? item.notes : undefined;
 }
 
