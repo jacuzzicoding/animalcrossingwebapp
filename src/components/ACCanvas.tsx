@@ -2,7 +2,6 @@ import React from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
-import { CATEGORY_ORDER } from '../lib/constants';
 import { CATEGORY_META } from '../lib/categoryMeta';
 import { downloadCSV } from '../lib/csvExport';
 import { filterByQuery, globalFilter, type AnyItem } from '../lib/utils';
@@ -14,8 +13,7 @@ import HomeTab from './HomeTab';
 import ErrorBanner from './ErrorBanner';
 import ErrorState from './ErrorState';
 
-import { MuseumHeader } from './MuseumHeader';
-import { TabBar } from './TabBar';
+import { Sidebar } from './Sidebar';
 import { CollectibleRow } from './CollectibleRow';
 import { ItemExpandPanel } from './ItemExpandPanel';
 import { CategoryProgress } from './shared/CategoryProgress';
@@ -79,7 +77,6 @@ export default function ACCanvas() {
     return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
   });
   const toggle = useAppStore(s => s.toggle);
-  const setTownHemisphere = useAppStore(s => s.setTownHemisphere);
 
   // Sync URL townId → Zustand activeTownId
   useEffect(() => {
@@ -148,15 +145,6 @@ export default function ACCanvas() {
     setSelected(null);
   }, [activeTab]);
 
-  const totalItems = CATEGORY_ORDER.reduce(
-    (sum, cat) => sum + data[cat].length,
-    0
-  );
-  const totalDonated = CATEGORY_ORDER.reduce(
-    (sum, cat) => sum + catCounts[cat],
-    0
-  );
-
   const activeCat: CategoryId | null =
     activeTab !== 'home' &&
     activeTab !== 'activity' &&
@@ -222,183 +210,160 @@ export default function ACCanvas() {
   const catLabel = activeCat ? CATEGORY_META[activeCat].label : '';
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(180deg, #f7f3ea 0%, #efe6d6 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-[0.06] pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(90deg, rgba(0,0,0,.15) 1px, transparent 1px), linear-gradient(rgba(0,0,0,.15) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="relative mx-auto max-w-3xl px-4 py-8 space-y-4">
-        <MuseumHeader
-          donatedCount={totalDonated}
-          totalCount={totalItems}
-          onCreateTown={() => setShowCreateTown(true)}
-          onEditTown={() => setShowEditTown(true)}
+    <div className="ac-app">
+      {!noTowns && activeTownId && (
+        <Sidebar
+          townId={activeTownId}
+          data={data}
+          catCounts={catCounts}
+          onOpenCreateTown={() => setShowCreateTown(true)}
+          onOpenEditTown={() => setShowEditTown(true)}
           onExport={handleExport}
-          gameId={activeTown?.gameId}
-          hemisphere={activeTown?.hemisphere ?? 'NH'}
-          onHemisphereChange={h => {
-            if (activeTown) setTownHemisphere(activeTown.id, h);
-          }}
         />
-
-        {banner && (
-          <ErrorBanner
-            error={banner}
-            onDismiss={() => setBanner(null)}
-            onRetry={
-              banner.type === 'networkError'
-                ? () => {
-                    setBanner(null);
-                    reload();
-                  }
-                : undefined
-            }
-          />
-        )}
-
-        {noTowns ? (
-          <EmptyState message="Create a town to start tracking your museum donations." />
-        ) : (
-          <>
-            <TabBar
-              active={activeTab}
-              onChange={handleTabChange}
-              catCounts={catCounts}
-              data={data}
+      )}
+      <main className="ac-main">
+        <div className="space-y-4">
+          {banner && (
+            <ErrorBanner
+              error={banner}
+              onDismiss={() => setBanner(null)}
+              onRetry={
+                banner.type === 'networkError'
+                  ? () => {
+                      setBanner(null);
+                      reload();
+                    }
+                  : undefined
+              }
             />
+          )}
 
-            {activeTab === 'home' ? (
-              <HomeTab
-                data={data}
-                donated={activeTownDonated}
-                donatedAt={activeTownDonatedAt}
-                catCounts={catCounts}
-                onNavigate={v => handleTabChange(v)}
-              />
-            ) : activeTab === 'analytics' ? (
-              <AnalyticsView
-                data={data}
-                catCounts={catCounts}
-                donatedAt={activeTownDonatedAt}
-              />
-            ) : activeTab === 'activity' ? (
-              <ActivityFeed donatedAt={activeTownDonatedAt} data={data} />
-            ) : activeTab === 'search' ? (
-              <>
-                <GlobalSearchBar
-                  query={globalQuery}
-                  setQuery={setGlobalQuery}
-                  onSubmit={pushRecentSearch}
-                  historyOpen={historyOpen}
-                  setHistoryOpen={setHistoryOpen}
-                  recentSearches={recentSearches}
-                  onSelectHistory={s => {
-                    setGlobalQuery(s);
-                    pushRecentSearch(s);
-                  }}
-                  onClearHistory={() => {
-                    setRecentSearches([]);
-                    setHistoryOpen(false);
-                  }}
-                  wrapperRef={historyRef}
-                />
-                <GlobalSearchResults
-                  results={globalResults}
-                  query={globalQuery}
+          {noTowns ? (
+            <EmptyState message="Create a town to start tracking your museum donations." />
+          ) : (
+            <>
+              {activeTab === 'home' ? (
+                <HomeTab
+                  data={data}
                   donated={activeTownDonated}
-                  onToggle={id => toggle(id)}
-                  onSelect={(item, category) => {
-                    if (globalQuery.trim())
-                      pushRecentSearch(globalQuery.trim());
-                    setSelected({ item, category });
-                  }}
+                  donatedAt={activeTownDonatedAt}
+                  catCounts={catCounts}
+                  onNavigate={v => handleTabChange(v)}
                 />
-              </>
-            ) : (
-              <>
-                <CategoryProgress
-                  donated={catCounts[activeCat!]}
-                  total={activeItems.length}
-                  label={catLabel}
+              ) : activeTab === 'analytics' ? (
+                <AnalyticsView
+                  data={data}
+                  catCounts={catCounts}
+                  donatedAt={activeTownDonatedAt}
                 />
-                <SearchBar
-                  query={query}
-                  setQuery={setQuery}
-                  placeholder={`Search ${catLabel.toLowerCase()}…`}
-                />
-                <div className="space-y-3">
-                  {filtered.map(item => (
-                    <div key={item.id}>
-                      <CollectibleRow
-                        item={item}
-                        category={activeCat!}
-                        checked={!!activeTownDonated[item.id]}
-                        onToggle={() => toggle(item.id)}
-                        onClick={() => {
-                          if (activeCat === 'art') {
-                            setSelected({ item, category: activeCat! });
-                          } else {
-                            setExpandedId(prev =>
-                              prev === item.id ? null : item.id
-                            );
-                          }
-                        }}
-                        expanded={
-                          activeCat !== 'art'
-                            ? expandedId === item.id
-                            : undefined
-                        }
-                        hemisphere={activeTown?.hemisphere ?? 'NH'}
-                      />
-                      {activeCat !== 'art' && expandedId === item.id && (
-                        <ItemExpandPanel
+              ) : activeTab === 'activity' ? (
+                <ActivityFeed donatedAt={activeTownDonatedAt} data={data} />
+              ) : activeTab === 'search' ? (
+                <>
+                  <GlobalSearchBar
+                    query={globalQuery}
+                    setQuery={setGlobalQuery}
+                    onSubmit={pushRecentSearch}
+                    historyOpen={historyOpen}
+                    setHistoryOpen={setHistoryOpen}
+                    recentSearches={recentSearches}
+                    onSelectHistory={s => {
+                      setGlobalQuery(s);
+                      pushRecentSearch(s);
+                    }}
+                    onClearHistory={() => {
+                      setRecentSearches([]);
+                      setHistoryOpen(false);
+                    }}
+                    wrapperRef={historyRef}
+                  />
+                  <GlobalSearchResults
+                    results={globalResults}
+                    query={globalQuery}
+                    donated={activeTownDonated}
+                    onToggle={id => toggle(id)}
+                    onSelect={(item, category) => {
+                      if (globalQuery.trim())
+                        pushRecentSearch(globalQuery.trim());
+                      setSelected({ item, category });
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <CategoryProgress
+                    donated={catCounts[activeCat!]}
+                    total={activeItems.length}
+                    label={catLabel}
+                  />
+                  <SearchBar
+                    query={query}
+                    setQuery={setQuery}
+                    placeholder={`Search ${catLabel.toLowerCase()}…`}
+                  />
+                  <div className="space-y-3">
+                    {filtered.map(item => (
+                      <div key={item.id}>
+                        <CollectibleRow
                           item={item}
                           category={activeCat!}
                           checked={!!activeTownDonated[item.id]}
-                          donatedAt={activeTownDonatedAt[item.id]}
                           onToggle={() => toggle(item.id)}
+                          onClick={() => {
+                            if (activeCat === 'art') {
+                              setSelected({ item, category: activeCat! });
+                            } else {
+                              setExpandedId(prev =>
+                                prev === item.id ? null : item.id
+                              );
+                            }
+                          }}
+                          expanded={
+                            activeCat !== 'art'
+                              ? expandedId === item.id
+                              : undefined
+                          }
+                          hemisphere={activeTown?.hemisphere ?? 'NH'}
                         />
-                      )}
-                    </div>
-                  ))}
-                  {filtered.length === 0 && (
-                    <EmptyState
-                      message={
-                        query
-                          ? `No ${catLabel.toLowerCase()} match "${query}".`
-                          : `No ${catLabel.toLowerCase()} found.`
-                      }
-                    />
-                  )}
-                </div>
-              </>
-            )}
-          </>
-        )}
+                        {activeCat !== 'art' && expandedId === item.id && (
+                          <ItemExpandPanel
+                            item={item}
+                            category={activeCat!}
+                            checked={!!activeTownDonated[item.id]}
+                            donatedAt={activeTownDonatedAt[item.id]}
+                            onToggle={() => toggle(item.id)}
+                          />
+                        )}
+                      </div>
+                    ))}
+                    {filtered.length === 0 && (
+                      <EmptyState
+                        message={
+                          query
+                            ? `No ${catLabel.toLowerCase()} match "${query}".`
+                            : `No ${catLabel.toLowerCase()} found.`
+                        }
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+            </>
+          )}
 
-        <div className="text-center pb-2">
-          <span
-            style={{
-              color: '#9c8a6e',
-              fontSize: '0.7rem',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {import.meta.env.VITE_APP_VERSION}
-          </span>
+          <div className="text-center pb-2">
+            <span
+              style={{
+                color: '#9c8a6e',
+                fontSize: '0.7rem',
+                letterSpacing: '0.05em',
+              }}
+            >
+              {import.meta.env.VITE_APP_VERSION}
+            </span>
+          </div>
         </div>
-      </div>
+      </main>
 
       <CreateTownModal
         isOpen={noTowns || showCreateTown}

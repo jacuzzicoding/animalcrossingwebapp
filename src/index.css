@@ -52,3 +52,184 @@
 * {
   font-family: 'Inter', system-ui, sans-serif;
 }
+
+/* ── App shell (v0.9 Phase 2) ── */
+.ac-app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  max-width: 1440px;
+  margin: 0 auto;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.ac-sidebar {
+  border-right: 1px solid var(--border);
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg);
+}
+.ac-brand { display: flex; gap: 12px; align-items: center; color: var(--accent); }
+.ac-brand-mark {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: grid; place-items: center;
+}
+.ac-brand-name {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.ac-brand-sub {
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-style: italic;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+}
+
+.ac-town-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.ac-town-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+.ac-town-name {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin-top: 2px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.ac-town-meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.ac-dot-sep { color: var(--border-strong); }
+.ac-hem-toggle { display: inline-flex; gap: 2px; }
+.ac-hem-btn {
+  font-size: 11px;
+  color: var(--ink-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.ac-hem-btn.is-active {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.ac-town-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.ac-town-switch {
+  font-size: 12px;
+  color: var(--accent-ink);
+  padding: 0;
+  text-align: left;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.ac-town-switch:hover { text-decoration: underline; }
+.ac-town-edit {
+  font-size: 11px;
+  color: var(--ink-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.ac-town-edit:hover { color: var(--ink); text-decoration: underline; }
+
+.ac-nav { display: flex; flex-direction: column; gap: 1px; }
+.ac-nav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 14px;
+  border-radius: 9px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+  text-decoration: none;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+.ac-nav-item:hover { background: var(--surface-alt); color: var(--ink); }
+.ac-nav-item-active {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 500;
+}
+.ac-nav-count {
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ac-nav-count-slash { opacity: 0.5; margin: 0 1px; }
+.ac-nav-item-active .ac-nav-count { color: var(--accent-ink); }
+
+.ac-sidebar-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.ac-foot-link {
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.ac-foot-link:hover { color: var(--ink); }
+
+.ac-main {
+  padding: 32px 48px 80px;
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  .ac-app { grid-template-columns: 1fr; }
+  .ac-sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .ac-main { padding: 24px 20px 60px; }
+}

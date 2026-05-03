@@ -15,6 +15,22 @@ All notable changes to this project are documented here.
 - This phase is plumbing only. No components consume the new tokens yet; visual output is intentionally near-identical to v0.8.2-alpha. Component restyles begin in Phase 5.
 - **Parchment, Midnight, and Sakura themes are intentionally excluded** per locked decision #2 in `docs/v0.9-plan.md` ("ship Meadow only"). The legacy `colors` export in `src/lib/colors.ts` is kept untouched until later phases retire its consumers.
 
+### Added — Phase 2: sidebar + shell layout
+- **`Sidebar` component** (`src/components/Sidebar.tsx`) — 280px sticky left sidebar with brand mark/wordmark, active-town card, vertical nav with per-category `donated/total` counts, and Export CSV / Settings footer. Uses `<NavLink>` so active state tracks the URL.
+- **App shell layout** in `src/index.css` (`.ac-app`, `.ac-sidebar`, `.ac-main`, `.ac-nav-*`, `.ac-town-*`, `.ac-brand-*`, `.ac-foot-link`, `.ac-hem-toggle`, `.ac-hem-btn`) — CSS grid `280px 1fr`, max-width 1440px centered. Below 980px sidebar stacks above main (CSS grid row change).
+- Sea nav entry gated on `gameId in {ACNL, ACNH}` and presence of sea data; Art nav entry hidden when game has no art.
+- Hemisphere toggle (NH/SH) inline in the sidebar town card for ACNH towns — preserves the toggle that previously lived in `MuseumHeader`. Will move into `TownManager` in Phase 4.
+- Settings nav button routes to `/settings` (route lands in Phase 3).
+
+### Removed — Phase 2
+- **`MuseumHeader`**, **`TabBar`**, **`TownSwitcher`** — deleted. Replaced by `Sidebar`. ACCanvas no longer renders the wood-toned header bar or horizontal tab strip; main column now sits inside `.ac-main`.
+
+### Decisions — Phase 2
+- The plan calls the Active Town card's "Switch town ›" button a Phase 4 stub. Implemented as a temporary lightweight switcher: 0 other towns → opens `CreateTownModal`; 1 other → activates it; 2+ → `window.prompt` picker. Replaced wholesale by `TownManager` in Phase 4.
+- Edit / New town are exposed as small links inside the active-town card so users don't lose town CRUD between Phase 2 and Phase 4 (they previously lived in the now-deleted `TownSwitcher`). Both still wire to the existing `EditTownModal` / `CreateTownModal`, which Phase 4 will retire.
+- Hemisphere toggle relocated to the sidebar town card to avoid regressing the v0.8 functionality that lived in `MuseumHeader`. Phase 4 moves it into `TownManager`.
+- Brand wordmark uses **"Museum Tracker"** (matching the prior MuseumHeader) — not "Curator", per the codename note in `docs/v0.9-plan.md` (no user-facing copy says "Curator").
+
 ## [v0.8.2-alpha] — 2026-05-01
 
 ### Added
