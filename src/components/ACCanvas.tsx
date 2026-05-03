@@ -20,8 +20,6 @@ import { CategoryProgress } from './shared/CategoryProgress';
 import { SearchBar } from './shared/SearchBar';
 import { EmptyState } from './shared/EmptyState';
 
-import { CreateTownModal } from './modals/CreateTownModal';
-import { EditTownModal } from './modals/EditTownModal';
 import { DetailModal } from './modals/DetailModal';
 
 import { GlobalSearchBar } from './search/GlobalSearchBar';
@@ -98,8 +96,6 @@ export default function ACCanvas() {
     item: AnyItem;
     category: CategoryId;
   } | null>(null);
-  const [showCreateTown, setShowCreateTown] = useState(false);
-  const [showEditTown, setShowEditTown] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { data, loading, loadError, reload } = useMuseumData(
@@ -170,13 +166,7 @@ export default function ACCanvas() {
 
   function handleExport() {
     if (!activeTown) return;
-    downloadCSV(
-      data,
-      activeTownDonated,
-      activeTownDonatedAt,
-      activeTown.name,
-      activeTown.playerName
-    );
+    downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name);
   }
 
   function handleTabChange(tab: ViewId) {
@@ -216,8 +206,6 @@ export default function ACCanvas() {
           townId={activeTownId}
           data={data}
           catCounts={catCounts}
-          onOpenCreateTown={() => setShowCreateTown(true)}
-          onOpenEditTown={() => setShowEditTown(true)}
           onExport={handleExport}
         />
       )}
@@ -364,18 +352,6 @@ export default function ACCanvas() {
           </div>
         </div>
       </main>
-
-      <CreateTownModal
-        isOpen={noTowns || showCreateTown}
-        required={noTowns}
-        onClose={() => setShowCreateTown(false)}
-      />
-
-      <EditTownModal
-        isOpen={showEditTown}
-        town={activeTown ?? null}
-        onClose={() => setShowEditTown(false)}
-      />
 
       {selected && !noTowns && (
         <DetailModal

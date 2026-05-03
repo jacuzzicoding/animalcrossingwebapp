@@ -44,6 +44,32 @@ All notable changes to this project are documented here.
 - **Reset donations is disabled** when there's no active town, instead of being hidden — keeps the Danger zone shape stable across states.
 - **Settings is a top-level route** (`/settings`) rather than nested under `/town/:townId/settings`. The settings page is a property of the app, not the town — and a user mid-reset-everything wouldn't have an active town to nest under.
 
+### Added — Phase 4: TownManager drawer
+- **`TownManager` component** (`src/components/TownManager.tsx`) — right-side drawer (420px) that mounts at the layout level in `App.tsx`, so it overlays every route (home, category tabs, settings) without z-index or `overflow-hidden` issues. Below 720px it renders as a bottom sheet. Contains: the list of towns with active-town indicator, inline row edit (name + hemisphere only), a `+ New town` form (name + game + hemisphere), and per-row delete with native `confirm()` guard.
+- **`useUIStore`** (`src/lib/uiStore.ts`) — small non-persisted Zustand store for transient UI state (`townManagerOpen`, `townManagerForceCreate`). Exposes `openTownManager(forceCreate?)` and `closeTownManager()`.
+- **Auto-open in create mode when no towns exist** — `App.tsx` opens the TownManager forced-create when `towns.length === 0`. The drawer hides its close button, ignores Esc, and ignores scrim clicks in this state — equivalent to the previous "required" behavior on `CreateTownModal`.
+- **`GAME_LIST`** export in `src/lib/types.ts` — ordered array of `Game`, used by the create-town form's game selector.
+- **TownManager styles** in `src/index.css` (`.ac-tm-scrim`, `.ac-tm-drawer`, `.ac-tm-row*`, `.ac-tm-form`, `.ac-tm-seg`, `.ac-tm-cta`, `.ac-tm-newform`, `.ac-tm-empty`, `ac-fade` / `ac-slide` / `ac-slide-up` keyframes). Bottom-sheet variant at `(max-width: 720px)`.
+
+### Changed — Phase 4
+- **`Sidebar`** — the Phase 2 bridge stubs are removed: the `window.prompt` switcher, the Edit / + New buttons inside the active-town card, and the inline NH/SH segmented toggle. The single `Switch town ›` button now opens the TownManager. Hemisphere is shown as a read-only `Hem. NH` / `Hem. SH` label (editing happens in the drawer). Sidebar no longer takes `onOpenCreateTown` / `onOpenEditTown` props.
+- **`useAppStore.createTown`** signature is `(name, gameId, hemisphere?)` — `playerName` removed. **`useAppStore.updateTown`** signature is `(id, patch: TownPatch)` where `TownPatch` is `{ name?, hemisphere? }`. `gameId` is intentionally not part of the patch (Decision 1 — game is immutable post-create).
+- **`Town` type** — `playerName: string` field removed (Decision 5). Existing values in localStorage are silently dropped on next write; no migration step required.
+- **`downloadCSV` / `buildCSV`** no longer take a `playerName` argument; the "Player" row is removed from CSV exports.
+
+### Removed — Phase 4
+- **`CreateTownModal`** (`src/components/modals/CreateTownModal.tsx`) — replaced by TownManager's New Town form.
+- **`EditTownModal`** (`src/components/modals/EditTownModal.tsx`) — replaced by TownManager's inline row edit.
+- **`TownNameFields`** (`src/components/shared/TownNameFields.tsx`) — no remaining consumers.
+- **v0.8.1 greyed-out-buttons stopgap** — no longer needed; the TownManager drawer mounts at the layout level and works on every route, resolving the issue the stopgap worked around.
+
+### Decisions — Phase 4
+- **Decision 1 honored** — the inline edit form has no game `<select>`. The game is shown as a read-only badge with the hint "Game can't be changed after creation." `handleSave` builds a patch object that contains only `name` and `hemisphere`, never `gameId`.
+- **Decision 5 honored** — `playerName` removed from `Town`, store, CSV export, and tests. No migration callback because Zustand's `persist` simply ignores fields not in the schema.
+- **Hemisphere persistence** — the store keeps `hemisphere: Hemisphere` (`'NH'` | `'SH'`, default `'NH'`). The drawer passes `null` from the patch when the game isn't ACNH; `updateTown` ignores nulls so a town's stored hemisphere never gets clobbered.
+- **TownManager state lives in a separate `useUIStore`** rather than inside `useAppStore`, so the drawer's open/closed state isn't persisted to localStorage across reloads.
+- **Auto-open path replaces the `required` flag** — `CreateTownModal`'s `required={noTowns}` pattern is replaced by `App.tsx` opening the drawer in `forceCreate` mode whenever the store hydrates with zero towns. Same UX (modal-like, can't be dismissed) implemented as a single behavior gate inside the new component.
+
 ## [v0.8.2-alpha] — 2026-05-01
 
 ### Added

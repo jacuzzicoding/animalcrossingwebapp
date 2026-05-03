@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
-import type { Hemisphere } from '../lib/store';
+import { useUIStore } from '../lib/uiStore';
 import { GAMES } from '../lib/types';
 import type { CategoryId, GameId } from '../lib/types';
 import type { ViewId, AllData } from '../lib/viewTypes';
@@ -21,21 +21,16 @@ export function Sidebar({
   townId,
   data,
   catCounts,
-  onOpenCreateTown,
-  onOpenEditTown,
   onExport,
 }: {
   townId: string;
   data: AllData;
   catCounts: Stats;
-  onOpenCreateTown: () => void;
-  onOpenEditTown: () => void;
   onExport: () => void;
 }) {
   const navigate = useNavigate();
   const towns = useAppStore(s => s.towns);
-  const setActiveTown = useAppStore(s => s.setActiveTown);
-  const setTownHemisphere = useAppStore(s => s.setTownHemisphere);
+  const openTownManager = useUIStore(s => s.openTownManager);
   const activeTown = towns.find(t => t.id === townId);
 
   const gameId = activeTown?.gameId ?? 'ACGCN';
@@ -44,35 +39,6 @@ export function Sidebar({
 
   function navItemHref(view: ViewId) {
     return `/town/${townId}/${view}`;
-  }
-
-  function handleSwitchTown() {
-    // Phase 2 stub: cycles to the next town if one exists, otherwise opens
-    // CreateTownModal. Full TownManager drawer ships in Phase 4.
-    const others = towns.filter(t => t.id !== townId);
-    if (others.length === 0) {
-      onOpenCreateTown();
-      return;
-    }
-    if (others.length === 1) {
-      setActiveTown(others[0].id);
-      navigate(`/town/${others[0].id}/home`);
-      return;
-    }
-    // Multiple other towns — surface a quick prompt picker (temporary).
-    const labels = others
-      .map((t, i) => `${i + 1}. ${t.name} (${GAMES[t.gameId].shortName})`)
-      .join('\n');
-    const pick = window.prompt(
-      `Switch to which town?\n${labels}\n\nEnter a number, or cancel.`
-    );
-    if (!pick) return;
-    const idx = Number.parseInt(pick, 10) - 1;
-    const choice = others[idx];
-    if (choice) {
-      setActiveTown(choice.id);
-      navigate(`/town/${choice.id}/home`);
-    }
   }
 
   return (
@@ -113,47 +79,16 @@ export function Sidebar({
             {game.hasHemispheres && (
               <>
                 <span className="ac-dot-sep">·</span>
-                <span
-                  className="ac-hem-toggle"
-                  role="group"
-                  aria-label="Hemisphere"
-                >
-                  {(['NH', 'SH'] as const).map(h => (
-                    <button
-                      key={h}
-                      type="button"
-                      className={`ac-hem-btn ${(activeTown.hemisphere ?? 'NH') === h ? 'is-active' : ''}`}
-                      onClick={() =>
-                        setTownHemisphere(activeTown.id, h as Hemisphere)
-                      }
-                      aria-pressed={(activeTown.hemisphere ?? 'NH') === h}
-                    >
-                      {h}
-                    </button>
-                  ))}
-                </span>
+                <span>Hem. {activeTown.hemisphere ?? 'NH'}</span>
               </>
             )}
           </div>
           <div className="ac-town-actions">
-            <button className="ac-town-switch" onClick={handleSwitchTown}>
+            <button
+              className="ac-town-switch"
+              onClick={() => openTownManager(false)}
+            >
               Switch town ›
-            </button>
-            <button
-              className="ac-town-edit"
-              onClick={onOpenEditTown}
-              title="Edit town"
-              aria-label="Edit town"
-            >
-              Edit
-            </button>
-            <button
-              className="ac-town-edit"
-              onClick={onOpenCreateTown}
-              title="New town"
-              aria-label="New town"
-            >
-              + New
             </button>
           </div>
         </div>
