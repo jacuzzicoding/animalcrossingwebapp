@@ -1,105 +1,175 @@
 import React from 'react';
-import { ChevronDown } from 'lucide-react';
-import { CATEGORY_META } from '../lib/categoryMeta';
-import { HabitatChip } from './shared/HabitatChip';
-import { DonateToggle } from './shared/DonateToggle';
 import {
   displayName,
-  rowSubtitle,
   itemBells,
   itemMonths,
-  itemNotes,
+  isFish,
+  isFossil,
+  isArtPiece,
+  isSeaCreature,
   type AnyItem,
 } from '../lib/utils';
 import type { CategoryId } from '../lib/types';
+
+function getInitials(name: string): string {
+  return name
+    .split(/\s|-/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(s => s[0])
+    .join('')
+    .toUpperCase();
+}
+
+function Glyph({
+  name,
+  category,
+  donated,
+}: {
+  name: string;
+  category: CategoryId;
+  donated: boolean;
+}) {
+  const tintVar =
+    category === 'sea_creatures'
+      ? 'var(--chip-sea)'
+      : `var(--chip-${category})`;
+  return (
+    <div
+      className="ac-glyph"
+      style={{
+        background: donated ? tintVar : 'transparent',
+        borderColor: tintVar,
+        color: donated ? 'var(--surface)' : tintVar,
+      }}
+    >
+      <span>{getInitials(name)}</span>
+    </div>
+  );
+}
+
+function metaBits(
+  item: AnyItem,
+  category: CategoryId,
+  bells: number | null
+): { text: string; italic?: boolean; bells?: boolean }[] {
+  const out: { text: string; italic?: boolean; bells?: boolean }[] = [];
+  if (isFish(item) && item.habitat) {
+    out.push({ text: item.habitat.replace('-', ' · ') });
+  }
+  if (isFossil(item) && item.part) {
+    out.push({ text: item.part });
+  }
+  if (isSeaCreature(item) && item.shadow) {
+    out.push({ text: item.shadow });
+  }
+  if (isArtPiece(item) && item.basedOn) {
+    out.push({ text: item.basedOn, italic: true });
+  }
+  if (bells != null) {
+    out.push({ text: `${bells.toLocaleString()} ✦`, bells: true });
+  }
+  return out;
+}
 
 export function CollectibleRow({
   item,
   category,
   checked,
-  onToggle,
   onClick,
   expanded,
+  highlighted,
   hemisphere,
+  currentMonth,
 }: {
   item: AnyItem;
   category: CategoryId;
   checked: boolean;
-  onToggle: () => void;
+  /** Kept for back-compat with callers; toggling now happens from inside the expand panel. */
+  onToggle?: () => void;
   onClick: () => void;
   expanded?: boolean;
+  highlighted?: boolean;
   hemisphere?: 'NH' | 'SH';
+  currentMonth?: number;
 }) {
-  const { Icon } = CATEGORY_META[category];
   const name = displayName(item, category);
-  const subtitle = rowSubtitle(item, category);
   const bells = itemBells(item, category);
   const months = itemMonths(item, category, hemisphere);
-  const notes = itemNotes(item);
+  const cm = currentMonth ?? new Date().getMonth() + 1;
+
+  const hasMonths = !!(months && months.length > 0);
+  const inThisMonth = hasMonths && months!.includes(cm);
+  const next = cm === 12 ? 1 : cm + 1;
+  const prev = cm === 1 ? 12 : cm - 1;
+  const leavingSoon = inThisMonth && !months!.includes(next);
+  const newThisMonth = inThisMonth && !months!.includes(prev);
+
+  const time = isSeaCreature(item) ? item.time : undefined;
+
+  const bits = metaBits(item, category, bells);
+
+  const classes = [
+    'ac-row',
+    expanded ? 'ac-row-expanded' : '',
+    checked ? 'ac-row-donated' : '',
+    highlighted ? 'ac-row-pulse' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full text-left flex items-center gap-3 border px-4 py-3 transition"
-      style={{
-        borderColor: checked ? '#b8dfc8' : '#E7DAC4',
-        backgroundColor: checked ? '#f2faf6' : '#FFFDF6',
-        boxShadow: '0 1px 0 rgba(0,0,0,0.03)',
-        borderRadius: expanded ? '14px 14px 0 0' : '14px',
-      }}
-    >
-      <div
-        className="shrink-0 rounded-xl p-2"
-        style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
-        aria-hidden
-      >
-        <Icon className="w-4 h-4" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span
-            className="truncate font-medium text-sm"
-            style={{ color: '#2A2A2A' }}
-          >
-            {name}
-          </span>
-          {category === 'fish' && subtitle && <HabitatChip label={subtitle} />}
+    <div data-row-id={item.id} className={classes}>
+      <button type="button" className="ac-row-main" onClick={onClick}>
+        <Glyph name={name} category={category} donated={checked} />
+        <div className="ac-row-text">
+          <div className="ac-row-name">
+            <span>{name}</span>
+            {checked && (
+              <span className="ac-row-checkmark" aria-label="donated">
+                ●
+              </span>
+            )}
+          </div>
+          {bits.length > 0 && (
+            <div className="ac-row-meta">
+              {bits.map((b, i) => (
+                <span
+                  key={i}
+                  className={[
+                    'ac-row-meta-bit',
+                    b.italic ? 'ac-row-meta-italic' : '',
+                    b.bells ? 'ac-row-meta-bells' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  {b.text}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <div
-          className="text-[12px] mt-0.5 truncate"
-          style={{ color: '#5a4a35' }}
-        >
-          {bells != null
-            ? `${bells.toLocaleString()} Bells`
-            : category === 'art'
-              ? 'Painting'
-              : '—'}
-          {category !== 'fossils' && category !== 'art' && (
-            <span className="ml-2 opacity-60">
-              {months && months.length > 0
-                ? `${months.length} months`
-                : 'Year-round'}
+        <div className="ac-row-side">
+          {leavingSoon && !checked && (
+            <span className="ac-pill ac-pill-warn">Leaving soon</span>
+          )}
+          {newThisMonth && !leavingSoon && !checked && (
+            <span className="ac-pill ac-pill-accent">New this month</span>
+          )}
+          {time && time !== 'all day' && (
+            <span className="ac-row-time">{time}</span>
+          )}
+          {expanded !== undefined && (
+            <span
+              className={`ac-chevron ${expanded ? 'ac-chevron-open' : ''}`}
+              aria-hidden
+            >
+              ›
             </span>
           )}
-          {category === 'art' && subtitle && (
-            <span className="ml-1 opacity-70">
-              · {subtitle.length > 38 ? subtitle.slice(0, 38) + '…' : subtitle}
-            </span>
-          )}
-          {notes && <span className="ml-2 italic opacity-70">{notes}</span>}
         </div>
-      </div>
-      {expanded !== undefined && (
-        <ChevronDown
-          className="w-4 h-4 shrink-0 transition-transform"
-          style={{
-            color: '#9c8a6e',
-            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-          }}
-        />
-      )}
-      <DonateToggle checked={checked} onToggle={onToggle} />
-    </button>
+      </button>
+    </div>
   );
 }

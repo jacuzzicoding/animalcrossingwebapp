@@ -97,6 +97,7 @@ export default function ACCanvas() {
     category: CategoryId;
   } | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
 
   const { data, loading, loadError, reload } = useMuseumData(
     activeTown?.gameId ?? 'ACGCN'
@@ -140,6 +141,26 @@ export default function ACCanvas() {
     setExpandedId(null);
     setSelected(null);
   }, [activeTab]);
+
+  // Scroll-to + highlight on jump (Decision 10).
+  // When highlightId changes, expand the matching row, scroll it into view,
+  // and let the .ac-row-pulse keyframe play. Clear after the animation duration
+  // so re-jumping to the same id retriggers the pulse.
+  useEffect(() => {
+    if (!highlightId) return;
+    setExpandedId(highlightId);
+    const raf = requestAnimationFrame(() => {
+      const el = document.querySelector(
+        `[data-row-id="${CSS.escape(highlightId)}"]`
+      );
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    const t = window.setTimeout(() => setHighlightId(null), 1400);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(t);
+    };
+  }, [highlightId]);
 
   const activeCat: CategoryId | null =
     activeTab !== 'home' &&
@@ -289,14 +310,13 @@ export default function ACCanvas() {
                     setQuery={setQuery}
                     placeholder={`Search ${catLabel.toLowerCase()}…`}
                   />
-                  <div className="space-y-3">
+                  <div className="ac-list">
                     {filtered.map(item => (
-                      <div key={item.id}>
+                      <React.Fragment key={item.id}>
                         <CollectibleRow
                           item={item}
                           category={activeCat!}
                           checked={!!activeTownDonated[item.id]}
-                          onToggle={() => toggle(item.id)}
                           onClick={() => {
                             if (activeCat === 'art') {
                               setSelected({ item, category: activeCat! });
@@ -311,7 +331,9 @@ export default function ACCanvas() {
                               ? expandedId === item.id
                               : undefined
                           }
+                          highlighted={highlightId === item.id}
                           hemisphere={activeTown?.hemisphere ?? 'NH'}
+                          currentMonth={new Date().getMonth() + 1}
                         />
                         {activeCat !== 'art' && expandedId === item.id && (
                           <ItemExpandPanel
@@ -320,9 +342,11 @@ export default function ACCanvas() {
                             checked={!!activeTownDonated[item.id]}
                             donatedAt={activeTownDonatedAt[item.id]}
                             onToggle={() => toggle(item.id)}
+                            hemisphere={activeTown?.hemisphere ?? 'NH'}
+                            currentMonth={new Date().getMonth() + 1}
                           />
                         )}
-                      </div>
+                      </React.Fragment>
                     ))}
                     {filtered.length === 0 && (
                       <EmptyState
