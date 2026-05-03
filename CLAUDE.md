@@ -56,6 +56,8 @@ src/
     CollectibleRow.tsx      # Single item row with donate toggle; shows chevron + rounded-top when expanded
     ItemExpandPanel.tsx     # Inline accordion panel shown below CollectibleRow for fish/bugs/fossils
     Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
+    SettingsPage.tsx        # v0.9 Phase 3: full-page Settings — About + Danger zone (no Appearance per locked decision #3)
+    SettingsRoute.tsx       # v0.9 Phase 3: route wrapper that mounts Sidebar + SettingsPage at /settings
     ErrorBanner.tsx         # Dismissible inline error notification
     ErrorBoundary.tsx       # Top-level React error boundary; crashes render ErrorState
     ErrorState.tsx          # Full-page error fallback UI
