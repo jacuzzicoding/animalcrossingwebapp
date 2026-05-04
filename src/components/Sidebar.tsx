@@ -134,14 +134,6 @@ export function Sidebar({
           <span>Log</span>
         </NavLink>
         <NavLink
-          to={navItemHref('search')}
-          className={({ isActive }) =>
-            `ac-nav-item ${isActive ? 'ac-nav-item-active' : ''}`
-          }
-        >
-          <span>Search</span>
-        </NavLink>
-        <NavLink
           to={navItemHref('analytics')}
           className={({ isActive }) =>
             `ac-nav-item ${isActive ? 'ac-nav-item-active' : ''}`

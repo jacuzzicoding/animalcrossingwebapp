@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ## [Unreleased] — v0.9.0-beta (in progress)
 
+### Added — Phase 8: GlobalSearchDropdown
+- **`GlobalSearchDropdown` component** (`src/components/search/GlobalSearchDropdown.tsx`) — unified search dropdown anchored under a topbar input on the Home tab. Four states: empty + intro hint, empty + recent searches (history), no-match for query, and grouped category results. Shows up to 5 items per group, max 5 groups (fish, bugs, fossils, art, sea). Sea group gated on `gameId ∈ {ACNL, ACNH}` and non-empty data. Art search matches both `name` and `basedOn` (Decision 8 — "Leonardo" → Famous Painting). Each row shows category-tinted monogram glyph, name with `donated` badge, and meta line (habitat / location / part / basedOn / shadow + bells).
+- **Keyboard navigation** — `↑↓` move the active row, `↵` selects + jumps + closes, `Esc` closes the panel. Hovering a row also sets the active index.
+- **Search history** — persists in `localStorage` under `ac-curator-search-history`, max 8 entries, deduplicated, most recent first. Stored on result selection. "Clear" button in the history header empties it.
+- **Result jump wiring** — selecting a result calls `onJump(category, id)`, which sets the active tab via React Router and stamps `highlightId` so `CategoryTab`'s scroll-to + `.ac-row-pulse` animation fires (Decision 10). Identical pattern to Phase 6 home shelves.
+- **Phase 8 CSS** appended to `src/index.css` — `.ac-topbar`, `.ac-search-wrap`, `.ac-search` (rounded pill input with focus ring), `.ac-gs-panel`, `.ac-gs-empty` / `-title` / `-sub` / `-hint`, `.ac-gs-section-head` / `.ac-gs-eyebrow` / `.ac-gs-clear`, `.ac-gs-history` / `-row` / `-icon`, `.ac-gs-group` / `-head` / `-dot` / `-count`, `.ac-gs-row` / `-active` / `-glyph` / `-text` / `-name` / `-donated` / `-meta` / `-arrow`, `.ac-gs-foot` + `kbd` chip styling.
+
+### Removed — Phase 8
+- **`GlobalSearchBar`, `GlobalSearchResults`, `SearchHistoryPopover`** — deleted (`src/components/search/`). Replaced wholesale by `GlobalSearchDropdown`.
+- **`useSearch` hook** — deleted (`src/hooks/useSearch.ts`). Search state now lives inside `GlobalSearchDropdown`.
+- **`'search'` view route** — removed from `ViewId`, `VALID_TABS`, and the Sidebar nav. The retired Search tab is replaced by the dropdown on Home.
+
+### Decisions — Phase 8
+- **Topbar lives only on Home tab.** Per the v0.9.2 spec, other tabs keep their per-tab inline search inside `CategoryTab`. Mounting the topbar on Home only avoids two competing search affordances on category pages.
+- **Click-outside dismisses the panel; result clicks use `onMouseDown` preventDefault.** Without `preventDefault` on mousedown, the input would lose focus before the click handler fired and the dropdown would close mid-click.
+- **Sea group gated on both game and data presence.** Mirrors the gating in Sidebar nav and ProgressMeter — a town whose game JSON happens to be missing sea data still renders correctly without an empty section.
+- **Per-group limit kept at 5.** Matches the v0.9.2 design and keeps the dropdown short enough to scan without scrolling on a 1080p viewport even when all 5 groups have hits.
+
 ### Added — Phase 7: CategoryTab sectioning
 - **`CategoryTab` component** (`src/components/CategoryTab.tsx`) — replaces the inline category render in `ACCanvas`. Groups items into four sections (Leaving this month / Available now / Out of season / Already donated), each with an eyebrow header and item count. Empty groups are hidden. December→January wrap is handled via `next = currentMonth === 12 ? 1 : currentMonth + 1`. Donated items always land in "Already donated" regardless of season. Categories without month data (fossils, art) treat all non-donated items as "Available now". Owns its own `expandedId` state — only one row open at a time per tab — and reacts to `highlightId` by opening the matching row before ACCanvas's scroll-to fires.
 - **Category page header** — Fraunces 44 `<em>{donated}</em> of {total} {category}` title and right-aligned meta line ("X% complete" + "Showing availability for {month}" for seasonal categories). Stats card-style header sits above the per-tab search bar.
