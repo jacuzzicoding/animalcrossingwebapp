@@ -261,6 +261,7 @@ export default function ACCanvas() {
                   highlightId={highlightId}
                   onToggle={id => toggle(id)}
                   catLabel={catLabel}
+                  gameId={activeTown?.gameId ?? 'ACGCN'}
                 />
               )}
             </>

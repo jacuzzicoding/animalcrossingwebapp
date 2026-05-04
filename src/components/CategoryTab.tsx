@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import type { CategoryId } from '../lib/types';
+import type { CategoryId, GameId } from '../lib/types';
 import {
   type AnyItem,
   displayName,
@@ -30,6 +30,7 @@ interface CategoryTabProps {
   highlightId: string | null;
   onToggle: (id: string) => void;
   catLabel: string;
+  gameId: GameId;
 }
 
 export function CategoryTab({
@@ -44,6 +45,7 @@ export function CategoryTab({
   highlightId,
   onToggle,
   catLabel,
+  gameId,
 }: CategoryTabProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -182,6 +184,7 @@ export function CategoryTab({
                     highlighted={highlightId === item.id}
                     hemisphere={hemisphere}
                     currentMonth={currentMonth}
+                    gameId={gameId}
                   />
                   {expandedId === item.id && (
                     <ItemExpandPanel
@@ -192,6 +195,7 @@ export function CategoryTab({
                       onToggle={() => onToggle(item.id)}
                       hemisphere={hemisphere}
                       currentMonth={currentMonth}
+                      gameId={gameId}
                     />
                   )}
                 </React.Fragment>
