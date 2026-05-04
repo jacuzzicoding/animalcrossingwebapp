@@ -11,7 +11,7 @@
   { "id": "moody-painting", "name": "Moody Painting", "basedOn": "The Sower by Jean-François Millet" },
   { "id": "moving-painting", "name": "Moving Painting", "basedOn": "The Birth of Venus by Sandro Botticelli" },
   { "id": "nice-painting", "name": "Nice Painting", "basedOn": "The Fifer by Édouard Manet" },
-  { "id": "perfect-painting", "name": "Perfect Painting", "basedOn": "Still Life with Apples and Oranges by Paul Cézanne" },
+  { "id": "perfect-painting", "name": "Perfect Painting", "basedOn": "Apples and Oranges by Paul Cézanne" },
   { "id": "proper-painting", "name": "Proper Painting", "basedOn": "A Bar at the Folies-Bergère by Édouard Manet" },
   { "id": "quaint-painting", "name": "Quaint Painting", "basedOn": "The Milkmaid by Johannes Vermeer" },
   { "id": "scary-painting", "name": "Scary Painting", "basedOn": "Otani Oniji II by Toshusai Sharaku" },
