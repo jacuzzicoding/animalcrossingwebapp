@@ -2,7 +2,12 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased] — v0.9.0-beta (in progress)
+## [Unreleased]
+
+## [v0.9.0-beta] — 2026-05-04
+
+### Fixed — Version footer suppresses `release/` branch suffix (#60)
+- **`src/App.tsx`** version footer now hides the `· <branch>` suffix when the active branch starts with `release/`. Production hostname behavior unchanged. Closes #60.
 
 ### Changed — Art tab uses inline ItemExpandPanel (#81)
 - **Art tab converted from `DetailModal` bottom-sheet to inline `ItemExpandPanel`.** Art rows now expand inline like fish/bugs/fossils/sea creatures — same `.ac-row` → `.ac-expand` flow. Closes #81 (v0.9 release blocker).

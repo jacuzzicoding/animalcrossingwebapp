@@ -81,15 +81,23 @@ function App() {
             pointerEvents: 'none',
           }}
         >
-          {window.location.hostname === 'animalcrossingwebapp.vercel.app' ? (
-            <>v{import.meta.env.VITE_APP_VERSION}</>
-          ) : (
-            <>
-              v{import.meta.env.VITE_APP_VERSION}
-              {' · '}
-              {import.meta.env.VITE_GIT_BRANCH}
-            </>
-          )}
+          {(() => {
+            const version = import.meta.env.VITE_APP_VERSION;
+            const branch = import.meta.env.VITE_GIT_BRANCH;
+            const isProd =
+              window.location.hostname === 'animalcrossingwebapp.vercel.app';
+            const hideBranchSuffix =
+              isProd || !branch || branch.startsWith('release/');
+            return hideBranchSuffix ? (
+              <>v{version}</>
+            ) : (
+              <>
+                v{version}
+                {' · '}
+                {branch}
+              </>
+            );
+          })()}
         </div>
       )}
     </ErrorBoundary>
