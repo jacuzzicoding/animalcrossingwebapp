@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed — v0.9.1: data-driven icon gate (replaces allowlist)
+- **`useGameHasIcons(gameId)`** — replaces the `GAMES_WITH_ICONS = { ACGCN }` allowlist with a data-driven probe of `/icons/<gameId>/manifest.json`. State is tri-valued (`unknown` / `present` / `absent`), cached at module scope, fetched lazily on first call per game. Same lesson as the v0.9 `GAMES_WITH_ART` cleanup: data-driven gates beat per-game capability sets, because future v0.9.x icon releases now light up automatically the moment their `manifest.json` is committed — zero code changes.
+- **`isUsableManifest()`** — schema check rejects malformed JSON (non-object, no recognised category keys, all categories empty) so a corrupt deploy doesn't render `<ItemIcon>` against a busted manifest.
+- **Tests in `ItemIcon.test.tsx`** — added 4 hook tests for `unknown` (in-flight returns false), `unknown → present` (200), `unknown → absent` (404), and `unknown → absent` (malformed JSON).
+
+### Added — v0.9.1: ItemIcon component + UI wiring (PR (b) of icon track)
+- **`src/components/ItemIcon.tsx`** — shared item icon component. Resolves `(gameId, category, id)` to `/icons/<gameId>/<category>/<filename>` via a per-game `manifest.json` loaded lazily and cached at module scope. Reserves `size × size` before the image loads to prevent layout shift; falls back to a tinted-monogram placeholder when the manifest entry is missing or the `<img>` errors.
+- **`src/components/itemIconUtils.ts`** — manifest cache, fetch, subscribe/notify, and the `gameHasIcons(gameId)` gate. `GAMES_WITH_ICONS` is currently `{ ACGCN }`; other games render the existing textual-glyph fallback until their respective icon scrapes ship.
+- **`scripts/generate-icon-manifest.ts`** — standalone manifest re-emitter (`npm run icons:manifest`). Walks `public/icons/<gameId>/` and writes the same `{ category: { id: filename } }` shape `fetch-icons.ts` produces, in catalog order.
+- **`<ItemIcon>` slotted into four surfaces** — 32×32 in `CollectibleRow`, 64×64 in `ItemExpandPanel` (top-left, hidden ≤720px), 24×24 in `GlobalSearchDropdown` results, 24×24 in `HomeTab` shelf cards and recent-activity rows. Each surface keeps its prior glyph as the fallback for non-ACGCN games.
+- **`CategoryTab`, `CollectibleRow`, `ItemExpandPanel`** gain a `gameId` prop forwarded from `ACCanvas` so the icon resolver can scope to the active town's game.
+- **`src/components/ItemIcon.test.tsx`** — 5 tests covering URL construction, missing-entry fallback, fetch-failure fallback, runtime `<img>` error fallback, and dimension reservation before load.
+- **`src/index.css`** — appended `.ac-expand { position: relative; }`, `.ac-expand-icon` (top-left absolute, hidden ≤720px), and inline-block layout helpers for the icon wrappers in row/search/home contexts.
+
 ## [v0.9.0-beta] — 2026-05-04
 
 ### Fixed — Version footer suppresses `release/` branch suffix (#60)
