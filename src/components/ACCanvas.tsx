@@ -20,7 +20,7 @@ import { DetailModal } from './modals/DetailModal';
 
 import { GlobalSearchDropdown } from './search/GlobalSearchDropdown';
 
-import { AnalyticsView } from './views/AnalyticsView';
+import { StatsTab } from './StatsTab';
 import { ActivityFeed } from './views/ActivityFeed';
 
 import { useMuseumData } from '../hooks/useMuseumData';
@@ -246,10 +246,12 @@ export default function ACCanvas() {
                   />
                 </>
               ) : activeTab === 'analytics' ? (
-                <AnalyticsView
+                <StatsTab
                   data={data}
+                  donated={activeTownDonated}
                   catCounts={catCounts}
-                  donatedAt={activeTownDonatedAt}
+                  gameId={activeTown?.gameId ?? 'ACGCN'}
+                  hemisphere={activeTown?.hemisphere ?? 'NH'}
                 />
               ) : activeTab === 'activity' ? (
                 <ActivityFeed donatedAt={activeTownDonatedAt} data={data} />
