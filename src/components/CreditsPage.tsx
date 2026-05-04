@@ -49,11 +49,11 @@ export function CreditsPage() {
           <p>
             Item icons are sourced from the Animal Crossing Fandom Wiki (
             <a
-              href="https://animalcrossingwiki.fandom.com"
+              href="https://animalcrossing.fandom.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              animalcrossingwiki.fandom.com
+              animalcrossing.fandom.com
             </a>
             ) under the Creative Commons Attribution-ShareAlike 3.0 license (
             <a

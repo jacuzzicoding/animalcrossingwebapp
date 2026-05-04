@@ -1,7 +1,7 @@
 This project includes the following third-party assets:
 
-Item icons (public/icons/acgcn/**/*.png, **/*.jpg)
-- Source: Animal Crossing Fandom Wiki (animalcrossingwiki.fandom.com)
+Item icons (public/icons/acgcn/**/*.{png,jpg,jpeg})
+- Source: Animal Crossing Fandom Wiki (animalcrossing.fandom.com)
 - License: Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)
 - License URL: https://creativecommons.org/licenses/by-sa/3.0/
 
