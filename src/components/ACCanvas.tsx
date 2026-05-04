@@ -1,10 +1,9 @@
-import React from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
 import { CATEGORY_META } from '../lib/categoryMeta';
 import { downloadCSV } from '../lib/csvExport';
-import { filterByQuery, globalFilter, type AnyItem } from '../lib/utils';
+import { globalFilter, type AnyItem } from '../lib/utils';
 import type { CategoryId } from '../lib/types';
 import type { AppErrorKind } from '../lib/types';
 import type { ViewId } from '../lib/viewTypes';
@@ -14,10 +13,7 @@ import ErrorBanner from './ErrorBanner';
 import ErrorState from './ErrorState';
 
 import { Sidebar } from './Sidebar';
-import { CollectibleRow } from './CollectibleRow';
-import { ItemExpandPanel } from './ItemExpandPanel';
-import { CategoryProgress } from './shared/CategoryProgress';
-import { SearchBar } from './shared/SearchBar';
+import { CategoryTab } from './CategoryTab';
 import { EmptyState } from './shared/EmptyState';
 
 import { DetailModal } from './modals/DetailModal';
@@ -96,7 +92,6 @@ export default function ACCanvas() {
     item: AnyItem;
     category: CategoryId;
   } | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
 
   const { data, loading, loadError, reload } = useMuseumData(
@@ -135,20 +130,18 @@ export default function ACCanvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.sea_creatures.length, loading, activeTab]);
 
-  // Reset per-tab search query, expanded item, and selected detail on tab changes
+  // Reset per-tab search query and selected detail on tab changes
   useEffect(() => {
     setQuery('');
-    setExpandedId(null);
     setSelected(null);
   }, [activeTab]);
 
   // Scroll-to + highlight on jump (Decision 10).
-  // When highlightId changes, expand the matching row, scroll it into view,
-  // and let the .ac-row-pulse keyframe play. Clear after the animation duration
-  // so re-jumping to the same id retriggers the pulse.
+  // CategoryTab handles expanding the matching row when highlightId changes;
+  // here we scroll the row into view and clear after the animation duration so
+  // re-jumping to the same id retriggers the pulse.
   useEffect(() => {
     if (!highlightId) return;
-    setExpandedId(highlightId);
     const raf = requestAnimationFrame(() => {
       const el = document.querySelector(
         `[data-row-id="${CSS.escape(highlightId)}"]`
@@ -170,15 +163,10 @@ export default function ACCanvas() {
       ? activeTab
       : null;
 
-  const activeItems = useMemo(
+  const activeItems = useMemo<AnyItem[]>(
     () => (activeCat ? (data[activeCat] as AnyItem[]) : []),
     [activeCat, data]
   );
-
-  const filtered = useMemo(() => {
-    if (!activeCat) return [];
-    return filterByQuery(activeItems, activeCat, query);
-  }, [activeItems, activeCat, query]);
 
   const globalResults = useMemo(() => {
     if (!globalQuery.trim()) return null;
@@ -300,66 +288,22 @@ export default function ACCanvas() {
                   />
                 </>
               ) : (
-                <>
-                  <CategoryProgress
-                    donated={catCounts[activeCat!]}
-                    total={activeItems.length}
-                    label={catLabel}
-                  />
-                  <SearchBar
-                    query={query}
-                    setQuery={setQuery}
-                    placeholder={`Search ${catLabel.toLowerCase()}…`}
-                  />
-                  <div className="ac-list">
-                    {filtered.map(item => (
-                      <React.Fragment key={item.id}>
-                        <CollectibleRow
-                          item={item}
-                          category={activeCat!}
-                          checked={!!activeTownDonated[item.id]}
-                          onClick={() => {
-                            if (activeCat === 'art') {
-                              setSelected({ item, category: activeCat! });
-                            } else {
-                              setExpandedId(prev =>
-                                prev === item.id ? null : item.id
-                              );
-                            }
-                          }}
-                          expanded={
-                            activeCat !== 'art'
-                              ? expandedId === item.id
-                              : undefined
-                          }
-                          highlighted={highlightId === item.id}
-                          hemisphere={activeTown?.hemisphere ?? 'NH'}
-                          currentMonth={new Date().getMonth() + 1}
-                        />
-                        {activeCat !== 'art' && expandedId === item.id && (
-                          <ItemExpandPanel
-                            item={item}
-                            category={activeCat!}
-                            checked={!!activeTownDonated[item.id]}
-                            donatedAt={activeTownDonatedAt[item.id]}
-                            onToggle={() => toggle(item.id)}
-                            hemisphere={activeTown?.hemisphere ?? 'NH'}
-                            currentMonth={new Date().getMonth() + 1}
-                          />
-                        )}
-                      </React.Fragment>
-                    ))}
-                    {filtered.length === 0 && (
-                      <EmptyState
-                        message={
-                          query
-                            ? `No ${catLabel.toLowerCase()} match "${query}".`
-                            : `No ${catLabel.toLowerCase()} found.`
-                        }
-                      />
-                    )}
-                  </div>
-                </>
+                <CategoryTab
+                  category={activeCat!}
+                  items={activeItems}
+                  donated={activeTownDonated}
+                  donatedAt={activeTownDonatedAt}
+                  hemisphere={activeTown?.hemisphere ?? 'NH'}
+                  currentMonth={new Date().getMonth() + 1}
+                  query={query}
+                  setQuery={setQuery}
+                  highlightId={highlightId}
+                  onItemSelect={item =>
+                    setSelected({ item, category: activeCat! })
+                  }
+                  onToggle={id => toggle(id)}
+                  catLabel={catLabel}
+                />
               )}
             </>
           )}

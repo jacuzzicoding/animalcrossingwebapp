@@ -57,6 +57,7 @@ src/
     ProgressMeter.tsx       # v0.9 Phase 6: segmented progress bar (4 or 5 segments
                             # gated by gameId; sea segment for ACNL/ACNH).
     progressMeterUtils.ts   # Pure helper segmentsForGame (unit-tested).
+    CategoryTab.tsx         # v0.9 Phase 7: sectioned category page (Leaving / Available / Out of season / Already donated)
     CollectibleRow.tsx      # Single item row with donate toggle; shows chevron + rounded-top when expanded
     ItemExpandPanel.tsx     # Inline accordion panel shown below CollectibleRow for fish/bugs/fossils
     Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
