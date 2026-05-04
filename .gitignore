@@ -157,3 +157,4 @@ expo-env.d.ts
 # Claude Code worktrees (session scratch dirs)
 .claude/worktrees/
 .claire/
+scripts/missing.txt
