@@ -1,4 +1,4 @@
-# Architecture Reference (v0.9.0-beta)
+# Architecture Reference (v0.9.1-beta)
 
 ## Stack
 Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persisted UI store) + React Router v6. Meadow design tokens (CSS custom properties in `src/index.css` `@theme`); Fraunces (display) + Inter (UI).

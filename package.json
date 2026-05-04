@@ -1,6 +1,6 @@
 {
   "name": "animalcrossingwebapp",
-  "version": "0.9.0-beta",
+  "version": "0.9.1-beta",
   "description": "Web companion app for tracking museum donations across all five Animal Crossing main-line games (GCN, WW, CF, NL, NH). Live at https://animalcrossingwebapp.vercel.app/",
   "type": "module",
   "main": "index.js",
@@ -27,7 +27,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jacuzzicoding/animalcrossingwebapp/issues"
   },

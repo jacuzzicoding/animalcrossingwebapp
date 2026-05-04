@@ -154,6 +154,13 @@ export function Sidebar({
         >
           Settings
         </button>
+        <button
+          className="ac-foot-link"
+          onClick={() => navigate('/credits')}
+          title="Credits"
+        >
+          Credits
+        </button>
       </div>
     </aside>
   );

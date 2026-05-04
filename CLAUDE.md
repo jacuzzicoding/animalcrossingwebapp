@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.0-beta (shipped 2026-05-04) — full UI revamp (Sidebar, TownManager, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown, mobile responsive). See `docs/v0.9-plan.md` for the implementation plan and `CHANGELOG.md` for the full entry.**
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.1-beta (2026-05-04) — adds Animal Crossing (GameCube) item icons across category rows, expand panels, global search, and home tab. Previous: v0.9.0-beta (full UI revamp — Sidebar, TownManager, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown, mobile responsive). See `docs/v0.9-plan.md` and `docs/v0.9.1-icons-plan.md` for plans, `CHANGELOG.md` for the full entries.**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
