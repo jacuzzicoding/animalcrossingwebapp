@@ -2,7 +2,26 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [v0.9.1-beta] — 2026-05-04
+
+### Added
+- Animal Crossing (GameCube) item icons — fish, bugs, fossils, and art (118 items total) sourced from the AC Fandom Wiki under CC BY-SA 3.0
+- `<ItemIcon>` shared component renders icons across category rows (32×32), expand panels (64×64, hidden ≤720px), global search results (24×24), and home tab shelf + recent activity (24×24); falls back to the existing tinted-monogram glyph when an icon is missing
+- `/credits` route documenting third-party asset sources and licensing, linked from the sidebar footer
+- `LICENSE` (MIT) and `NOTICE` files at the repo root
+- `manifest.json` per game under `public/icons/<gameId>/` drives icon resolution; `npm run icons:manifest` regenerates it
+- Wiki-scraping scripts (`scripts/fetch-icons.ts`, `scripts/spike-fandom-coverage.ts`) and an expanded `scripts/README.md` with methodology notes
+
+### Changed
+- Icon rendering is data-driven — adding a `manifest.json` for a future game (ACWW, ACCF, ACNL, ACNH) lights up its UI automatically with no code change. Replaces the earlier `GAMES_WITH_ICONS = { ACGCN }` allowlist
+- ESLint config no longer flags `scripts/` Node-only code; `tsx` added as a devDependency so the icon scripts run from `npm` scripts
+
+### Fixed
+- `ItemExpandPanel` padding-left expanded to clear the absolute-positioned icon
+
+### Notes
+- Other games continue to render the existing monogram fallback until their respective icon scrapes ship in subsequent v0.9.x betas
+- Per-piece fossil icons share a single per-species image where the source only provides one render — flagged for hand-drawn replacement on a later polish pass
 
 ## [v0.9.0-beta] — 2026-05-04
 

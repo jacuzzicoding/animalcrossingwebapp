@@ -456,6 +456,30 @@
     <h2>🏅 Shipped versions</h2>
     <div class="timeline">
 
+      <!-- v0.9.1-beta -->
+      <div class="tl-entry">
+        <div class="tl-date">May 4<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.9.1-beta</span>
+            <span class="version-title">ACGCN item icons</span>
+            <span class="velocity-chip">same day as v0.9.0</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Animal Crossing (GameCube) item icons — fish, bugs, fossils, art (118 items) sourced from the AC Fandom Wiki under CC BY-SA 3.0</li>
+            <li><code>&lt;ItemIcon&gt;</code> shared component renders icons across category rows, expand panels, global search results, and home tab strips</li>
+            <li>Data-driven manifest probe — adding a <code>manifest.json</code> for a future game lights up its UI with no code change</li>
+            <li>New <code>/credits</code> route documenting third-party asset sources and licensing</li>
+            <li>Repository now ships <code>LICENSE</code> (MIT) and <code>NOTICE</code> files at the root</li>
+            <li>Other games (ACWW, ACCF, ACNL, ACNH) continue to render the existing monogram fallback until their icon scrapes ship in subsequent v0.9.x betas</li>
+          </ul>
+        </div>
+      </div>
+
       <!-- v0.9.0-beta -->
       <div class="tl-entry">
         <div class="tl-date">May 4<br/>2026</div>
@@ -747,19 +771,23 @@
         <span class="building-note">polish, PWA, accessibility</span>
       </div>
 
-      <p class="checklist-section">✅ Recently shipped (v0.9.0-beta)</p>
+      <p class="checklist-section">✅ Recently shipped (v0.9.1-beta)</p>
       <div class="checklist">
         <div class="check-item done">
           <div class="box">✓</div>
-          <span class="text">Meadow UI revamp — Sidebar, TownManager drawer, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown</span>
+          <span class="text">ACGCN item icons across category rows, expand panels, global search, and home tab</span>
         </div>
         <div class="check-item done">
           <div class="box">✓</div>
-          <span class="text">Mobile responsive pass at 980/720/700/480 breakpoints; scroll-to + highlight wiring</span>
+          <span class="text">Data-driven icon manifest — drop in a manifest.json per game and the UI picks it up automatically</span>
         </div>
         <div class="check-item done">
           <div class="box">✓</div>
-          <span class="text">ACWW + ACCF art data; art tab now inline-expand</span>
+          <span class="text">New /credits route, MIT LICENSE + NOTICE files at the repo root</span>
+        </div>
+        <div class="check-item done">
+          <div class="box">✓</div>
+          <span class="text">v0.9.0-beta Meadow UI revamp — Sidebar, TownManager, sectioned CategoryTab, GlobalSearchDropdown, mobile responsive pass</span>
         </div>
       </div>
 
@@ -925,13 +953,19 @@
             <td style="padding:.6rem 1rem;">3 days</td>
             <td style="padding:.6rem 1rem;">Curator UI revamp — Meadow design, Sidebar, TownManager, sectioned categories</td>
           </tr>
+          <tr style="border-top:1px solid var(--border);">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.1-beta</td>
+            <td style="padding:.6rem 1rem;">May 4</td>
+            <td style="padding:.6rem 1rem;">same day</td>
+            <td style="padding:.6rem 1rem;">ACGCN item icons + /credits route + MIT LICENSE/NOTICE</td>
+          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <footer>
-    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.0-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.1-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
   </footer>
 
 </div>

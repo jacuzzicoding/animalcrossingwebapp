@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.0-beta (shipped 2026-05-04) — full UI revamp (Sidebar, TownManager, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown, mobile responsive). See `docs/v0.9-plan.md` for the implementation plan and `CHANGELOG.md` for the full entry.**
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.1-beta (2026-05-04) — adds Animal Crossing (GameCube) item icons across category rows, expand panels, global search, and home tab. Previous: v0.9.0-beta (full UI revamp — Sidebar, TownManager, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown, mobile responsive). See `docs/v0.9-plan.md` and `docs/v0.9.1-icons-plan.md` for plans, `CHANGELOG.md` for the full entries.**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -73,6 +73,12 @@ src/
                             # + stats stack with bells/shadow/hours/notes) with the
                             # donate / undonate button at the bottom. Donate UI lives
                             # in the panel only — the row no longer renders a toggle.
+    ItemIcon.tsx            # v0.9.1: shared item icon — manifest-resolved, layout-reserved,
+                            # fallback to monogram placeholder on miss/error.
+    itemIconUtils.ts        # v0.9.1: data-driven icon gate (`useGameHasIcons`) — probes
+                            # /icons/<gameId>/manifest.json lazily, caches a tri-state
+                            # (unknown/present/absent) at module scope. New games light up
+                            # automatically when their manifest.json lands; no code change.
     Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
     SettingsPage.tsx        # v0.9 Phase 3: full-page Settings — About + Danger zone (no Appearance per locked decision #3)
     SettingsRoute.tsx       # v0.9 Phase 3: route wrapper that mounts Sidebar + SettingsPage at /settings
@@ -282,6 +288,11 @@ Phases shipped to `development`:
 Pending:
 - Phase 10 — Mobile responsive verification pass
 - ACWW + ACCF art data (PR #78, closes Issue #74)
+
+### v0.9.1-beta — Item icons (in progress)
+- PR (a) — Fandom scraper, `OVERRIDES` map, full ACGCN icon set committed under `public/icons/acgcn/` with per-game `manifest.json` (PR #86, shipped)
+- PR (b) — `<ItemIcon>` component + UI wiring in CollectibleRow / ItemExpandPanel / GlobalSearchDropdown / HomeTab; `scripts/generate-icon-manifest.ts` standalone re-emitter; `GAMES_WITH_ICONS` gate scoped to ACGCN until other games' icon scrapes ship (this PR)
+- PR (c) — `NOTICE` at the repo root + in-app `/credits` route + release prep (pending)
 
 ### v1.0 — Launch ready
 - Branding, SEO, accessibility, performance audit

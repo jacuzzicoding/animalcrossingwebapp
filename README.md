@@ -66,6 +66,6 @@ Museum data lives in `public/data/<game>/`:
 
 ## Version
 
-Current release: **v0.9.0-beta** (shipped 2026-05-04) — full UI revamp staged for release on `main`. Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the v0.9 plan.
+Current release: **v0.9.1-beta** (2026-05-04) — adds Animal Crossing (GameCube) item icons across all category surfaces. Previous beta: **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the v0.9 plan.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).
