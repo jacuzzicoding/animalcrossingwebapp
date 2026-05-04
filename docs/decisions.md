@@ -4,6 +4,16 @@ Reverse-chronological record of significant design and scope decisions. Newest f
 
 ---
 
+## 2026-05-03 — v0.9.0-beta locked decisions live in `docs/v0.9-plan.md`
+
+**Decision:** The 10 locked design decisions for the v0.9 UI revamp (game immutability, Meadow-only theme, Settings = About + Danger only, sea creatures in StatsTab, `playerName` deprecation, ACNH-only hemisphere, native `confirm()`, `basedOn` art search, sea in GlobalSearchDropdown, scroll-to + highlight wiring) are recorded in `docs/v0.9-plan.md` section 4 rather than duplicated here.
+
+**Why:** The plan doc is the canonical reference for v0.9 scope and is read alongside the design handoffs in `docs/design-handoffs/`. Splitting the decisions across two files would create two sources of truth. This log continues to capture decisions that don't sit inside an active plan doc (incident-driven, post-ship, scope tradeoffs).
+
+**Pointer:** See `docs/v0.9-plan.md` § 4 "Locked Design Decisions" for the binding list.
+
+---
+
 ## 2026-05-01 — Shadow size not surfaced in any UI — defer to v0.9 (Issue #59)
 
 **Decision:** Defer adding shadow size display to v0.9. Do not add it to v0.8.2.

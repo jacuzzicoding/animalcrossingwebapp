@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Curator — AC Museum Tracker</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js"></script>
+<script src="theme.js"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="shell.jsx"></script>
+<script type="text/babel" src="tabs.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect } = React;
+const { Sidebar } = window.ACShell;
+const { HomeTab, CategoryTab, StatsTab } = window.ACTabs;
+const { MONTHS_LONG } = window.ACComponents;
+const { TweaksPanel, TweakSection, TweakRadio, TweakSelect, TweakToggle, TweakSlider, useTweaks } = window;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "meadow",
+  "currentMonth": 5,
+  "showLeavingShelf": true,
+  "showNewShelf": true,
+  "compactRows": false,
+  "hideDonated": false
+}/*EDITMODE-END*/;
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const data = window.MUSEUM_DATA;
+  const [tab, setTab] = useState("home");
+  const [search, setSearch] = useState("");
+
+  // donated state — sets per category
+  const [donated, setDonated] = useState({
+    fish: new Set(data.donated.fish),
+    bugs: new Set(data.donated.bugs),
+    fossils: new Set(data.donated.fossils),
+    art: new Set(data.donated.art),
+  });
+
+  useEffect(() => { window.applyTheme(tweaks.theme); }, [tweaks.theme]);
+
+  function toggleDonated(cat, id) {
+    setDonated(prev => {
+      const next = { ...prev };
+      const s = new Set(prev[cat]);
+      if (s.has(id)) s.delete(id); else s.add(id);
+      next[cat] = s;
+      return next;
+    });
+  }
+
+  const stats = {
+    fish:    { donated: donated.fish.size,    total: data.fish.length },
+    bugs:    { donated: donated.bugs.size,    total: data.bugs.length },
+    fossils: { donated: donated.fossils.size, total: data.fossils.length },
+    art:     { donated: donated.art.size,     total: data.art.length },
+  };
+
+  const currentMonth = tweaks.currentMonth;
+
+  function jumpTo(cat, id) {
+    setTab(cat);
+    // could scroll to id, kept simple
+  }
+
+  // Filter donated rows out if hideDonated tweak is on
+  const filteredCat = (cat) => {
+    if (!tweaks.hideDonated) return data[cat];
+    return data[cat].filter(it => !donated[cat].has(it.id));
+  };
+
+  return (
+    <div className="ac-app" data-compact={tweaks.compactRows ? "true" : "false"}>
+      <Sidebar town={{...data.meta}} currentTab={tab} onTab={setTab} stats={stats} />
+
+      <main className="ac-main">
+        <div className="ac-topbar">
+          <div className="ac-search">
+            <svg className="ac-search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4"/>
+              <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            <input
+              placeholder={tab === "home" ? "Search across categories…" : `Search ${tab}…`}
+              value={search}
+              onChange={e=>setSearch(e.target.value)}
+            />
+          </div>
+          <div className="ac-topbar-actions">
+            <div className="ac-date-chip">
+              <span>Sat</span>
+              <strong>May {data.meta.currentDay}</strong>
+            </div>
+          </div>
+        </div>
+
+        {tab === "home" && (
+          <HomeTab
+            data={{...data,
+              recentActivity: data.recentActivity,
+            }}
+            donated={donated}
+            currentMonth={currentMonth}
+            onJump={jumpTo}
+            onToggle={toggleDonated}
+            showLeavingShelf={tweaks.showLeavingShelf}
+            showNewShelf={tweaks.showNewShelf}
+          />
+        )}
+
+        {["fish","bugs","fossils","art"].includes(tab) && (
+          <>
+            <header className="ac-category-head">
+              <h1 className="ac-category-title">
+                <em>{stats[tab].donated}</em> of {stats[tab].total} {tab}
+              </h1>
+              <div className="ac-category-meta">
+                <strong>{Math.round((stats[tab].donated/stats[tab].total)*100)}% complete</strong>
+                {tab !== "art" && tab !== "fossils" && `Showing availability for ${MONTHS_LONG[currentMonth-1]}`}
+              </div>
+            </header>
+            <CategoryTab
+              category={tab}
+              items={filteredCat(tab)}
+              donated={donated[tab]}
+              onToggle={(id)=>toggleDonated(tab, id)}
+              currentMonth={currentMonth}
+              search={search}
+            />
+          </>
+        )}
+
+        {tab === "stats" && (
+          <>
+            <header className="ac-category-head">
+              <h1 className="ac-category-title"><em>Stats</em> &amp; rhythms</h1>
+              <div className="ac-category-meta">
+                <strong>{data.meta.townName}</strong>
+                {data.meta.game}
+              </div>
+            </header>
+            <StatsTab data={data} donated={donated} currentMonth={currentMonth} />
+          </>
+        )}
+      </main>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Theme">
+          <TweakSelect
+            label="Palette"
+            value={tweaks.theme}
+            onChange={v => setTweak("theme", v)}
+            options={[
+              { value: "meadow",     label: "Meadow (default)" },
+              { value: "parchment",  label: "Parchment (current app)" },
+              { value: "midnight",   label: "Midnight" },
+              { value: "sakura",     label: "Sakura" },
+            ]}
+          />
+        </TweakSection>
+
+        <TweakSection title="Time">
+          <TweakSlider
+            label={`Current month — ${MONTHS_LONG[tweaks.currentMonth-1]}`}
+            value={tweaks.currentMonth}
+            onChange={v => setTweak("currentMonth", v)}
+            min={1} max={12} step={1}
+          />
+        </TweakSection>
+
+        <TweakSection title="Layout">
+          <TweakToggle
+            label="Show 'Leaving soon' shelf"
+            value={tweaks.showLeavingShelf}
+            onChange={v => setTweak("showLeavingShelf", v)}
+          />
+          <TweakToggle
+            label="Show 'New this month' shelf"
+            value={tweaks.showNewShelf}
+            onChange={v => setTweak("showNewShelf", v)}
+          />
+          <TweakToggle
+            label="Hide donated items in lists"
+            value={tweaks.hideDonated}
+            onChange={v => setTweak("hideDonated", v)}
+          />
+          <TweakToggle
+            label="Compact row density"
+            value={tweaks.compactRows}
+            onChange={v => setTweak("compactRows", v)}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<style id="__compact-density">
+[data-compact="true"] .ac-row-main { padding: 8px 18px; }
+[data-compact="true"] .ac-row-meta { display: none; }
+[data-compact="true"] .ac-glyph { width: 26px; height: 26px; font-size: 10px; }
+</style>
+</body>
+</html>

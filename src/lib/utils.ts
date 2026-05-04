@@ -70,12 +70,8 @@ export function itemMonths(
   return critter.months;
 }
 
-export function itemNotes(
-  item: AnyItem,
-  category?: CategoryId
-): string | undefined {
-  if (category === 'sea_creatures' || isSeaCreature(item))
-    return (item as SeaCreature).time;
+export function itemNotes(item: AnyItem): string | undefined {
+  if (isSeaCreature(item)) return item.time;
   return isFish(item) ? item.notes : undefined;
 }
 

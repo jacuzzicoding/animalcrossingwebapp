@@ -49,10 +49,9 @@ export function downloadCSV(
   data: AllData,
   donatedMap: Record<string, boolean>,
   donatedAtMap: Record<string, string>,
-  townName: string,
-  playerName: string
+  townName: string
 ): void {
-  const csv = buildCSV(data, donatedMap, donatedAtMap, townName, playerName);
+  const csv = buildCSV(data, donatedMap, donatedAtMap, townName);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -70,8 +69,7 @@ export function buildCSV(
   data: AllData,
   donatedMap: Record<string, boolean>,
   donatedAtMap: Record<string, string>,
-  townName: string,
-  playerName: string
+  townName: string
 ): string {
   const sections: string[] = [];
 
@@ -80,7 +78,6 @@ export function buildCSV(
     [
       row('Animal Crossing GCN — Museum Tracker Export'),
       row('Town', townName),
-      row('Player', playerName),
       row(
         'Exported',
         new Date().toLocaleString('en-US', {

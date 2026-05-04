@@ -7,7 +7,7 @@ import type {
   SeaCreature,
 } from './types';
 
-export type ViewId = CategoryId | 'home' | 'activity' | 'search' | 'analytics';
+export type ViewId = CategoryId | 'home' | 'activity' | 'analytics';
 
 export interface AllData {
   fish: Fish[];

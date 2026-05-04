@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Animal Crossing Web App — Version History & Roadmap</title>
-  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,7 +25,7 @@
     }
 
     body {
-      font-family: 'Varela Round', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: #eef7ee;
       color: var(--ink);
       min-height: 100vh;
@@ -422,22 +422,22 @@
   <header>
     <span class="leaf-deco">🍃</span>
     <h1>Animal Crossing Web App</h1>
-    <p>Version history &amp; roadmap · Updated May 1, 2026</p>
+    <p>Version history &amp; roadmap · Updated May 4, 2026</p>
   </header>
 
   <!-- Velocity banner -->
   <div class="velocity-banner">
     <div>
-      <div class="headline">🚀 v0.1 → v0.8.2 in 21 days</div>
-      <div class="sub">Eleven releases. Blathers can't keep up.</div>
+      <div class="headline">🚀 v0.1 → v0.9 in 24 days</div>
+      <div class="sub">Twelve releases. Blathers can't keep up.</div>
     </div>
     <div class="vel-stats">
       <div class="vel-stat">
-        <div class="num">11</div>
+        <div class="num">12</div>
         <div class="label">releases shipped</div>
       </div>
       <div class="vel-stat">
-        <div class="num">21</div>
+        <div class="num">24</div>
         <div class="label">days elapsed</div>
       </div>
       <div class="vel-stat">
@@ -455,6 +455,35 @@
   <section>
     <h2>🏅 Shipped versions</h2>
     <div class="timeline">
+
+      <!-- v0.9.0-beta -->
+      <div class="tl-entry">
+        <div class="tl-date">May 4<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.9.0-beta</span>
+            <span class="version-title">Curator UI revamp</span>
+            <span class="velocity-chip">3 days after v0.8.2</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Full Meadow design language — Fraunces + Inter type, moss-green accent, retired Varela Round + parchment palette</li>
+            <li>Sidebar shell replaces MuseumHeader + TabBar + TownSwitcher; per-category counts, sea nav gated for ACNL/ACNH</li>
+            <li>TownManager drawer unifies create/edit/delete (resolves the v0.8.1 greyed-out modal stopgap); game immutable post-creation, `playerName` deprecated</li>
+            <li>Settings page with About + Danger zone (reset active-town donations, reset everything)</li>
+            <li>HomeTab rebuilt — hero stat, month strip, leaving-soon + just-arrived shelves, ProgressMeter (4 or 5 segments by game)</li>
+            <li>CategoryTab sectioned (Leaving / Available / Out of season / Already donated) with month-wrap logic</li>
+            <li>GlobalSearchDropdown with category groups, keyboard nav (↑↓↵esc), search history, art `basedOn` matching preserved</li>
+            <li>StatsTab redesigned — per-category cards (3/4/5 by game) and yearly rhythm chart</li>
+            <li>Art tab now uses inline ItemExpandPanel; DetailModal retired</li>
+            <li>ACWW + ACCF art data shipped (Closes #74); Meadow tokens, scroll-to + pulse highlight, full mobile responsive pass at 980/720/700/480 breakpoints</li>
+            <li>Bug fixes: ACNH all-caught-up (#71), art modal close (#81), version footer suffix (#60), modal sticky-label (#26)</li>
+          </ul>
+        </div>
+      </div>
 
       <!-- v0.8.2-alpha -->
       <div class="tl-entry">
@@ -710,19 +739,27 @@
 
   <!-- Currently building -->
   <section>
-    <h2>🔨 Currently building — v0.9</h2>
+    <h2>🔨 Currently building — v1.0</h2>
     <div class="building-card">
       <div class="building-head">
         <span class="building-badge">UP NEXT</span>
-        <h3>Polish, onboarding &amp; PWA</h3>
-        <span class="building-note">making it feel at home</span>
+        <h3>Launch ready</h3>
+        <span class="building-note">polish, PWA, accessibility</span>
       </div>
 
-      <p class="checklist-section">✅ Recently shipped (v0.8.2)</p>
+      <p class="checklist-section">✅ Recently shipped (v0.9.0-beta)</p>
       <div class="checklist">
         <div class="check-item done">
           <div class="box">✓</div>
-          <span class="text">Sea creatures tab — ACNH + ACNL, inline expand panel, Home tab cards, search, CSV</span>
+          <span class="text">Meadow UI revamp — Sidebar, TownManager drawer, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown</span>
+        </div>
+        <div class="check-item done">
+          <div class="box">✓</div>
+          <span class="text">Mobile responsive pass at 980/720/700/480 breakpoints; scroll-to + highlight wiring</span>
+        </div>
+        <div class="check-item done">
+          <div class="box">✓</div>
+          <span class="text">ACWW + ACCF art data; art tab now inline-expand</span>
         </div>
       </div>
 
@@ -730,15 +767,7 @@
       <div class="checklist">
         <div class="check-item todo">
           <div class="box">·</div>
-          <span class="text">UI redesign pass — cozy-er, more expressive</span>
-        </div>
-        <div class="check-item todo">
-          <div class="box">·</div>
           <span class="text">PWA support — install to home screen</span>
-        </div>
-        <div class="check-item todo">
-          <div class="box">·</div>
-          <span class="text">Mobile-first responsive layout pass</span>
         </div>
         <div class="check-item todo">
           <div class="box">·</div>
@@ -746,11 +775,15 @@
         </div>
         <div class="check-item todo">
           <div class="box">·</div>
-          <span class="text">Seasonal / time-based filtering in list views</span>
+          <span class="text">Full accessibility audit (#76, #82) — keyboard nav, ARIA, focus rings</span>
         </div>
         <div class="check-item todo">
           <div class="box">·</div>
-          <span class="text">Improved accessibility — keyboard nav, focus rings</span>
+          <span class="text">SEO + Open Graph metadata; performance pass</span>
+        </div>
+        <div class="check-item todo">
+          <div class="box">·</div>
+          <span class="text">Branding &amp; identity polish — drop the alpha/beta label</span>
         </div>
       </div>
     </div>
@@ -886,13 +919,19 @@
             <td style="padding:.6rem 1rem;">1 day</td>
             <td style="padding:.6rem 1rem;">Sea Creatures tab (ACNH + ACNL)</td>
           </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.0-beta</td>
+            <td style="padding:.6rem 1rem;">May 4</td>
+            <td style="padding:.6rem 1rem;">3 days</td>
+            <td style="padding:.6rem 1rem;">Curator UI revamp — Meadow design, Sidebar, TownManager, sectioned categories</td>
+          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <footer>
-    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.8.2-alpha shipped · v0.9 in progress · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.0-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
   </footer>
 
 </div>

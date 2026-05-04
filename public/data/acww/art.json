@@ -1,0 +1,22 @@
+[
+  { "id": "amazing-painting", "name": "Amazing Painting", "basedOn": "The Night Watch by Rembrandt" },
+  { "id": "basic-painting", "name": "Basic Painting", "basedOn": "The Blue Boy by Thomas Gainsborough" },
+  { "id": "calm-painting", "name": "Calm Painting", "basedOn": "A Sunday on La Grande Jatte by Georges Seurat" },
+  { "id": "common-painting", "name": "Common Painting", "basedOn": "The Gleaners by Jean-François Millet" },
+  { "id": "dainty-painting", "name": "Dainty Painting", "basedOn": "Ballet by Edgar Degas" },
+  { "id": "famous-painting", "name": "Famous Painting", "basedOn": "Mona Lisa by Leonardo da Vinci" },
+  { "id": "fine-painting", "name": "Fine Painting", "basedOn": "Arearea by Paul Gauguin" },
+  { "id": "flowery-painting", "name": "Flowery Painting", "basedOn": "Sunflowers by Vincent van Gogh" },
+  { "id": "lovely-painting", "name": "Lovely Painting", "basedOn": "Irène Cahen d'Anvers by Pierre-Auguste Renoir" },
+  { "id": "moving-painting", "name": "Moving Painting", "basedOn": "The Birth of Venus by Sandro Botticelli" },
+  { "id": "nice-painting", "name": "Nice Painting", "basedOn": "The Fifer by Édouard Manet" },
+  { "id": "opulent-painting", "name": "Opulent Painting", "basedOn": "Zodiac by Alphonse Mucha" },
+  { "id": "perfect-painting", "name": "Perfect Painting", "basedOn": "Apples and Oranges by Paul Cézanne" },
+  { "id": "quaint-painting", "name": "Quaint Painting", "basedOn": "The Milkmaid by Johannes Vermeer" },
+  { "id": "rare-painting", "name": "Rare Painting", "basedOn": "The Kiss by Gustav Klimt" },
+  { "id": "scary-painting", "name": "Scary Painting", "basedOn": "Otani Oniji II by Toshusai Sharaku" },
+  { "id": "solemn-painting", "name": "Solemn Painting", "basedOn": "Las Meninas by Diego Velázquez" },
+  { "id": "strange-painting", "name": "Strange Painting", "basedOn": "Ambassadeurs: Aristide Bruant by Henri de Toulouse-Lautrec" },
+  { "id": "warm-painting", "name": "Warm Painting", "basedOn": "La maja vestida by Francisco Goya" },
+  { "id": "worthy-painting", "name": "Worthy Painting", "basedOn": "Liberty Leading the People by Eugène Delacroix" }
+]

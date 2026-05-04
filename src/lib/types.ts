@@ -53,6 +53,15 @@ export const GAMES: Record<GameId, Game> = {
   },
 };
 
+/** Convenience: list of games for selectors. */
+export const GAME_LIST: Game[] = [
+  GAMES.ACGCN,
+  GAMES.ACWW,
+  GAMES.ACCF,
+  GAMES.ACNL,
+  GAMES.ACNH,
+];
+
 export type Habitat = 'river' | 'ocean' | 'pond' | 'lake' | 'other';
 
 export type CategoryId = 'fish' | 'bugs' | 'fossils' | 'art' | 'sea_creatures';
@@ -90,6 +99,8 @@ export interface ArtPiece {
   id: string;
   name: string;
   basedOn: string;
+  /** ACNH: whether Crazy Redd sells a counterfeit version of this piece */
+  hasFake?: boolean;
 }
 
 export interface SeaCreature {

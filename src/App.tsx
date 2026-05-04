@@ -1,9 +1,13 @@
+import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import ACCanvas from './components/ACCanvas';
+import SettingsRoute from './components/SettingsRoute';
+import { TownManager } from './components/TownManager';
 import { useHydration } from './hooks/useHydration';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAppStore } from './lib/store';
+import { useUIStore } from './lib/uiStore';
 
 function RootRedirect() {
   const towns = useAppStore(s => s.towns);
@@ -19,6 +23,16 @@ function RootRedirect() {
 
 function App() {
   const hydrated = useHydration();
+  const towns = useAppStore(s => s.towns);
+  const openTownManager = useUIStore(s => s.openTownManager);
+  const townManagerOpen = useUIStore(s => s.townManagerOpen);
+
+  // Force the TownManager open in create mode whenever there are no towns.
+  useEffect(() => {
+    if (hydrated && towns.length === 0 && !townManagerOpen) {
+      openTownManager(true);
+    }
+  }, [hydrated, towns.length, townManagerOpen, openTownManager]);
 
   if (!hydrated) {
     return (
@@ -34,7 +48,7 @@ function App() {
         <span
           style={{
             color: '#7B5E3B',
-            fontFamily: 'Varela Round, sans-serif',
+            fontFamily: "'Inter', system-ui, sans-serif",
             fontSize: 18,
           }}
         >
@@ -48,10 +62,12 @@ function App() {
     <ErrorBoundary>
       <Routes>
         <Route path="/" element={<RootRedirect />} />
+        <Route path="/settings" element={<SettingsRoute />} />
         <Route path="/town/:townId" element={<ACCanvas />} />
         <Route path="/town/:townId/:tab" element={<ACCanvas />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <TownManager />
       <Analytics />
       {typeof window !== 'undefined' && (
         <div
@@ -65,15 +81,23 @@ function App() {
             pointerEvents: 'none',
           }}
         >
-          {window.location.hostname === 'animalcrossingwebapp.vercel.app' ? (
-            <>v{import.meta.env.VITE_APP_VERSION}</>
-          ) : (
-            <>
-              v{import.meta.env.VITE_APP_VERSION}
-              {' · '}
-              {import.meta.env.VITE_GIT_BRANCH}
-            </>
-          )}
+          {(() => {
+            const version = import.meta.env.VITE_APP_VERSION;
+            const branch = import.meta.env.VITE_GIT_BRANCH;
+            const isProd =
+              window.location.hostname === 'animalcrossingwebapp.vercel.app';
+            const hideBranchSuffix =
+              isProd || !branch || branch.startsWith('release/');
+            return hideBranchSuffix ? (
+              <>v{version}</>
+            ) : (
+              <>
+                v{version}
+                {' · '}
+                {branch}
+              </>
+            );
+          })()}
         </div>
       )}
     </ErrorBoundary>
