@@ -10,13 +10,11 @@ export function GlobalSearchResults({
   results,
   query,
   donated,
-  onToggle,
   onSelect,
 }: {
   results: Record<CategoryId, AnyItem[]> | null;
   query: string;
   donated: Record<string, boolean>;
-  onToggle: (id: string) => void;
   onSelect: (item: AnyItem, category: CategoryId) => void;
 }) {
   if (!results) {
@@ -61,7 +59,6 @@ export function GlobalSearchResults({
                   item={item}
                   category={cat}
                   checked={!!donated[item.id]}
-                  onToggle={() => onToggle(item.id)}
                   onClick={() => onSelect(item, cat)}
                 />
               ))}

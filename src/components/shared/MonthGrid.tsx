@@ -1,26 +1,27 @@
 import React from 'react';
 import { MONTH_NAMES } from '../../lib/constants';
 
-export function MonthGrid({ months }: { months?: number[] }) {
+export function MonthGrid({
+  months,
+  current,
+}: {
+  months?: number[];
+  current?: number;
+}) {
   return (
-    <div className="grid grid-cols-6 gap-1.5">
+    <div className="ac-monthgrid">
       {MONTH_NAMES.map((m, i) => {
-        const active = !months || months.includes(i + 1);
+        const idx = i + 1;
+        const on = !months || months.includes(idx);
+        const here = current === idx;
         return (
           <div
             key={m}
-            className="flex items-center justify-center rounded-[6px] py-1.5"
-            style={{
-              backgroundColor: active ? '#3CA370' : '#EDE3D0',
-              opacity: active ? 1 : 0.45,
-            }}
+            className={['ac-monthcell', on ? 'on' : '', here ? 'here' : '']
+              .filter(Boolean)
+              .join(' ')}
           >
-            <span
-              className="text-[10px] font-semibold"
-              style={{ color: active ? '#fff' : '#5a4a35' }}
-            >
-              {m}
-            </span>
+            <span className="ac-monthcell-label">{m}</span>
           </div>
         );
       })}

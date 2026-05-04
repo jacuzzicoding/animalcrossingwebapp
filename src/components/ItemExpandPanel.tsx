@@ -1,12 +1,10 @@
 import React from 'react';
-import { CheckCircle2 } from 'lucide-react';
 import { MonthGrid } from './shared/MonthGrid';
-import { HabitatChip } from './shared/HabitatChip';
 import {
   itemBells,
   itemMonths,
   itemNotes,
-  isFish,
+  isSeaCreature,
   formatTimestamp,
   type AnyItem,
 } from '../lib/utils';
@@ -18,105 +16,73 @@ export function ItemExpandPanel({
   checked,
   donatedAt,
   onToggle,
+  hemisphere,
+  currentMonth,
 }: {
   item: AnyItem;
   category: CategoryId;
   checked: boolean;
   donatedAt?: string;
   onToggle: () => void;
+  hemisphere?: 'NH' | 'SH';
+  currentMonth?: number;
 }) {
   const bells = itemBells(item, category);
-  const months = itemMonths(item, category);
-  const notes = itemNotes(item);
-  const habitat = isFish(item) ? item.habitat : undefined;
+  const months = itemMonths(item, category, hemisphere);
+  // Sea creatures render `time` as the "active hours" stat below; suppress the
+  // notes block to avoid showing the same string twice.
+  const notes = isSeaCreature(item) ? undefined : itemNotes(item);
+  const cm = currentMonth ?? new Date().getMonth() + 1;
+  const shadow = isSeaCreature(item) ? item.shadow : undefined;
+  const time = isSeaCreature(item) ? item.time : undefined;
+
+  const hasMonths = !!(months && months.length > 0);
 
   return (
-    <div
-      className="mx-2 mb-2 rounded-b-[14px] overflow-hidden"
-      style={{
-        backgroundColor: checked ? '#f2faf6' : '#FFFDF6',
-        border: '1px solid',
-        borderTop: 'none',
-        borderColor: checked ? '#b8dfc8' : '#E7DAC4',
-      }}
-    >
-      <div className="px-4 pt-3 pb-4 space-y-3">
-        {/* Bells + Habitat row */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {bells != null && (
-            <div
-              className="flex items-center gap-1.5 rounded-[8px] px-3 py-1.5"
-              style={{
-                backgroundColor: '#F5E9D4',
-                border: '1px solid #E7DAC4',
-              }}
-            >
-              <span
-                className="text-[11px] uppercase tracking-wider opacity-60"
-                style={{ color: '#5a4a35' }}
-              >
-                Value
-              </span>
-              <span
-                className="text-sm font-semibold"
-                style={{ color: '#2A2A2A' }}
-              >
-                {bells.toLocaleString()} Bells
-              </span>
-            </div>
-          )}
-          {habitat && <HabitatChip label={habitat} />}
+    <div className={`ac-expand${hasMonths ? '' : ' ac-expand-no-months'}`}>
+      {hasMonths && (
+        <div className="ac-expand-section">
+          <div className="ac-expand-label">Available in</div>
+          <MonthGrid months={months!} current={cm} />
         </div>
-
-        {/* Month availability grid */}
-        {category !== 'fossils' && (
-          <div>
-            <div
-              className="text-[11px] uppercase tracking-wider opacity-60 mb-2"
-              style={{ color: '#5a4a35' }}
-            >
-              {months && months.length > 0 ? 'Available' : 'Year-round'}
-            </div>
-            <MonthGrid months={months} />
+      )}
+      <div className="ac-expand-side">
+        {bells != null && (
+          <div className="ac-stat">
+            <div className="ac-stat-num">{bells.toLocaleString()}</div>
+            <div className="ac-stat-label">bells · sell value</div>
           </div>
         )}
-
-        {/* Notes */}
-        {notes && (
-          <div
-            className="rounded-[8px] px-3 py-2 italic text-xs"
-            style={{
-              backgroundColor: '#fff8ee',
-              border: '1px solid #E7DAC4',
-              color: '#5a4a35',
-            }}
-          >
-            {notes}
+        {shadow && (
+          <div className="ac-stat">
+            <div className="ac-stat-num ac-stat-num-text">{shadow}</div>
+            <div className="ac-stat-label">shadow size</div>
           </div>
         )}
-
-        {/* Donation timestamp */}
+        {time && (
+          <div className="ac-stat">
+            <div className="ac-stat-num ac-stat-num-text">{time}</div>
+            <div className="ac-stat-label">active hours</div>
+          </div>
+        )}
+        {notes && <div className="ac-note">{notes}</div>}
         {checked && donatedAt && (
-          <div className="text-xs" style={{ color: '#2A7A52' }}>
-            Donated {formatTimestamp(donatedAt)}
+          <div className="ac-stat">
+            <div className="ac-stat-num ac-stat-num-text">
+              {formatTimestamp(donatedAt)}
+            </div>
+            <div className="ac-stat-label">donated</div>
           </div>
         )}
-
-        {/* Donate toggle button */}
         <button
+          type="button"
+          className={`ac-donate-btn ${checked ? 'ac-donate-btn-on' : ''}`}
           onClick={e => {
             e.stopPropagation();
             onToggle();
           }}
-          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[10px] font-medium text-sm transition"
-          style={{
-            backgroundColor: checked ? '#EDE3D0' : '#3CA370',
-            color: checked ? '#2A2A2A' : '#fff',
-            border: '1px solid #E7DAC4',
-          }}
         >
-          {checked && <CheckCircle2 className="w-4 h-4" />}
-          {checked ? 'Remove from Donated' : 'Mark as Donated'}
+          {checked ? 'Donated ✓ — undonate' : 'Mark as donated'}
         </button>
       </div>
     </div>
