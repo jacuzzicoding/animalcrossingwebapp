@@ -26,6 +26,8 @@ npm run icons:manifest
 
 No env vars, no CLI args. Re-run after every icon commit.
 
+> The UI lights up automatically when a game's `manifest.json` lands. `<ItemIcon>` probes `/icons/<gameId>/manifest.json` lazily on first render and caches the tri-state result (`unknown` / `present` / `absent`); no companion code change in `src/` is needed to enable icons for a newly-scraped game.
+
 ---
 
 ## `fetch-icons.ts` — scrape item icons from the Fandom AC wiki

@@ -75,7 +75,10 @@ src/
                             # in the panel only — the row no longer renders a toggle.
     ItemIcon.tsx            # v0.9.1: shared item icon — manifest-resolved, layout-reserved,
                             # fallback to monogram placeholder on miss/error.
-    itemIconUtils.ts        # v0.9.1: GAMES_WITH_ICONS gate, manifest fetch + module-level cache.
+    itemIconUtils.ts        # v0.9.1: data-driven icon gate (`useGameHasIcons`) — probes
+                            # /icons/<gameId>/manifest.json lazily, caches a tri-state
+                            # (unknown/present/absent) at module scope. New games light up
+                            # automatically when their manifest.json lands; no code change.
     Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
     SettingsPage.tsx        # v0.9 Phase 3: full-page Settings — About + Danger zone (no Appearance per locked decision #3)
     SettingsRoute.tsx       # v0.9 Phase 3: route wrapper that mounts Sidebar + SettingsPage at /settings

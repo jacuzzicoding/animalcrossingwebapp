@@ -17,7 +17,7 @@ import {
 import { ProgressMeter } from './ProgressMeter';
 import { useJumpToRow } from '../hooks/useJumpToRow';
 import { ItemIcon } from './ItemIcon';
-import { gameHasIcons } from './itemIconUtils';
+import { useGameHasIcons } from './itemIconUtils';
 
 const MONTH_FULL = [
   'January',
@@ -104,6 +104,7 @@ export default function HomeTab({
   setHighlightId,
 }: HomeTabProps) {
   const jumpTo = useJumpToRow(setHighlightId);
+  const useIcons = useGameHasIcons(gameId);
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
@@ -315,7 +316,7 @@ export default function HomeTab({
                 className="ac-recent-row"
                 onClick={() => jumpTo(r.category, r.id)}
               >
-                {gameHasIcons(gameId) ? (
+                {useIcons ? (
                   <ItemIcon
                     gameId={gameId}
                     category={r.category}
@@ -358,7 +359,7 @@ function ShelfGrid({
   onPick: (category: CategoryId, id: string) => void;
   gameId: GameId;
 }) {
-  const useIcons = gameHasIcons(gameId);
+  const useIcons = useGameHasIcons(gameId);
   return (
     <div className="ac-shelf-grid">
       {items.slice(0, 6).map(item => {

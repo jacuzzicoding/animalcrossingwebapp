@@ -1,23 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { CategoryId, GameId } from '../lib/types';
-import {
-  getManifestState,
-  loadManifest,
-  subscribeManifest,
-  type ManifestState,
-} from './itemIconUtils';
-
-function useManifest(gameId: GameId): ManifestState {
-  const [, force] = useState(0);
-  useEffect(() => {
-    const unsub = subscribeManifest(gameId, () => force(n => n + 1));
-    if (!getManifestState(gameId)) {
-      void loadManifest(gameId);
-    }
-    return unsub;
-  }, [gameId]);
-  return getManifestState(gameId) ?? { status: 'loading' };
-}
+import { useManifestState } from './itemIconUtils';
 
 function humanize(id: string): string {
   return id
@@ -52,7 +35,7 @@ export function ItemIcon({
   className?: string;
   alt?: string;
 }) {
-  const state = useManifest(gameId);
+  const state = useManifestState(gameId);
   const [errored, setErrored] = useState(false);
 
   useEffect(() => {
@@ -60,7 +43,7 @@ export function ItemIcon({
   }, [gameId, category, id]);
 
   const filename =
-    state.status === 'ready' ? state.manifest[category]?.[id] : undefined;
+    state.status === 'present' ? state.manifest[category]?.[id] : undefined;
   const src = filename
     ? `/icons/${gameId.toLowerCase()}/${category}/${filename}`
     : null;

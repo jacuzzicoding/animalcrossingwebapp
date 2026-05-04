@@ -9,7 +9,7 @@ import {
   isSeaCreature,
 } from '../../lib/utils';
 import { ItemIcon } from '../ItemIcon';
-import { gameHasIcons } from '../itemIconUtils';
+import { useGameHasIcons } from '../itemIconUtils';
 
 const SEARCH_HISTORY_KEY = 'ac-curator-search-history';
 const MAX_HISTORY = 8;
@@ -113,6 +113,7 @@ export function GlobalSearchDropdown({
   const [activeIdx, setActiveIdx] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const useIcons = useGameHasIcons(gameId);
 
   const visibleCategories = useMemo<CategoryId[]>(() => {
     const cats: CategoryId[] = ['fish', 'bugs', 'fossils'];
@@ -343,7 +344,7 @@ export function GlobalSearchDropdown({
                           onMouseEnter={() => setActiveIdx(idx)}
                           onClick={() => selectIndex(idx)}
                         >
-                          {gameHasIcons(gameId) ? (
+                          {useIcons ? (
                             <ItemIcon
                               gameId={gameId}
                               category={cat}
