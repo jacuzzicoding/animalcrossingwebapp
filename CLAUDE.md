@@ -81,13 +81,15 @@ src/
       ActivityFeed.tsx      # Recent donations list
       SectionCard.tsx       # Reusable card wrapper
     search/
-      GlobalSearchBar.tsx   # Global search input
-      GlobalSearchResults.tsx  # Cross-category search results
-      SearchHistoryPopover.tsx # Recent search history dropdown
+      GlobalSearchDropdown.tsx # v0.9 Phase 8: unified search dropdown — anchored
+                               # under the Home topbar input. Grouped category
+                               # results (5 groups for ACNL/ACNH, 4 elsewhere),
+                               # keyboard nav (↑↓↵esc), localStorage history
+                               # under `ac-curator-search-history` (max 8).
+                               # Replaces GlobalSearchBar/Results/HistoryPopover.
   hooks/
     useHydration.ts         # Gates render on Zustand persist rehydration (onFinishHydration)
     useMuseumData.ts        # Fetches and caches all 4 category JSONs for active town's game
-    useSearch.ts            # Search history, click-outside, debounce
     useCategoryStats.ts     # Memoized donated counts per category
     useJumpToRow.ts         # v0.9 Phase 6: navigate to a category tab + set
                             # highlightId so ACCanvas scrolls + pulses the target row

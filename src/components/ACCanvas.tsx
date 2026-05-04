@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
 import { CATEGORY_META } from '../lib/categoryMeta';
 import { downloadCSV } from '../lib/csvExport';
-import { globalFilter, type AnyItem } from '../lib/utils';
+import { type AnyItem } from '../lib/utils';
 import type { CategoryId } from '../lib/types';
 import type { AppErrorKind } from '../lib/types';
 import type { ViewId } from '../lib/viewTypes';
@@ -18,14 +18,12 @@ import { EmptyState } from './shared/EmptyState';
 
 import { DetailModal } from './modals/DetailModal';
 
-import { GlobalSearchBar } from './search/GlobalSearchBar';
-import { GlobalSearchResults } from './search/GlobalSearchResults';
+import { GlobalSearchDropdown } from './search/GlobalSearchDropdown';
 
 import { AnalyticsView } from './views/AnalyticsView';
 import { ActivityFeed } from './views/ActivityFeed';
 
 import { useMuseumData } from '../hooks/useMuseumData';
-import { useSearch } from '../hooks/useSearch';
 import { useCategoryStats } from '../hooks/useCategoryStats';
 
 const VALID_TABS: ViewId[] = [
@@ -36,7 +34,6 @@ const VALID_TABS: ViewId[] = [
   'art',
   'sea_creatures',
   'activity',
-  'search',
   'analytics',
 ];
 
@@ -97,16 +94,6 @@ export default function ACCanvas() {
   const { data, loading, loadError, reload } = useMuseumData(
     activeTown?.gameId ?? 'ACGCN'
   );
-  const {
-    globalQuery,
-    setGlobalQuery,
-    recentSearches,
-    setRecentSearches,
-    historyOpen,
-    setHistoryOpen,
-    historyRef,
-    pushRecentSearch,
-  } = useSearch();
 
   const catCounts = useCategoryStats(data, activeTownDonated);
 
@@ -158,7 +145,6 @@ export default function ACCanvas() {
   const activeCat: CategoryId | null =
     activeTab !== 'home' &&
     activeTab !== 'activity' &&
-    activeTab !== 'search' &&
     activeTab !== 'analytics'
       ? activeTab
       : null;
@@ -168,10 +154,10 @@ export default function ACCanvas() {
     [activeCat, data]
   );
 
-  const globalResults = useMemo(() => {
-    if (!globalQuery.trim()) return null;
-    return globalFilter(data as Record<CategoryId, AnyItem[]>, globalQuery);
-  }, [globalQuery, data]);
+  function handleSearchJump(category: CategoryId, id: string) {
+    setHighlightId(id);
+    handleTabChange(category);
+  }
 
   function handleExport() {
     if (!activeTown) return;
@@ -240,15 +226,25 @@ export default function ACCanvas() {
           ) : (
             <>
               {activeTab === 'home' ? (
-                <HomeTab
-                  data={data}
-                  donated={activeTownDonated}
-                  donatedAt={activeTownDonatedAt}
-                  catCounts={catCounts}
-                  gameId={activeTown?.gameId ?? 'ACGCN'}
-                  hemisphere={activeTown?.hemisphere ?? 'NH'}
-                  setHighlightId={setHighlightId}
-                />
+                <>
+                  <div className="ac-topbar">
+                    <GlobalSearchDropdown
+                      data={data}
+                      donated={activeTownDonated}
+                      gameId={activeTown?.gameId ?? 'ACGCN'}
+                      onJump={handleSearchJump}
+                    />
+                  </div>
+                  <HomeTab
+                    data={data}
+                    donated={activeTownDonated}
+                    donatedAt={activeTownDonatedAt}
+                    catCounts={catCounts}
+                    gameId={activeTown?.gameId ?? 'ACGCN'}
+                    hemisphere={activeTown?.hemisphere ?? 'NH'}
+                    setHighlightId={setHighlightId}
+                  />
+                </>
               ) : activeTab === 'analytics' ? (
                 <AnalyticsView
                   data={data}
@@ -257,36 +253,6 @@ export default function ACCanvas() {
                 />
               ) : activeTab === 'activity' ? (
                 <ActivityFeed donatedAt={activeTownDonatedAt} data={data} />
-              ) : activeTab === 'search' ? (
-                <>
-                  <GlobalSearchBar
-                    query={globalQuery}
-                    setQuery={setGlobalQuery}
-                    onSubmit={pushRecentSearch}
-                    historyOpen={historyOpen}
-                    setHistoryOpen={setHistoryOpen}
-                    recentSearches={recentSearches}
-                    onSelectHistory={s => {
-                      setGlobalQuery(s);
-                      pushRecentSearch(s);
-                    }}
-                    onClearHistory={() => {
-                      setRecentSearches([]);
-                      setHistoryOpen(false);
-                    }}
-                    wrapperRef={historyRef}
-                  />
-                  <GlobalSearchResults
-                    results={globalResults}
-                    query={globalQuery}
-                    donated={activeTownDonated}
-                    onSelect={(item, category) => {
-                      if (globalQuery.trim())
-                        pushRecentSearch(globalQuery.trim());
-                      setSelected({ item, category });
-                    }}
-                  />
-                </>
               ) : (
                 <CategoryTab
                   category={activeCat!}
