@@ -5,7 +5,7 @@ All notable changes to this project are documented here.
 ## [Unreleased] — v0.9.0-beta (in progress)
 
 ### Added — Phase 10: Mobile responsive polish
-- **Mobile breakpoint hierarchy** documented (`980 / 720 / 700 / 480`). Surgical CSS additions to `src/index.css` Phase 10 block address touch targets and overflow at iPhone SE (390px) through iPad portrait (768px).
+- **Mobile breakpoint hierarchy** documented (`980 / 720 / 700 / 480`). Surgical CSS additions to `src/index.css` Phase 10 block address touch targets and overflow at iPhone SE (375px) through iPad portrait (768px).
 - **Touch targets ≥44px** at ≤720px: `.ac-tm-close`, `.ac-settings-close`, `.ac-tm-row-edit`, `.ac-tm-ghost / -primary / -danger`, `.ac-gs-history-row`, `.ac-gs-row`, `.ac-donate-btn`, `.ac-chevron`. Hemisphere toggle and segmented controls bumped to comfortable tap sizes.
 - **iOS zoom prevention** — `.ac-search input` rendered at `font-size: 16px` on stacked layouts so Safari does not auto-zoom on focus.
 - **Hero / category title overflow** — `word-break: break-word` on `.ac-hero-headline` and `.ac-category-title`; further font shrink at ≤480px (hero 26px, category 28px, settings 32px).
