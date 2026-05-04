@@ -66,4 +66,17 @@ export default [
       globals: globals.node,
     },
   },
+  // Local scripts run on Node, not in the browser
+  {
+    files: ['scripts/**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
+    },
+    rules: {
+      // One-shot tooling against an untyped third-party API — `any` is the
+      // honest type for raw MediaWiki JSON responses.
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ];
