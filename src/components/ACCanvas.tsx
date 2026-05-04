@@ -257,7 +257,9 @@ export default function ACCanvas() {
                   donated={activeTownDonated}
                   donatedAt={activeTownDonatedAt}
                   catCounts={catCounts}
-                  onNavigate={v => handleTabChange(v)}
+                  gameId={activeTown?.gameId ?? 'ACGCN'}
+                  hemisphere={activeTown?.hemisphere ?? 'NH'}
+                  setHighlightId={setHighlightId}
                 />
               ) : activeTab === 'analytics' ? (
                 <AnalyticsView
