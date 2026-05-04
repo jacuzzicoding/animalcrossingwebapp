@@ -1,23 +1,28 @@
-// Coverage spike: probe the Fandom AC wiki for 10 representative ACGCN items
-// using a layered title-resolution chain plus an HTML-infobox fallback.
+// Coverage spike v3: probe the Fandom AC wiki for representative ACGCN items
+// using a stricter resolution chain. Honest coverage is what matters — every
+// returned URL is auditable from the log (page title that produced it is shown
+// alongside the URL).
 //
-// Resolution chain per item:
-//   (a) bare item name via pageimages
-//   (b) "<name> (<category>)" disambig via pageimages
-//   (c) art only: basedOn field, with " by ..." stripped, via pageimages
-//   (d) MediaWiki list=search for the name; pageimages on the top hit if its
-//       title loosely contains the item name (case-insensitive substring)
-//   (e) HTML fallback: fetch the best-candidate page HTML and parse the first
-//       infobox <img> src
+// Per-item canonical lookup string:
+//   - art with basedOn → strip " by ..." from basedOn (source of truth)
+//   - everything else → item name
 //
-// Redirects are followed automatically (redirects=1 on every query call).
+// Resolution chain (each step uses the canonical lookup string):
+//   (a) pageimages(lookup)
+//   (b) pageimages("<lookup> (<category>)") if a disambig is configured
+//   (c) list=search(lookup) → top hit; accept only if ALL whitespace tokens of
+//       the lookup string appear in the candidate title (case-insensitive);
+//       then pageimages on that title. Rejected candidates are logged.
+//   (d) HTML infobox fallback — fires ONLY when (a) or (b) found a real page
+//       that simply has no pageimages.original. Never against guessed titles.
+//
 // Run: npx tsx scripts/spike-fandom-coverage.ts
 
 import { readFileSync } from 'node:fs';
 
 const API = 'https://animalcrossing.fandom.com/api.php';
 const ARTICLE_BASE = 'https://animalcrossing.fandom.com/wiki/';
-const UA = 'animalcrossingwebapp-icon-spike/0.2 (https://animalcrossingwebapp.vercel.app)';
+const UA = 'animalcrossingwebapp-icon-spike/0.3 (https://animalcrossingwebapp.vercel.app)';
 const DELAY_MS = 600;
 
 type Sample = { category: string; id: string; name: string; disambig?: string };
@@ -38,9 +43,10 @@ const SAMPLES: Sample[] = [
 type Result = {
   id: string;
   found: boolean;
-  via: string; // which step in the chain succeeded
+  via: string;
   titleResolved: string | null;
   imageUrl: string | null;
+  notes: string[];
 };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -52,8 +58,12 @@ async function getJson(params: Record<string, string>): Promise<any> {
   return res.json();
 }
 
-// Try pageimages for a title. Returns { title (post-redirect), imageUrl } or null.
-async function pageImage(title: string): Promise<{ title: string; imageUrl: string } | null> {
+type PageProbe =
+  | { kind: 'image'; title: string; imageUrl: string }
+  | { kind: 'no-image'; title: string }
+  | { kind: 'missing' };
+
+async function pageImage(title: string): Promise<PageProbe> {
   const json = await getJson({
     action: 'query',
     prop: 'pageimages',
@@ -63,44 +73,40 @@ async function pageImage(title: string): Promise<{ title: string; imageUrl: stri
   });
   const pages: any[] = json?.query?.pages ?? [];
   for (const p of pages) {
-    if (p?.missing) return null;
+    if (p?.missing) return { kind: 'missing' };
     const src = p?.original?.source;
-    if (typeof src === 'string') return { title: p.title ?? title, imageUrl: src };
+    if (typeof src === 'string') return { kind: 'image', title: p.title ?? title, imageUrl: src };
+    return { kind: 'no-image', title: p.title ?? title };
   }
-  return null;
+  return { kind: 'missing' };
 }
 
-// list=search for the item name; return the top hit's title (no filtering yet).
-async function searchTopHit(query: string): Promise<string | null> {
+async function searchTopHits(query: string, limit = 5): Promise<string[]> {
   const json = await getJson({
     action: 'query',
     list: 'search',
     srsearch: query,
-    srlimit: '5',
+    srlimit: String(limit),
   });
   const hits: any[] = json?.query?.search ?? [];
-  return hits[0]?.title ?? null;
+  return hits.map((h) => h?.title).filter((t): t is string => typeof t === 'string');
 }
 
-// Loose match: case-insensitive substring either way.
-function looseTitleMatch(itemName: string, candidate: string): boolean {
-  const a = itemName.toLowerCase();
-  const b = candidate.toLowerCase();
-  return b.includes(a) || a.includes(b);
+function allTokensPresent(lookup: string, candidate: string): boolean {
+  const tokens = lookup.toLowerCase().split(/\s+/).filter(Boolean);
+  const c = candidate.toLowerCase();
+  return tokens.every((t) => c.includes(t));
 }
 
-// Strip " by ..." from an art basedOn field.
 function stripByClause(s: string): string {
   return s.replace(/\s+by\s+.+$/i, '').trim();
 }
 
-// HTML fallback: fetch the article HTML and pull the first infobox <img> src.
 async function htmlInfoboxImage(title: string): Promise<string | null> {
   const url = `${ARTICLE_BASE}${encodeURIComponent(title.replace(/\s/g, '_'))}`;
   const res = await fetch(url, { headers: { 'User-Agent': UA } });
   if (!res.ok) return null;
   const html = await res.text();
-  // Try the standard portable-infobox first, then any image in the first infobox-ish block.
   const patterns: RegExp[] = [
     /class="pi-image-thumbnail"[^>]*src="([^"]+)"/i,
     /<aside[^>]*class="[^"]*portable-infobox[^"]*"[\s\S]*?<img[^>]+src="([^"]+)"/i,
@@ -113,49 +119,75 @@ async function htmlInfoboxImage(title: string): Promise<string | null> {
   return null;
 }
 
-// Load art basedOn map once (only used for art items in step c).
 const artMap: Record<string, string> = (() => {
   const raw = readFileSync('public/data/acgcn/art.json', 'utf8');
   const arr = JSON.parse(raw) as Array<{ id: string; basedOn?: string }>;
   return Object.fromEntries(arr.filter((x) => x.basedOn).map((x) => [x.id, x.basedOn!]));
 })();
 
-async function probe(s: Sample): Promise<Result> {
-  // (a) bare name
-  let hit = await pageImage(s.name);
-  if (hit) return { id: s.id, found: true, via: 'a:bare', titleResolved: hit.title, imageUrl: hit.imageUrl };
-  await sleep(DELAY_MS);
-
-  // (b) name (category)
-  if (s.disambig) {
-    hit = await pageImage(`${s.name} (${s.disambig})`);
-    if (hit) return { id: s.id, found: true, via: 'b:disambig', titleResolved: hit.title, imageUrl: hit.imageUrl };
-    await sleep(DELAY_MS);
-  }
-
-  // (c) art only: basedOn, with " by ..." stripped
+function canonicalLookup(s: Sample): string {
   if (s.category === 'art' && artMap[s.id]) {
     const stripped = stripByClause(artMap[s.id]);
-    hit = await pageImage(stripped);
-    if (hit) return { id: s.id, found: true, via: 'c:basedOn', titleResolved: hit.title, imageUrl: hit.imageUrl };
-    await sleep(DELAY_MS);
+    if (stripped) return stripped;
   }
+  return s.name;
+}
 
-  // (d) search top hit
-  const topTitle = await searchTopHit(s.name);
+async function probe(s: Sample): Promise<Result> {
+  const notes: string[] = [];
+  const lookup = canonicalLookup(s);
+  if (lookup !== s.name) notes.push(`lookup="${lookup}" (from basedOn)`);
+
+  // (a) bare lookup
+  const a = await pageImage(lookup);
   await sleep(DELAY_MS);
-  if (topTitle && looseTitleMatch(s.name, topTitle)) {
-    hit = await pageImage(topTitle);
-    if (hit) return { id: s.id, found: true, via: 'd:search', titleResolved: hit.title, imageUrl: hit.imageUrl };
+  if (a.kind === 'image') {
+    return { id: s.id, found: true, via: 'a:bare', titleResolved: a.title, imageUrl: a.imageUrl, notes };
+  }
+  let safeHtmlTarget: string | null = a.kind === 'no-image' ? a.title : null;
+
+  // (b) lookup (category)
+  if (s.disambig) {
+    const b = await pageImage(`${lookup} (${s.disambig})`);
     await sleep(DELAY_MS);
+    if (b.kind === 'image') {
+      return { id: s.id, found: true, via: 'b:disambig', titleResolved: b.title, imageUrl: b.imageUrl, notes };
+    }
+    if (!safeHtmlTarget && b.kind === 'no-image') safeHtmlTarget = b.title;
   }
 
-  // (e) HTML infobox fallback against the best candidate we have
-  const htmlCandidate = topTitle ?? s.name;
-  const imgSrc = await htmlInfoboxImage(htmlCandidate);
-  if (imgSrc) return { id: s.id, found: true, via: 'e:html', titleResolved: htmlCandidate, imageUrl: imgSrc };
+  // (c) search → all-tokens loose match → pageimages
+  const hits = await searchTopHits(lookup, 5);
+  await sleep(DELAY_MS);
+  const accepted: string[] = [];
+  const rejected: string[] = [];
+  for (const h of hits) {
+    if (allTokensPresent(lookup, h)) accepted.push(h);
+    else rejected.push(h);
+  }
+  if (rejected.length) notes.push(`search rejected: [${rejected.join(' | ')}]`);
+  if (accepted.length) notes.push(`search accepted: [${accepted.join(' | ')}]`);
+  for (const cand of accepted) {
+    const c = await pageImage(cand);
+    await sleep(DELAY_MS);
+    if (c.kind === 'image') {
+      return { id: s.id, found: true, via: 'c:search', titleResolved: c.title, imageUrl: c.imageUrl, notes };
+    }
+    if (!safeHtmlTarget && c.kind === 'no-image') safeHtmlTarget = c.title;
+  }
 
-  return { id: s.id, found: false, via: 'none', titleResolved: null, imageUrl: null };
+  // (d) HTML fallback ONLY against a confirmed real page (never a guessed title)
+  if (safeHtmlTarget) {
+    const img = await htmlInfoboxImage(safeHtmlTarget);
+    if (img) {
+      return { id: s.id, found: true, via: 'd:html', titleResolved: safeHtmlTarget, imageUrl: img, notes };
+    }
+    notes.push(`html fallback on "${safeHtmlTarget}" found no infobox image`);
+  } else {
+    notes.push('html fallback skipped (no confirmed page to scrape)');
+  }
+
+  return { id: s.id, found: false, via: 'none', titleResolved: null, imageUrl: null, notes };
 }
 
 (async () => {
@@ -164,14 +196,14 @@ async function probe(s: Sample): Promise<Result> {
     const r = await probe(s);
     results.push(r);
     console.log(
-      `${r.found ? 'OK ' : 'MISS'}  ${s.category.padEnd(8)} ${s.id.padEnd(34)}  via=${r.via.padEnd(11)}  ${
-        r.imageUrl ?? '(no image)'
-      }`,
+      `${r.found ? 'OK ' : 'MISS'}  ${s.category.padEnd(8)} ${s.id.padEnd(34)}  via=${r.via.padEnd(11)}  title=${(r.titleResolved ?? '-').padEnd(28)}  ${r.imageUrl ?? '(no image)'}`,
     );
+    for (const n of r.notes) console.log(`        · ${n}`);
     await sleep(DELAY_MS);
   }
   const hits = results.filter((r) => r.found).length;
   const pct = Math.round((hits / results.length) * 100);
-  console.log(`\nCoverage: ${hits}/${results.length} (${pct}%)`);
+  console.log(`\nReported coverage: ${hits}/${results.length} (${pct}%)`);
+  console.log('Audit the title→URL pairs above before trusting this number.');
   process.exit(hits / results.length >= 0.9 ? 0 : 1);
 })();
