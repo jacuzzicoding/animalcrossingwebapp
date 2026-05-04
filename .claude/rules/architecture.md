@@ -27,12 +27,12 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persiste
 - `src/components/Sidebar.tsx` — 280px sticky left sidebar (Phase 2). Brand, active-town card, NavLink nav with per-category counts, Export CSV / Settings footer. "Switch town ›" opens TownManager via useUIStore.
 - `src/components/TownManager.tsx` — right-side drawer (bottom sheet ≤720px) mounted at App layout level (Phase 4). Switch / inline-edit / create / delete towns. Edit form is name + (ACNH-only) hemisphere; game is read-only post-create.
 - `src/components/SettingsPage.tsx` + `SettingsRoute.tsx` — `/settings` route (Phase 3). About + Danger zone only (no Appearance, Decision 3).
-- `src/components/ACCanvas.tsx` — orchestration shell. Owns `highlightId` state. Mounts active tab; wires GlobalSearchDropdown topbar (Home only) and DetailModal (art).
+- `src/components/ACCanvas.tsx` — orchestration shell. Owns `highlightId` state. Mounts active tab; wires GlobalSearchDropdown topbar (Home only). All categories (including art) use the inline `ItemExpandPanel` as of v0.9 (#81).
 - `src/components/ErrorBoundary.tsx` / `ErrorBanner.tsx` / `ErrorState.tsx`.
 
 ### Components — tabs
 - `src/components/HomeTab.tsx` — Phase 6 rebuild. Hero stat + ProgressMeter, month strip, "Leaving end of {month}" shelf, "Just arrived" shelf, latest donations. Cards fire `jumpTo`.
-- `src/components/CategoryTab.tsx` — Phase 7. Sections: Leaving this month / Available now / Out of season / Already donated. Owns expandedId; reacts to `highlightId`. Hosts per-tab `SearchBar`. Routes art clicks to DetailModal instead of inline expand.
+- `src/components/CategoryTab.tsx` — Phase 7. Sections: Leaving this month / Available now / Out of season / Already donated. Owns expandedId; reacts to `highlightId`. Hosts per-tab `SearchBar`. All categories (including art) use the inline `ItemExpandPanel` as of v0.9 (#81).
 - `src/components/StatsTab.tsx` — Phase 9. Per-category cards (3/4/5 by game) + 12-column yearly rhythm chart. Replaces AnalyticsView.
 - `src/components/ProgressMeter.tsx` (+ `progressMeterUtils.ts`, `ProgressMeter.test.ts`) — Phase 6. 4 segments (fish/bugs/fossils/art) for ACGCN/ACWW/ACCF; 5 segments (+ sea) for ACNL/ACNH. `.ac-meter-5` modifier handles responsive wrapping.
 
@@ -40,7 +40,7 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persiste
 - `src/components/CollectibleRow.tsx` — Phase 5 restyle. Monogram glyph, meta line with `·` separators, leaving/new pills, animated chevron. Stamps `data-row-id`. Donate UI lives in the expand panel only.
 - `src/components/ItemExpandPanel.tsx` — Phase 5 rebuild. Two-column grid: MonthGrid + stats stack (bells / shadow / hours / notes) + donate button.
 - `src/components/shared/` — DonateToggle, EmptyState, HabitatChip, MonthGrid (Phase 5 re-skin, accepts `current` prop), SearchBar (per-tab, used by CategoryTab). `CategoryProgress.tsx` is dead — file remains pending cleanup.
-- `src/components/modals/DetailModal.tsx` — bottom-sheet detail. Used by Art and as a fallback in some paths.
+- `src/components/modals/` — DetailModal **retired in v0.9 (#81)**; file deleted. Art now uses the inline `ItemExpandPanel` like every other category.
 - `src/components/views/ActivityFeed.tsx` — recent donations list (consumed by HomeTab). `AnalyticsView` and `SectionCard` retired in Phase 9.
 - `src/components/search/GlobalSearchDropdown.tsx` — Phase 8 unified search dropdown (anchored under Home topbar). Grouped category results (5 groups for ACNL/ACNH, 4 elsewhere), keyboard nav (↑↓↵esc), search history at localStorage key `ac-curator-search-history` (max 8). Replaces GlobalSearchBar / GlobalSearchResults / SearchHistoryPopover.
 

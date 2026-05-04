@@ -12,8 +12,7 @@ A cozy companion web app for tracking Animal Crossing museum donations across mu
 - Manage multiple towns from a single TownManager drawer — switch, rename, create, and delete (game is locked at create-time)
 - **Five games supported:** Animal Crossing (GCN), Wild World, City Folk, New Leaf, New Horizons
 - **Persistent left sidebar** with brand, active town card, per-category donation counts, and Export CSV / Settings footer
-- **Inline item expand** — tap a Fish, Bug, Fossil, or Sea Creature row to open a two-column panel with the month availability grid, bells / shadow / hours, notes, and donate/undonate button
-- **Bottom-sheet detail view** — Art opens a full detail sheet (`DetailModal`)
+- **Inline item expand** — tap any row (Fish, Bugs, Fossils, Sea Creatures, or Art) to open a two-column panel with the month availability grid, bells / shadow / hours / `basedOn` real-world reference / Crazy Redd authentication note (ACNH art), notes, and donate/undonate button
 - **Hemisphere toggle** — New Horizons towns expose an NH/SH toggle; month grids reflect the correct hemisphere
 - **URL-based navigation** — every town and tab has a shareable URL via React Router v6
 - Home screen with hero stat, current-month strip, "Leaving end of {month}" and "Just arrived" shelves, segmented progress meter, and latest donations
