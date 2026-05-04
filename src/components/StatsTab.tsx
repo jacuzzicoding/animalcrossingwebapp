@@ -5,7 +5,6 @@ import type { AllData } from '../lib/viewTypes';
 import { itemMonths } from '../lib/utils';
 import type { AnyItem } from '../lib/utils';
 
-const GAMES_WITH_ART = new Set<GameId>(['ACGCN', 'ACNL', 'ACNH']);
 const GAMES_WITH_SEA = new Set<GameId>(['ACNL', 'ACNH']);
 
 function chipVar(cat: CategoryId): string {
@@ -38,10 +37,10 @@ export function StatsTab({
         total: data.fossils.length,
       },
     ];
-    if (GAMES_WITH_ART.has(gameId)) {
+    if (data.art.length > 0) {
       list.push({ cat: 'art', donated: catCounts.art, total: data.art.length });
     }
-    if (GAMES_WITH_SEA.has(gameId)) {
+    if (data.sea_creatures.length > 0) {
       list.push({
         cat: 'sea_creatures',
         donated: catCounts.sea_creatures,
@@ -49,7 +48,7 @@ export function StatsTab({
       });
     }
     return list;
-  }, [data, catCounts, gameId]);
+  }, [data, catCounts]);
 
   const currentMonth = new Date().getMonth() + 1;
 
