@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased] — v0.9.0-beta (in progress)
 
+### Added — Phase 9: StatsTab
+- **`StatsTab` component** (`src/components/StatsTab.tsx`) — replaces `AnalyticsView`. Renders per-category cards (3/4/5 cards, gated by game: fish/bugs/fossils always; art for ACGCN/ACNL/ACNH; sea for ACNL/ACNH) above a 12-column "Yearly rhythm" availability chart. Each card shows category eyebrow tinted with the matching `--chip-*` token, donated/total in Fraunces 32, a thin tinted progress bar, and "X% complete" caption.
+- **Yearly rhythm chart** — 12 stacked columns. Background bar height = `avail / maxAvail`; inner accent fill = `donated / avail`. Number above each column = items available that month. Current month column borders in `--accent`. Includes fish + bugs always; sea creatures added for ACNL/ACNH (Decision 4). Hemisphere-aware via `itemMonths(item, cat, hemisphere)`. Legend below: "Available" / "Already donated".
+- **Phase 9 CSS** appended to `src/index.css` — `.ac-stats`, `.ac-stats-grid` (responsive 3/4/5 → 2 → 1 columns at 980px / 480px), `.ac-statcard` / `-cat` / `-num` / `-of` / `-bar` / `-fill` / `-pct`, `.ac-chartcard`, `.ac-chart` / `-col` / `-bar` / `-bar-bg` / `-bar-fill` / `-num` / `-month`, `.ac-chart-legend` / `-dot` / `-dot-bg` / `-dot-fill`. Current-month column gets accent border via `.ac-chart-col.is-now`.
+
+### Removed — Phase 9
+- **`AnalyticsView`** (`src/components/views/AnalyticsView.tsx`) — superseded by `StatsTab`.
+- **`SectionCard`** (`src/components/views/SectionCard.tsx`) — its only consumer was `AnalyticsView`; new card primitives are inline.
+
+### Decisions — Phase 9
+- **Sea creatures included in the chart for ACNL/ACNH.** Per Decision 4, sea is a first-class category in nav/ProgressMeter/HomeTab/Search, so excluding it from the yearly rhythm would be inconsistent. ACGCN/ACWW/ACCF still chart only fish + bugs (no sea data exists for those games).
+- **3-letter month labels** (`Jan`/`Feb`/…) instead of the 1-letter mocks in the handoff — readable at the production sidebar layout width and at the 980px breakpoint.
+- **Card-count attribute drives grid sizing only.** The component derives the actual list of cards from `gameId` data presence (mirroring `getDataPaths`); `data-card-count` on the grid is set from `cards.length` purely so CSS can pick the right column template.
+
 ### Added — Phase 8: GlobalSearchDropdown
 - **`GlobalSearchDropdown` component** (`src/components/search/GlobalSearchDropdown.tsx`) — unified search dropdown anchored under a topbar input on the Home tab. Four states: empty + intro hint, empty + recent searches (history), no-match for query, and grouped category results. Shows up to 5 items per group, max 5 groups (fish, bugs, fossils, art, sea). Sea group gated on `gameId ∈ {ACNL, ACNH}` and non-empty data. Art search matches both `name` and `basedOn` (Decision 8 — "Leonardo" → Famous Painting). Each row shows category-tinted monogram glyph, name with `donated` badge, and meta line (habitat / location / part / basedOn / shadow + bells).
 - **Keyboard navigation** — `↑↓` move the active row, `↵` selects + jumps + closes, `Esc` closes the panel. Hovering a row also sets the active index.

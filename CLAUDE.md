@@ -76,10 +76,11 @@ src/
     modals/
       DetailModal.tsx       # Item detail sheet
     TownManager.tsx         # Right-side drawer for switch/edit/create/delete towns (v0.9 Phase 4)
+    StatsTab.tsx            # v0.9 Phase 9: per-category cards (3/4/5 by game) +
+                            # 12-column yearly rhythm chart (fish + bugs always,
+                            # sea added for ACNL/ACNH). Replaces AnalyticsView.
     views/
-      AnalyticsView.tsx     # Charts + stats tab content
       ActivityFeed.tsx      # Recent donations list
-      SectionCard.tsx       # Reusable card wrapper
     search/
       GlobalSearchDropdown.tsx # v0.9 Phase 8: unified search dropdown — anchored
                                # under the Home topbar input. Grouped category
