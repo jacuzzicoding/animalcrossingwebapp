@@ -16,8 +16,6 @@ import { Sidebar } from './Sidebar';
 import { CategoryTab } from './CategoryTab';
 import { EmptyState } from './shared/EmptyState';
 
-import { DetailModal } from './modals/DetailModal';
-
 import { GlobalSearchDropdown } from './search/GlobalSearchDropdown';
 
 import { StatsTab } from './StatsTab';
@@ -85,10 +83,6 @@ export default function ACCanvas() {
 
   const [query, setQuery] = useState('');
   const [banner, setBanner] = useState<AppErrorKind | null>(null);
-  const [selected, setSelected] = useState<{
-    item: AnyItem;
-    category: CategoryId;
-  } | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
 
   const { data, loading, loadError, reload } = useMuseumData(
@@ -117,10 +111,9 @@ export default function ACCanvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.sea_creatures.length, loading, activeTab]);
 
-  // Reset per-tab search query and selected detail on tab changes
+  // Reset per-tab search query on tab changes
   useEffect(() => {
     setQuery('');
-    setSelected(null);
   }, [activeTab]);
 
   // Scroll-to + highlight on jump (Decision 10).
@@ -266,9 +259,6 @@ export default function ACCanvas() {
                   query={query}
                   setQuery={setQuery}
                   highlightId={highlightId}
-                  onItemSelect={item =>
-                    setSelected({ item, category: activeCat! })
-                  }
                   onToggle={id => toggle(id)}
                   catLabel={catLabel}
                 />
@@ -289,18 +279,6 @@ export default function ACCanvas() {
           </div>
         </div>
       </main>
-
-      {selected && !noTowns && (
-        <DetailModal
-          item={selected.item}
-          category={selected.category}
-          checked={!!activeTownDonated[selected.item.id]}
-          donatedAt={activeTownDonatedAt[selected.item.id]}
-          onToggle={() => toggle(selected.item.id)}
-          onClose={() => setSelected(null)}
-          hemisphere={activeTown?.hemisphere ?? 'NH'}
-        />
-      )}
     </div>
   );
 }

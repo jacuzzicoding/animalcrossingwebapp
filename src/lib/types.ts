@@ -99,6 +99,8 @@ export interface ArtPiece {
   id: string;
   name: string;
   basedOn: string;
+  /** ACNH: whether Crazy Redd sells a counterfeit version of this piece */
+  hasFake?: boolean;
 }
 
 export interface SeaCreature {

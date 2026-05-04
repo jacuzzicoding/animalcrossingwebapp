@@ -28,7 +28,6 @@ interface CategoryTabProps {
   query: string;
   setQuery: (q: string) => void;
   highlightId: string | null;
-  onItemSelect: (item: AnyItem) => void;
   onToggle: (id: string) => void;
   catLabel: string;
 }
@@ -43,7 +42,6 @@ export function CategoryTab({
   query,
   setQuery,
   highlightId,
-  onItemSelect,
   onToggle,
   catLabel,
 }: CategoryTabProps) {
@@ -57,7 +55,6 @@ export function CategoryTab({
   // Open the expand panel when a highlight arrives (Decision 10).
   useEffect(() => {
     if (!highlightId) return;
-    if (category === 'art') return; // art uses modal, not inline
     setExpandedId(highlightId);
   }, [highlightId, category]);
 
@@ -177,22 +174,16 @@ export function CategoryTab({
                     category={category}
                     checked={!!donated[item.id]}
                     onClick={() => {
-                      if (category === 'art') {
-                        onItemSelect(item);
-                      } else {
-                        setExpandedId(prev =>
-                          prev === item.id ? null : item.id
-                        );
-                      }
+                      setExpandedId(prev =>
+                        prev === item.id ? null : item.id
+                      );
                     }}
-                    expanded={
-                      category !== 'art' ? expandedId === item.id : undefined
-                    }
+                    expanded={expandedId === item.id}
                     highlighted={highlightId === item.id}
                     hemisphere={hemisphere}
                     currentMonth={currentMonth}
                   />
-                  {category !== 'art' && expandedId === item.id && (
+                  {expandedId === item.id && (
                     <ItemExpandPanel
                       item={item}
                       category={category}
