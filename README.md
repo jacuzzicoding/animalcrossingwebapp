@@ -9,16 +9,18 @@ A cozy companion web app for tracking Animal Crossing museum donations across mu
 ## Features
 
 - Track donations for all museum categories: Fish, Bugs, Fossils, Art, and Sea Creatures
-- Manage multiple towns — create, switch, and rename them at any time
+- Manage multiple towns from a single TownManager drawer — switch, rename, create, and delete (game is locked at create-time)
 - **Five games supported:** Animal Crossing (GCN), Wild World, City Folk, New Leaf, New Horizons
-- **Item inline expand** — tap a Fish, Bug, or Fossil row to expand it in-place: month availability grid, sell value, habitat, and donate/undonate button (powered by `ItemExpandPanel`)
-- **Bottom-sheet detail view** — Art rows and Search results open a full detail sheet (`DetailModal`)
-- **Hemisphere toggle** — New Horizons towns show an NH/SH toggle; month grids reflect the correct hemisphere
+- **Persistent left sidebar** with brand, active town card, per-category donation counts, and Export CSV / Settings footer
+- **Inline item expand** — tap a Fish, Bug, Fossil, or Sea Creature row to open a two-column panel with the month availability grid, bells / shadow / hours, notes, and donate/undonate button
+- **Bottom-sheet detail view** — Art opens a full detail sheet (`DetailModal`)
+- **Hemisphere toggle** — New Horizons towns expose an NH/SH toggle; month grids reflect the correct hemisphere
 - **URL-based navigation** — every town and tab has a shareable URL via React Router v6
-- Home screen with seasonal availability, leaving-soon alerts, and progress cards
-- Global search across all categories
-- Stats tab with collection analytics and monthly availability chart
-- Recent activity feed per town
+- Home screen with hero stat, current-month strip, "Leaving end of {month}" and "Just arrived" shelves, segmented progress meter, and latest donations
+- Sectioned category pages — Leaving this month / Available now / Out of season / Already donated
+- Unified global search dropdown with grouped category results, keyboard navigation, and recent-search history
+- Stats tab with per-category cards and a 12-column "Yearly rhythm" availability chart
+- Settings page — About + Danger zone (reset active town donations, reset everything)
 - CSV export of your donation records
 - Fully persistent — data saved to localStorage, no account required
 
@@ -65,6 +67,6 @@ Museum data lives in `public/data/<game>/`:
 
 ## Version
 
-Current release: **v0.8.2-alpha** (last stable). Active development: **v0.9.0-beta** — see [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the in-progress plan.
+Current release: **v0.8.2-alpha** (last stable on `main`). Active development: **v0.9.0-beta** — Phases 1–9 of the UI revamp shipped to `development`; Phase 10 (mobile responsive verification) pending. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the canonical plan.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).
