@@ -17,8 +17,10 @@ Reads `public/data/<gameId>/{fish,bugs,fossils,art}.json`, resolves each item ag
 ### Run
 
 ```bash
-npx tsx scripts/fetch-icons.ts
+npm run fetch:icons
 ```
+
+(`tsx` is pinned in `devDependencies` so the version is deterministic across machines. The script entry resolves to `tsx scripts/fetch-icons.ts`.)
 
 No env vars. No CLI args. The currently-targeted game is set via the `GAME_ID` constant at the top of the script — change it (and the matching `DATA_DIR` / `ICON_DIR`) when scraping a new game. Polite delay is ≥600 ms between API calls; a full ACGCN run (~118 items) takes about 3 minutes.
 
@@ -71,8 +73,10 @@ Runs the resolver against a 10-item representative sample (1 art, 2 fossils incl
 ### Run
 
 ```bash
-npx tsx scripts/spike-fandom-coverage.ts
+npm run spike:icons
 ```
+
+(Resolves to `tsx scripts/spike-fandom-coverage.ts` via the pinned `tsx` devDependency.)
 
 ### Why "honest"
 

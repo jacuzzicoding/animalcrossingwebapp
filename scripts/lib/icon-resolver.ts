@@ -15,7 +15,8 @@
 
 const API = 'https://animalcrossing.fandom.com/api.php';
 const ARTICLE_BASE = 'https://animalcrossing.fandom.com/wiki/';
-export const UA = 'animalcrossingwebapp-icon-resolver/0.1 (https://animalcrossingwebapp.vercel.app)';
+export const UA =
+  'animalcrossingwebapp-icon-resolver/0.1 (https://animalcrossingwebapp.vercel.app)';
 export const DELAY_MS = 600;
 
 export type ResolveInput = {
@@ -56,11 +57,13 @@ export const OVERRIDES: Record<string, Override> = {
   'ACGCN/fossils/dinosaur-egg': { file: 'Dinosaur egg.png' },
 };
 
-export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 async function getJson(params: Record<string, string>): Promise<any> {
   const url = `${API}?${new URLSearchParams({ format: 'json', formatversion: '2', origin: '*', ...params })}`;
-  const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } });
+  const res = await fetch(url, {
+    headers: { 'User-Agent': UA, Accept: 'application/json' },
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return res.json();
 }
@@ -82,7 +85,8 @@ async function pageImage(title: string): Promise<PageProbe> {
   for (const p of pages) {
     if (p?.missing) return { kind: 'missing' };
     const src = p?.original?.source;
-    if (typeof src === 'string') return { kind: 'image', title: p.title ?? title, imageUrl: src };
+    if (typeof src === 'string')
+      return { kind: 'image', title: p.title ?? title, imageUrl: src };
     return { kind: 'no-image', title: p.title ?? title };
   }
   return { kind: 'missing' };
@@ -111,13 +115,15 @@ async function searchTopHits(query: string, limit = 5): Promise<string[]> {
     srlimit: String(limit),
   });
   const hits: any[] = json?.query?.search ?? [];
-  return hits.map((h) => h?.title).filter((t): t is string => typeof t === 'string');
+  return hits
+    .map(h => h?.title)
+    .filter((t): t is string => typeof t === 'string');
 }
 
 function allTokensPresent(query: string, candidate: string): boolean {
   const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
   const c = candidate.toLowerCase();
-  return tokens.every((t) => c.includes(t));
+  return tokens.every(t => c.includes(t));
 }
 
 async function htmlInfoboxImage(title: string): Promise<string | null> {
@@ -148,14 +154,28 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
       const r = await pageImage(overrideTitle);
       await sleep(DELAY_MS);
       if (r.kind === 'image') {
-        return { found: true, via: 'override', titleResolved: r.title, imageUrl: r.imageUrl, notes: [`override="${overrideTitle}"`] };
+        return {
+          found: true,
+          via: 'override',
+          titleResolved: r.title,
+          imageUrl: r.imageUrl,
+          notes: [`override="${overrideTitle}"`],
+        };
       }
-      notes.push(`override "${overrideTitle}" did not yield an image (kind=${r.kind})`);
+      notes.push(
+        `override "${overrideTitle}" did not yield an image (kind=${r.kind})`
+      );
     } else {
       const url = await fileImageUrl(overrideTitle.file);
       await sleep(DELAY_MS);
       if (url) {
-        return { found: true, via: 'override', titleResolved: `File:${overrideTitle.file}`, imageUrl: url, notes: [`override file="${overrideTitle.file}"`] };
+        return {
+          found: true,
+          via: 'override',
+          titleResolved: `File:${overrideTitle.file}`,
+          imageUrl: url,
+          notes: [`override file="${overrideTitle.file}"`],
+        };
       }
       notes.push(`override file "${overrideTitle.file}" did not resolve`);
     }
@@ -165,7 +185,13 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
   const a = await pageImage(input.name);
   await sleep(DELAY_MS);
   if (a.kind === 'image') {
-    return { found: true, via: 'a:bare', titleResolved: a.title, imageUrl: a.imageUrl, notes };
+    return {
+      found: true,
+      via: 'a:bare',
+      titleResolved: a.title,
+      imageUrl: a.imageUrl,
+      notes,
+    };
   }
   let safeHtmlTarget: string | null = a.kind === 'no-image' ? a.title : null;
 
@@ -174,7 +200,13 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
     const b = await pageImage(`${input.name} (${input.disambig})`);
     await sleep(DELAY_MS);
     if (b.kind === 'image') {
-      return { found: true, via: 'b:disambig', titleResolved: b.title, imageUrl: b.imageUrl, notes };
+      return {
+        found: true,
+        via: 'b:disambig',
+        titleResolved: b.title,
+        imageUrl: b.imageUrl,
+        notes,
+      };
     }
     if (!safeHtmlTarget && b.kind === 'no-image') safeHtmlTarget = b.title;
   }
@@ -184,14 +216,21 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
   await sleep(DELAY_MS);
   const accepted: string[] = [];
   const rejected: string[] = [];
-  for (const h of hits) (allTokensPresent(input.name, h) ? accepted : rejected).push(h);
+  for (const h of hits)
+    (allTokensPresent(input.name, h) ? accepted : rejected).push(h);
   if (rejected.length) notes.push(`search rejected: [${rejected.join(' | ')}]`);
   if (accepted.length) notes.push(`search accepted: [${accepted.join(' | ')}]`);
   for (const cand of accepted) {
     const c = await pageImage(cand);
     await sleep(DELAY_MS);
     if (c.kind === 'image') {
-      return { found: true, via: 'c:search', titleResolved: c.title, imageUrl: c.imageUrl, notes };
+      return {
+        found: true,
+        via: 'c:search',
+        titleResolved: c.title,
+        imageUrl: c.imageUrl,
+        notes,
+      };
     }
     if (!safeHtmlTarget && c.kind === 'no-image') safeHtmlTarget = c.title;
   }
@@ -200,12 +239,24 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
   if (safeHtmlTarget) {
     const img = await htmlInfoboxImage(safeHtmlTarget);
     if (img) {
-      return { found: true, via: 'd:html', titleResolved: safeHtmlTarget, imageUrl: img, notes };
+      return {
+        found: true,
+        via: 'd:html',
+        titleResolved: safeHtmlTarget,
+        imageUrl: img,
+        notes,
+      };
     }
     notes.push(`html fallback on "${safeHtmlTarget}" found no infobox image`);
   } else {
     notes.push('html fallback skipped (no confirmed page to scrape)');
   }
 
-  return { found: false, via: 'none', titleResolved: null, imageUrl: null, notes };
+  return {
+    found: false,
+    via: 'none',
+    titleResolved: null,
+    imageUrl: null,
+    notes,
+  };
 }

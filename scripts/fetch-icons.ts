@@ -6,7 +6,10 @@
 //   3. Treat HTML-fallback hits (via=d:html) the same as misses — the override
 //      map is the only legitimate fallback path. Anything that lands at d:html
 //      gets logged to scripts/missing.txt and excluded from the binary commit.
-//   4. Download every algorithmic/override hit to public/icons/acgcn/<cat>/<id>.png.
+//   4. Download every algorithmic/override hit to public/icons/acgcn/<cat>/<id>.<ext>,
+//      where <ext> is preserved from the source file — typically png or jpg
+//      (.jpeg is normalized to .jpg). Renaming everything to .png would lie
+//      about the bytes, so the source extension is kept.
 //   5. Sample-audit ~5% of the resolved icons (random spread across categories):
 //      verify the resolved page title or image filename plausibly relates to the
 //      item name. Any clear mismatch halts the run.
@@ -15,9 +18,23 @@
 //
 // Run: npx tsx scripts/fetch-icons.ts
 
-import { mkdirSync, readFileSync, writeFileSync, readdirSync, unlinkSync, existsSync } from 'node:fs';
+import {
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  readdirSync,
+  unlinkSync,
+  existsSync,
+} from 'node:fs';
 import { resolve as resolvePath } from 'node:path';
-import { resolveIcon, sleep, DELAY_MS, UA, type ResolveInput, type ResolveResult } from './lib/icon-resolver.ts';
+import {
+  resolveIcon,
+  sleep,
+  DELAY_MS,
+  UA,
+  type ResolveInput,
+  type ResolveResult,
+} from './lib/icon-resolver.ts';
 
 const GAME_ID = 'ACGCN';
 const DATA_DIR = 'public/data/acgcn';
@@ -39,7 +56,7 @@ type RawItem = { id: string; name: string };
 function loadCategory(cat: Category): ResolveInput[] {
   const raw = readFileSync(resolvePath(DATA_DIR, `${cat}.json`), 'utf8');
   const items = JSON.parse(raw) as RawItem[];
-  return items.map((it) => ({
+  return items.map(it => ({
     gameId: GAME_ID,
     category: cat,
     id: it.id,
@@ -67,18 +84,28 @@ function tokensOf(s: string): string[] {
     .toLowerCase()
     .replace(/[._-]+/g, ' ')
     .split(/\s+/)
-    .filter((t) => t && t.length >= 3 && !/^(nh|sh|gcn|ww|cf|nl|the|new|horizons|fossil|fish|bug|painting|sculpture|by|of|and|a)$/.test(t));
+    .filter(
+      t =>
+        t &&
+        t.length >= 3 &&
+        !/^(nh|sh|gcn|ww|cf|nl|the|new|horizons|fossil|fish|bug|painting|sculpture|by|of|and|a)$/.test(
+          t
+        )
+    );
 }
 
 // Audit heuristic: at least one significant token of the item name must appear
 // in either the resolved page title or the image filename. Catches obvious
 // cross-category resolutions (a bug item resolving to an art image, etc.).
-function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; reason?: string } {
+function auditPlausible(
+  item: ResolveInput,
+  r: ResolveResult
+): { ok: boolean; reason?: string } {
   const itemTokens = tokensOf(item.name);
   if (itemTokens.length === 0) return { ok: true }; // single short word — pass
   const titleTokens = new Set(tokensOf(r.titleResolved ?? ''));
   const fileTokens = new Set(tokensOf(urlFilename(r.imageUrl ?? '')));
-  const hit = itemTokens.find((t) => titleTokens.has(t) || fileTokens.has(t));
+  const hit = itemTokens.find(t => titleTokens.has(t) || fileTokens.has(t));
   if (hit) return { ok: true };
   // For items hit via override, trust the curated title regardless.
   if (r.via === 'override') return { ok: true };
@@ -101,7 +128,11 @@ function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; re
   const manifestPath = resolvePath(ICON_DIR, 'manifest.json');
   if (existsSync(manifestPath)) unlinkSync(manifestPath);
 
-  type Row = { item: ResolveInput; result: ResolveResult; status: 'hit' | 'miss-html' | 'miss' };
+  type Row = {
+    item: ResolveInput;
+    result: ResolveResult;
+    status: 'hit' | 'miss-html' | 'miss';
+  };
   const rows: Row[] = [];
 
   for (const cat of CATEGORIES) {
@@ -114,11 +145,13 @@ function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; re
       else if (r.found) status = 'hit';
       rows.push({ item, result: r, status });
       const tag =
-        status === 'hit' ? 'OK  '
-        : status === 'miss-html' ? 'SKIP' // resolved via HTML fallback — excluded per policy
-        : 'MISS';
+        status === 'hit'
+          ? 'OK  '
+          : status === 'miss-html'
+            ? 'SKIP' // resolved via HTML fallback — excluded per policy
+            : 'MISS';
       console.log(
-        `${tag}  ${item.id.padEnd(34)}  via=${r.via.padEnd(11)}  ${r.titleResolved ?? '-'}`,
+        `${tag}  ${item.id.padEnd(34)}  via=${r.via.padEnd(11)}  ${r.titleResolved ?? '-'}`
       );
       await sleep(DELAY_MS);
     }
@@ -131,7 +164,9 @@ function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; re
   for (const cat of CATEGORIES) manifest[cat] = {};
   for (const row of rows) {
     if (row.status !== 'hit') continue;
-    const ext = (urlFilename(row.result.imageUrl!).match(/\.(png|jpe?g)$/i)?.[1] ?? 'png').toLowerCase();
+    const ext = (
+      urlFilename(row.result.imageUrl!).match(/\.(png|jpe?g)$/i)?.[1] ?? 'png'
+    ).toLowerCase();
     const filename = `${row.item.id}.${ext === 'jpeg' ? 'jpg' : ext}`;
     const dest = resolvePath(ICON_DIR, row.item.category, filename);
     try {
@@ -144,10 +179,13 @@ function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; re
       row.status = 'miss';
     }
   }
-  writeFileSync(resolvePath(ICON_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+  writeFileSync(
+    resolvePath(ICON_DIR, 'manifest.json'),
+    JSON.stringify(manifest, null, 2) + '\n'
+  );
 
   // Sample audit (~5% across all hits)
-  const hits = rows.filter((r) => r.status === 'hit');
+  const hits = rows.filter(r => r.status === 'hit');
   const sampleSize = Math.max(1, Math.round(hits.length * AUDIT_FRACTION));
   const shuffled = [...hits].sort(() => Math.random() - 0.5);
   const audit = shuffled.slice(0, sampleSize);
@@ -156,15 +194,19 @@ function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; re
   for (const row of audit) {
     const verdict = auditPlausible(row.item, row.result);
     const tag = verdict.ok ? 'OK  ' : 'FAIL';
-    console.log(`${tag}  ${row.item.category}/${row.item.id} → "${row.result.titleResolved}"  ${urlFilename(row.result.imageUrl!)}`);
-    if (!verdict.ok) auditFails.push(`${row.item.category}/${row.item.id}: ${verdict.reason}`);
+    console.log(
+      `${tag}  ${row.item.category}/${row.item.id} → "${row.result.titleResolved}"  ${urlFilename(row.result.imageUrl!)}`
+    );
+    if (!verdict.ok)
+      auditFails.push(`${row.item.category}/${row.item.id}: ${verdict.reason}`);
   }
 
   // Missing log
-  const misses = rows.filter((r) => r.status !== 'hit');
+  const misses = rows.filter(r => r.status !== 'hit');
   if (misses.length) {
-    const lines = misses.map((r) =>
-      `${r.item.category}/${r.item.id}\tvia=${r.result.via}\tname="${r.item.name}"\tnotes=${r.result.notes.join(' ; ')}`,
+    const lines = misses.map(
+      r =>
+        `${r.item.category}/${r.item.id}\tvia=${r.result.via}\tname="${r.item.name}"\tnotes=${r.result.notes.join(' ; ')}`
     );
     writeFileSync(MISSING_LOG, lines.join('\n') + '\n');
   } else {
@@ -178,7 +220,9 @@ function auditPlausible(item: ResolveInput, r: ResolveResult): { ok: boolean; re
   console.log(`Downloaded:      ${hits.length}`);
   console.log(`Missing:         ${misses.length}  (see ${MISSING_LOG})`);
   console.log(`Bytes on disk:   ${bytesTotal} (${totalMB} MB)`);
-  console.log(`Audit:           ${audit.length} sampled, ${auditFails.length} fail`);
+  console.log(
+    `Audit:           ${audit.length} sampled, ${auditFails.length} fail`
+  );
 
   if (auditFails.length) {
     console.log('\nAudit failures:');
