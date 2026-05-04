@@ -18,6 +18,12 @@ All notable changes to this project are documented here.
 - **3-letter month labels** (`Jan`/`Feb`/…) instead of the 1-letter mocks in the handoff — readable at the production sidebar layout width and at the 980px breakpoint.
 - **Card-count attribute drives grid sizing only.** The component derives the actual list of cards from `gameId` data presence (mirroring `getDataPaths`); `data-card-count` on the grid is set from `cards.length` purely so CSS can pick the right column template.
 
+### Added — Art data for ACWW + ACCF
+- **`public/data/acww/art.json`** — 20 paintings sourced from Wikibooks (`Animal_Crossing:_Wild_World/Paintings`). Schema matches `acnl/art.json` (`id`, `name`, `basedOn`).
+- **`public/data/accf/art.json`** — 23 paintings. City Folk adds 7 over Wild World (dynamic, jolly, moody, proper, scenic, serene, wistful) and drops 4 (dainty, lovely, opulent, rare). `basedOn` strings reuse ACNL phrasing verbatim wherever the real-world reference matches, so cross-game search stays consistent.
+- **Loader fix** (`src/lib/categoryMeta.ts`) — added `'ACWW'` and `'ACCF'` to `GAMES_WITH_ART` so `getDataPaths()` actually fetches the new files. Sidebar's `data.art.length > 0` gate then lights up the tab. Includes corresponding 4-card StatsTab grid (fish/bugs/fossils/art) for both games.
+- Closes #74.
+
 ### Added — Phase 8: GlobalSearchDropdown
 - **`GlobalSearchDropdown` component** (`src/components/search/GlobalSearchDropdown.tsx`) — unified search dropdown anchored under a topbar input on the Home tab. Four states: empty + intro hint, empty + recent searches (history), no-match for query, and grouped category results. Shows up to 5 items per group, max 5 groups (fish, bugs, fossils, art, sea). Sea group gated on `gameId ∈ {ACNL, ACNH}` and non-empty data. Art search matches both `name` and `basedOn` (Decision 8 — "Leonardo" → Famous Painting). Each row shows category-tinted monogram glyph, name with `donated` badge, and meta line (habitat / location / part / basedOn / shadow + bells).
 - **Keyboard navigation** — `↑↓` move the active row, `↵` selects + jumps + closes, `Esc` closes the panel. Hovering a row also sets the active index.
