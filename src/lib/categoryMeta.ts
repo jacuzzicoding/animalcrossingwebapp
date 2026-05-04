@@ -25,7 +25,13 @@ const GAME_DATA_DIR: Partial<Record<GameId, string>> = {
   ACNH: '/data/acnh',
 };
 
-const GAMES_WITH_ART = new Set<GameId>(['ACGCN', 'ACNL', 'ACNH']);
+const GAMES_WITH_ART = new Set<GameId>([
+  'ACGCN',
+  'ACWW',
+  'ACCF',
+  'ACNL',
+  'ACNH',
+]);
 const GAMES_WITH_SEA_CREATURES = new Set<GameId>(['ACNL', 'ACNH']);
 
 /** Returns per-category fetch paths for the given game. Null means no data file for that category/game combo. */
