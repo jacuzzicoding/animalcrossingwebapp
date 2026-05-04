@@ -66,6 +66,6 @@ Museum data lives in `public/data/<game>/`:
 
 ## Version
 
-Current release: **v0.8.2-alpha** (last stable on `main`). Active development: **v0.9.0-beta** — Phases 1–9 of the UI revamp shipped to `development`; Phase 10 (mobile responsive verification) pending. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the canonical plan.
+Current release: **v0.9.0-beta** (shipped 2026-05-04) — full UI revamp staged for release on `main`. Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the v0.9 plan.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).
