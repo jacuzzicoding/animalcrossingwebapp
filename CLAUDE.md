@@ -51,8 +51,12 @@ src/
   components/
     ACCanvas.tsx            # Orchestration shell ~298 lines. Mounts active tab view,
                             # wires modals and global search. Decomposition complete (v0.7).
-    HomeTab.tsx             # Home screen: seasonal availability, leaving-soon,
-                            # progress cards, recent activity
+    HomeTab.tsx             # v0.9 Phase 6: rebuilt — hero stat + ProgressMeter,
+                            # month strip, leaving-soon shelf, just-arrived shelf,
+                            # latest donations. Cards fire jumpTo (scroll + pulse).
+    ProgressMeter.tsx       # v0.9 Phase 6: segmented progress bar (4 or 5 segments
+                            # gated by gameId; sea segment for ACNL/ACNH).
+    progressMeterUtils.ts   # Pure helper segmentsForGame (unit-tested).
     CollectibleRow.tsx      # Single item row with donate toggle; shows chevron + rounded-top when expanded
     ItemExpandPanel.tsx     # Inline accordion panel shown below CollectibleRow for fish/bugs/fossils
     Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
@@ -84,6 +88,8 @@ src/
     useMuseumData.ts        # Fetches and caches all 4 category JSONs for active town's game
     useSearch.ts            # Search history, click-outside, debounce
     useCategoryStats.ts     # Memoized donated counts per category
+    useJumpToRow.ts         # v0.9 Phase 6: navigate to a category tab + set
+                            # highlightId so ACCanvas scrolls + pulses the target row
   lib/
     store.ts                # Zustand store: towns, donations, activeTownId. persist key 'ac-web' v2.
     bootstrapMigration.ts   # One-time localStorage rename (ac-web:v1 → ac-web), called in main.tsx

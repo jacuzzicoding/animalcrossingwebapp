@@ -1,15 +1,4 @@
-import { useMemo, type ElementType } from 'react';
-import {
-  Fish as FishIcon,
-  Bug,
-  Bone,
-  Palette,
-  Waves,
-  BarChart2,
-  Clock,
-  AlertTriangle,
-  Sparkles,
-} from 'lucide-react';
+import { useMemo } from 'react';
 import type {
   Fish as FishType,
   BugItem,
@@ -17,8 +6,16 @@ import type {
   ArtPiece,
   SeaCreature,
   CategoryId,
+  GameId,
 } from '../lib/types';
-import { displayName, formatRelativeDate, type AnyItem } from '../lib/utils';
+import {
+  displayName,
+  formatRelativeDate,
+  itemMonths,
+  type AnyItem,
+} from '../lib/utils';
+import { ProgressMeter } from './ProgressMeter';
+import { useJumpToRow } from '../hooks/useJumpToRow';
 
 const MONTH_FULL = [
   'January',
@@ -34,21 +31,35 @@ const MONTH_FULL = [
   'November',
   'December',
 ];
-
-const CAT_ICON: Record<CategoryId, ElementType> = {
-  fish: FishIcon,
-  bugs: Bug,
-  fossils: Bone,
-  art: Palette,
-  sea_creatures: Waves,
-};
+const MONTH_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 const CAT_LABEL: Record<CategoryId, string> = {
   fish: 'Fish',
   bugs: 'Bugs',
   fossils: 'Fossils',
   art: 'Art',
-  sea_creatures: 'Sea Creatures',
+  sea_creatures: 'Sea',
+};
+
+const CAT_VAR: Record<CategoryId, string> = {
+  fish: 'var(--chip-fish)',
+  bugs: 'var(--chip-bugs)',
+  fossils: 'var(--chip-fossils)',
+  art: 'var(--chip-art)',
+  sea_creatures: 'var(--chip-sea)',
 };
 
 export interface HomeTabProps {
@@ -62,14 +73,23 @@ export interface HomeTabProps {
   donated: Record<string, boolean>;
   donatedAt: Record<string, string>;
   catCounts: Record<CategoryId, number>;
-  onNavigate: (view: CategoryId | 'activity' | 'analytics') => void;
+  gameId: GameId;
+  hemisphere: 'NH' | 'SH';
+  setHighlightId: (id: string | null) => void;
 }
 
-interface AvailItem {
+interface ShelfItem {
   id: string;
   name: string;
-  category: 'fish' | 'bugs';
-  leavingSoon: boolean;
+  category: CategoryId;
+  months: number[];
+  bells: number | null;
+}
+
+function monogram(name: string): string {
+  const parts = name.replace(/[—–-]/g, ' ').trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
 }
 
 export default function HomeTab({
@@ -77,39 +97,98 @@ export default function HomeTab({
   donated,
   donatedAt,
   catCounts,
-  onNavigate,
+  gameId,
+  hemisphere,
+  setHighlightId,
 }: HomeTabProps) {
+  const jumpTo = useJumpToRow(setHighlightId);
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+  const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   const monthName = MONTH_FULL[currentMonth - 1];
 
-  const available: AvailItem[] = useMemo(() => {
-    const out: AvailItem[] = [];
-    const push = (items: (FishType | BugItem)[], category: 'fish' | 'bugs') => {
-      for (const item of items) {
-        if (!item.months?.includes(currentMonth)) continue;
-        if (donated[item.id]) continue;
-        out.push({
-          id: item.id,
-          name: displayName(item, category),
-          category,
-          leavingSoon: !item.months.includes(nextMonth),
-        });
-      }
-    };
-    push(data.fish, 'fish');
-    push(data.bugs, 'bugs');
-    return out.sort(
-      (a, b) =>
-        Number(b.leavingSoon) - Number(a.leavingSoon) ||
-        a.name.localeCompare(b.name)
-    );
-  }, [data.fish, data.bugs, donated, currentMonth, nextMonth]);
+  const seasonalCats: CategoryId[] = useMemo(() => {
+    const cats: CategoryId[] = ['fish', 'bugs'];
+    if (
+      (gameId === 'ACNL' || gameId === 'ACNH') &&
+      data.sea_creatures.length > 0
+    ) {
+      cats.push('sea_creatures');
+    }
+    return cats;
+  }, [gameId, data.sea_creatures.length]);
 
-  const fishCount = available.filter(a => a.category === 'fish').length;
-  const bugsCount = available.filter(a => a.category === 'bugs').length;
-  const leavingCount = available.filter(a => a.leavingSoon).length;
+  const { leavingSoon, justArrived, stillNeeded } = useMemo(() => {
+    const avail: ShelfItem[] = [];
+    const leaving: ShelfItem[] = [];
+    const arrived: ShelfItem[] = [];
+
+    for (const cat of seasonalCats) {
+      const items = (data[cat] as AnyItem[]) ?? [];
+      for (const item of items) {
+        const months = itemMonths(item, cat, hemisphere);
+        if (!months || !months.includes(currentMonth)) continue;
+        const isDonated = !!donated[item.id];
+        const entry: ShelfItem = {
+          id: item.id,
+          name: displayName(item, cat),
+          category: cat,
+          months,
+          bells:
+            'value' in item
+              ? ((item as FishType | BugItem | SeaCreature).value ?? null)
+              : null,
+        };
+        avail.push(entry);
+        if (isDonated) continue;
+        if (!months.includes(nextMonth)) leaving.push(entry);
+        else if (!months.includes(lastMonth)) arrived.push(entry);
+      }
+    }
+
+    const stillNeededCount = avail.filter(a => !donated[a.id]).length;
+
+    const sortByName = (a: ShelfItem, b: ShelfItem) =>
+      a.name.localeCompare(b.name);
+    leaving.sort(sortByName);
+    arrived.sort(sortByName);
+
+    void avail;
+    return {
+      leavingSoon: leaving,
+      justArrived: arrived,
+      stillNeeded: stillNeededCount,
+    };
+  }, [
+    data,
+    seasonalCats,
+    currentMonth,
+    nextMonth,
+    lastMonth,
+    donated,
+    hemisphere,
+  ]);
+
+  const totals: Record<CategoryId, number> = {
+    fish: data.fish.length,
+    bugs: data.bugs.length,
+    fossils: data.fossils.length,
+    art: data.art.length,
+    sea_creatures: data.sea_creatures.length,
+  };
+
+  const heroCats: CategoryId[] = useMemo(() => {
+    const cats: CategoryId[] = ['fish', 'bugs', 'fossils'];
+    if (totals.art > 0) cats.push('art');
+    if ((gameId === 'ACNL' || gameId === 'ACNH') && totals.sea_creatures > 0) {
+      cats.push('sea_creatures');
+    }
+    return cats;
+  }, [gameId, totals.art, totals.sea_creatures]);
+
+  const heroDonated = heroCats.reduce((sum, c) => sum + catCounts[c], 0);
+  const heroTotal = heroCats.reduce((sum, c) => sum + totals[c], 0);
 
   const recent = useMemo(() => {
     const nameMap: Record<string, { name: string; category: CategoryId }> = {};
@@ -127,230 +206,182 @@ export default function HomeTab({
       .map(([id, ts]) => ({ id, ts, ...nameMap[id] }))
       .filter(e => e.name)
       .sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime())
-      .slice(0, 3);
+      .slice(0, 6);
   }, [donatedAt, data]);
 
-  const totals: Record<CategoryId, number> = {
-    fish: data.fish.length,
-    bugs: data.bugs.length,
-    fossils: data.fossils.length,
-    art: data.art.length,
-    sea_creatures: data.sea_creatures.length,
-  };
+  const showSeasonalUI = seasonalCats.length > 0;
 
   return (
-    <div className="space-y-4">
-      {/* Hero: Available this month */}
-      <div
-        className="rounded-[16px] border overflow-hidden"
-        style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
-      >
-        <div
-          className="px-4 py-3 flex items-center gap-2"
-          style={{
-            background: 'linear-gradient(180deg, #7B5E3B 0%, #6e5234 100%)',
-            color: '#F5E9D4',
-          }}
-        >
-          <Sparkles className="w-4 h-4" />
-          <div className="text-sm font-semibold">Available in {monthName}</div>
+    <div className="ac-home">
+      {/* Hero */}
+      <section className="ac-hero">
+        <div className="ac-eyebrow ac-eyebrow-accent">
+          {showSeasonalUI ? `Available in ${monthName}` : `Your museum`}
         </div>
-        <div className="px-4 py-4">
-          {available.length === 0 ? (
-            <div className="text-center py-4">
-              <div className="text-2xl mb-1">🎉</div>
-              <div className="text-sm font-medium" style={{ color: '#2A7A52' }}>
-                You're all caught up for {monthName}!
-              </div>
-              <div
-                className="text-xs mt-1"
-                style={{ color: '#5a4a35', opacity: 0.75 }}
-              >
-                Every fish and bug available this month is already in your
-                museum.
-              </div>
+        {showSeasonalUI ? (
+          <h1 className="ac-hero-headline">
+            <em>{stillNeeded}</em>{' '}
+            {stillNeeded === 1 ? 'creature' : 'creatures'} still to donate this
+            month.
+            {leavingSoon.length > 0 && (
+              <span className="ac-hero-aside">
+                {leavingSoon.length} leaving soon.
+              </span>
+            )}
+          </h1>
+        ) : (
+          <h1 className="ac-hero-headline">
+            <em>{heroDonated}</em> of {heroTotal} donated.
+          </h1>
+        )}
+        <ProgressMeter gameId={gameId} donated={catCounts} totals={totals} />
+      </section>
+
+      {/* Month strip */}
+      {showSeasonalUI && (
+        <div
+          className="ac-month-strip"
+          aria-label="Months of the year, current month highlighted"
+        >
+          {MONTH_SHORT.map((m, i) => (
+            <div
+              key={m}
+              className={`ac-month-cell${i + 1 === currentMonth ? ' ac-month-cell-current' : ''}`}
+            >
+              {m}
             </div>
+          ))}
+        </div>
+      )}
+
+      {/* Leaving soon shelf */}
+      {leavingSoon.length > 0 && (
+        <section>
+          <div className="ac-shelf-head">
+            <div>
+              <div className="ac-eyebrow ac-eyebrow-warn">
+                Leaving end of {monthName}
+              </div>
+              <h2 className="ac-shelf-title">Catch them while you can</h2>
+            </div>
+            <span className="ac-shelf-count">{leavingSoon.length}</span>
+          </div>
+          <ShelfGrid
+            items={leavingSoon}
+            currentMonth={currentMonth}
+            warn
+            onPick={(cat, id) => jumpTo(cat, id)}
+          />
+        </section>
+      )}
+
+      {/* Just arrived shelf */}
+      {justArrived.length > 0 && (
+        <section>
+          <div className="ac-shelf-head">
+            <div>
+              <div className="ac-eyebrow ac-eyebrow-accent">New this month</div>
+              <h2 className="ac-shelf-title">Just arrived</h2>
+            </div>
+            <span className="ac-shelf-count">{justArrived.length}</span>
+          </div>
+          <ShelfGrid
+            items={justArrived}
+            currentMonth={currentMonth}
+            onPick={(cat, id) => jumpTo(cat, id)}
+          />
+        </section>
+      )}
+
+      {/* Latest donations */}
+      <section>
+        <div className="ac-shelf-head">
+          <div>
+            <div className="ac-eyebrow">Latest donations</div>
+            <h2 className="ac-shelf-title">Recent activity</h2>
+          </div>
+        </div>
+        <div className="ac-recent-card">
+          {recent.length === 0 ? (
+            <div className="ac-recent-empty">No donations yet.</div>
           ) : (
-            <>
-              <div className="text-sm mb-3" style={{ color: '#2A2A2A' }}>
-                <span className="font-semibold">{fishCount}</span> fish and{' '}
-                <span className="font-semibold">{bugsCount}</span> bugs still to
-                donate this month
-                {leavingCount > 0 && (
-                  <>
-                    {' · '}
-                    <span style={{ color: '#b85c2e' }} className="font-medium">
-                      {leavingCount} leaving soon
-                    </span>
-                  </>
-                )}
-                .
-              </div>
-              <div className="space-y-1.5 max-h-72 overflow-y-auto">
-                {available.map(a => {
-                  const Icon = CAT_ICON[a.category];
-                  return (
-                    <div
-                      key={a.id}
-                      className="flex items-center gap-2.5 rounded-[10px] border px-3 py-2"
-                      style={{
-                        borderColor: a.leavingSoon ? '#f0c8a4' : '#E7DAC4',
-                        backgroundColor: a.leavingSoon ? '#fdf3e8' : '#FDF9F1',
-                      }}
-                    >
-                      <Icon
-                        className="w-4 h-4 shrink-0"
-                        style={{ color: '#7B5E3B' }}
-                      />
-                      <div
-                        className="flex-1 min-w-0 text-sm truncate"
-                        style={{ color: '#2A2A2A' }}
-                      >
-                        {a.name}
-                      </div>
-                      {a.leavingSoon && (
-                        <div
-                          className="flex items-center gap-1 text-[11px] font-medium shrink-0"
-                          style={{ color: '#b85c2e' }}
-                        >
-                          <AlertTriangle className="w-3 h-3" />
-                          Leaving after {monthName}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
+            recent.map(r => (
+              <button
+                key={r.id}
+                className="ac-recent-row"
+                onClick={() => jumpTo(r.category, r.id)}
+              >
+                <span
+                  className="ac-recent-cat-dot"
+                  style={{ backgroundColor: CAT_VAR[r.category] }}
+                  aria-hidden="true"
+                />
+                <span className="ac-recent-name">{r.name}</span>
+                <span className="ac-recent-cat">{CAT_LABEL[r.category]}</span>
+                <span className="ac-recent-time">
+                  {formatRelativeDate(r.ts)}
+                </span>
+              </button>
+            ))
           )}
         </div>
-      </div>
+      </section>
+    </div>
+  );
+}
 
-      {/* Per-category progress grid */}
-      <div className="grid grid-cols-2 gap-3">
-        {(['fish', 'bugs', 'fossils', 'art', 'sea_creatures'] as CategoryId[])
-          .filter(cat => totals[cat] > 0)
-          .map(cat => {
-            const Icon = CAT_ICON[cat];
-            const done = catCounts[cat];
-            const total = totals[cat];
-            const pct = total ? Math.round((done / total) * 100) : 0;
-            return (
-              <button
-                key={cat}
-                onClick={() => onNavigate(cat)}
-                className="text-left rounded-[14px] border px-4 py-3 transition-colors hover:bg-[#FDF9F1]"
-                style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
-              >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <Icon className="w-4 h-4" style={{ color: '#7B5E3B' }} />
-                  <div
-                    className="text-sm font-semibold"
-                    style={{ color: '#2A2A2A' }}
-                  >
-                    {CAT_LABEL[cat]}
-                  </div>
-                </div>
-                <div className="text-xs mb-1.5" style={{ color: '#5a4a35' }}>
-                  {done} / {total} donated
-                </div>
-                <div
-                  className="h-1.5 w-full rounded-full overflow-hidden"
-                  style={{ backgroundColor: '#e9dcc3' }}
-                >
-                  <div
-                    className="h-full transition-all duration-500"
-                    style={{ width: `${pct}%`, backgroundColor: '#3CA370' }}
-                  />
-                </div>
-              </button>
-            );
-          })}
-      </div>
-
-      {/* Recent activity */}
-      <div
-        className="rounded-[14px] border overflow-hidden"
-        style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
-      >
-        <div
-          className="px-4 py-2.5 flex items-center justify-between border-b"
-          style={{ borderColor: '#E7DAC4' }}
-        >
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" style={{ color: '#7B5E3B' }} />
-            <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>
-              Recent donations
-            </div>
-          </div>
+function ShelfGrid({
+  items,
+  currentMonth,
+  warn,
+  onPick,
+}: {
+  items: ShelfItem[];
+  currentMonth: number;
+  warn?: boolean;
+  onPick: (category: CategoryId, id: string) => void;
+}) {
+  return (
+    <div className="ac-shelf-grid">
+      {items.slice(0, 6).map(item => {
+        const tint = CAT_VAR[item.category];
+        return (
           <button
-            onClick={() => onNavigate('activity')}
-            className="text-xs font-medium"
-            style={{ color: '#7B5E3B' }}
+            key={`${item.category}-${item.id}`}
+            className="ac-shelf-card"
+            onClick={() => onPick(item.category, item.id)}
           >
-            View all →
-          </button>
-        </div>
-        {recent.length === 0 ? (
-          <div
-            className="px-4 py-5 text-center text-sm"
-            style={{ color: '#5a4a35', opacity: 0.75 }}
-          >
-            No donations yet.
-          </div>
-        ) : (
-          <div className="divide-y" style={{ borderColor: '#E7DAC4' }}>
-            {recent.map(r => {
-              const Icon = CAT_ICON[r.category];
-              return (
-                <div key={r.id} className="px-4 py-2.5 flex items-center gap-3">
-                  <Icon
-                    className="w-4 h-4 shrink-0"
-                    style={{ color: '#7B5E3B' }}
+            <span
+              className="ac-shelf-glyph"
+              style={{ borderColor: tint, color: tint }}
+              aria-hidden="true"
+            >
+              {monogram(item.name)}
+            </span>
+            <span className="ac-shelf-card-body">
+              <span className="ac-shelf-card-name">{item.name}</span>
+              <span className="ac-shelf-card-meta">
+                {item.bells != null
+                  ? `${item.bells.toLocaleString()} ✦`
+                  : CAT_LABEL[item.category]}
+              </span>
+              <span className="ac-month-dots" aria-hidden="true">
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                  <span
+                    key={m}
+                    className={`ac-month-dot${item.months.includes(m) ? ' ac-month-dot-on' : ''}`}
                   />
-                  <div
-                    className="flex-1 min-w-0 text-sm truncate"
-                    style={{ color: '#2A2A2A' }}
-                  >
-                    {r.name}
-                  </div>
-                  <div
-                    className="text-xs shrink-0"
-                    style={{ color: '#5a4a35', opacity: 0.75 }}
-                  >
-                    {formatRelativeDate(r.ts)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Stats shortcut */}
-      <button
-        onClick={() => onNavigate('analytics')}
-        className="w-full flex items-center gap-3 rounded-[14px] border px-4 py-3 transition-colors hover:bg-[#FDF9F1]"
-        style={{ borderColor: '#E7DAC4', backgroundColor: '#FFFDF6' }}
-      >
-        <div
-          className="shrink-0 rounded-xl p-2"
-          style={{ backgroundColor: '#EDE3D0', border: '1px solid #E7DAC4' }}
-        >
-          <BarChart2 className="w-4 h-4" style={{ color: '#2A7A52' }} />
-        </div>
-        <div className="flex-1 text-left">
-          <div className="text-sm font-semibold" style={{ color: '#2A2A2A' }}>
-            View full stats
-          </div>
-          <div className="text-xs" style={{ color: '#5a4a35', opacity: 0.75 }}>
-            Progress charts and monthly availability
-          </div>
-        </div>
-        <div className="text-sm" style={{ color: '#7B5E3B' }}>
-          →
-        </div>
-      </button>
+                ))}
+              </span>
+              {warn && (
+                <span className="ac-shelf-card-warn">
+                  ⚠ Last month: {MONTH_SHORT[currentMonth - 1]}
+                </span>
+              )}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
