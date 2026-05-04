@@ -185,7 +185,7 @@ export function GlobalSearchDropdown({
   function selectIndex(idx: number) {
     const entry = flatList[idx];
     if (!entry) return;
-    commitSearch(entry.item.name);
+    commitSearch(query);
     onJump(entry.category, entry.item.id);
     setQuery('');
     setFocused(false);
