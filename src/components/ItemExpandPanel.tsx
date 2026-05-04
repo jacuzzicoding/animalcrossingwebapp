@@ -5,6 +5,7 @@ import {
   itemMonths,
   itemNotes,
   isSeaCreature,
+  isArtPiece,
   formatTimestamp,
   type AnyItem,
 } from '../lib/utils';
@@ -35,6 +36,7 @@ export function ItemExpandPanel({
   const cm = currentMonth ?? new Date().getMonth() + 1;
   const shadow = isSeaCreature(item) ? item.shadow : undefined;
   const time = isSeaCreature(item) ? item.time : undefined;
+  const art = isArtPiece(item) ? item : undefined;
 
   const hasMonths = !!(months && months.length > 0);
 
@@ -47,6 +49,21 @@ export function ItemExpandPanel({
         </div>
       )}
       <div className="ac-expand-side">
+        {art && (
+          <div className="ac-stat ac-stat-art">
+            <div className="ac-stat-num ac-stat-num-text">{art.basedOn}</div>
+            <div className="ac-stat-label">based on</div>
+          </div>
+        )}
+        {art?.hasFake !== undefined && (
+          <div
+            className={`ac-art-fake-note ${art.hasFake ? 'ac-art-fake-note-warn' : 'ac-art-fake-note-ok'}`}
+          >
+            {art.hasFake
+              ? 'Crazy Redd may sell a counterfeit — verify before donating.'
+              : 'No known counterfeit — always genuine.'}
+          </div>
+        )}
         {bells != null && (
           <div className="ac-stat">
             <div className="ac-stat-num">{bells.toLocaleString()}</div>

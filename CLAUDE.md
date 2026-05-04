@@ -54,7 +54,8 @@ src/
   components/
     ACCanvas.tsx            # Orchestration shell. Mounts active tab view; owns
                             # `highlightId` state for scroll-to + pulse; wires
-                            # GlobalSearchDropdown topbar (Home only) and DetailModal (art).
+                            # GlobalSearchDropdown topbar (Home only). All categories,
+                            # including art, use ItemExpandPanel inline expand (v0.9 #81).
     HomeTab.tsx             # v0.9 Phase 6: rebuilt — hero stat + ProgressMeter,
                             # month strip, leaving-soon shelf, just-arrived shelf,
                             # latest donations. Cards fire jumpTo (scroll + pulse).
@@ -88,8 +89,8 @@ src/
       # render + AnalyticsView) were retired in Phase 7 / Phase 9. File remains
       # in tree pending a follow-up cleanup PR.
     modals/
-      DetailModal.tsx       # Bottom-sheet item detail. Used by Art (CategoryTab routes
-                            # art clicks here) and persistent across search jumps.
+      # DetailModal.tsx — RETIRED in v0.9 (#81). Was the bottom-sheet for the Art
+      # tab; art now uses the inline ItemExpandPanel like every other category.
     TownManager.tsx         # v0.9 Phase 4: right-side drawer (bottom sheet ≤720px) mounted
                             # at App layout level via useUIStore. Switch/edit/create/delete
                             # towns. Inline edit = name + (ACNH-only) hemisphere — game is
@@ -222,7 +223,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 
 ## ACCanvas.tsx
 
-`src/components/ACCanvas.tsx` is the orchestration shell that lives below the `Sidebar`. It mounts the active tab view (HomeTab, CategoryTab, StatsTab), owns the `highlightId` state for the scroll-to + pulse effect (Phase 5/6/8), wires the GlobalSearchDropdown topbar (Home tab only), and renders the persistent DetailModal for art. All data fetching lives in `useMuseumData`; per-category filtering and sectioning lives in `CategoryTab`.
+`src/components/ACCanvas.tsx` is the orchestration shell that lives below the `Sidebar`. It mounts the active tab view (HomeTab, CategoryTab, StatsTab), owns the `highlightId` state for the scroll-to + pulse effect (Phase 5/6/8), and wires the GlobalSearchDropdown topbar (Home tab only). All categories — including art — now use the inline `ItemExpandPanel` (v0.9 #81; `DetailModal` retired). All data fetching lives in `useMuseumData`; per-category filtering and sectioning lives in `CategoryTab`.
 
 Do not add new top-level tabs without updating the tab switch in ACCanvas, the nav list in `Sidebar`, and `VALID_TABS` / `ViewId` in `src/lib/viewTypes.ts`.
 

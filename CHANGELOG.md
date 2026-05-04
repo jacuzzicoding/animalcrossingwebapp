@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 ## [Unreleased] — v0.9.0-beta (in progress)
 
+### Changed — Art tab uses inline ItemExpandPanel (#81)
+- **Art tab converted from `DetailModal` bottom-sheet to inline `ItemExpandPanel`.** Art rows now expand inline like fish/bugs/fossils/sea creatures — same `.ac-row` → `.ac-expand` flow. Closes #81 (v0.9 release blocker).
+- **`ItemExpandPanel`** surfaces art-specific fields: `basedOn` (real-world artwork + artist) as the primary stat, plus a Crazy Redd authentication note keyed off `hasFake` (counterfeit-possible vs. always-genuine). Hidden when `hasFake` is undefined (ACGCN/ACWW/ACCF/ACNL data).
+- **`ArtPiece` type** gains optional `hasFake?: boolean` (ACNH-only, sourced from existing `acnh/art.json`).
+- **`DetailModal` retired** — file deleted. It was the only remaining consumer; global search jumps via `onJump` (highlight + scroll), and no other tab uses it. `CategoryTab` drops the `onItemSelect` prop and the `category === 'art'` special-cases. `ACCanvas` drops the `selected` state.
+- **CSS:** `.ac-art-fake-note` (warn / ok variants reusing existing `--warn` / `--accent` tokens) and `.ac-stat-art` italic basedOn rendering, appended to `src/index.css`.
+
 ### Added — Phase 10: Mobile responsive polish
 - **Mobile breakpoint hierarchy** documented (`980 / 720 / 700 / 480`). Surgical CSS additions to `src/index.css` Phase 10 block address touch targets and overflow at iPhone SE (375px) through iPad portrait (768px).
 - **Touch targets ≥44px** at ≤720px: `.ac-tm-close`, `.ac-settings-close`, `.ac-tm-row-edit`, `.ac-tm-ghost / -primary / -danger`, `.ac-gs-history-row`, `.ac-gs-row`, `.ac-donate-btn`, `.ac-chevron`. Hemisphere toggle and segmented controls bumped to comfortable tap sizes.
