@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import ACCanvas from './components/ACCanvas';
 import SettingsRoute from './components/SettingsRoute';
+import CreditsRoute from './components/CreditsRoute';
 import { TownManager } from './components/TownManager';
 import { useHydration } from './hooks/useHydration';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -63,6 +64,7 @@ function App() {
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/settings" element={<SettingsRoute />} />
+        <Route path="/credits" element={<CreditsRoute />} />
         <Route path="/town/:townId" element={<ACCanvas />} />
         <Route path="/town/:townId/:tab" element={<ACCanvas />} />
         <Route path="*" element={<Navigate to="/" replace />} />

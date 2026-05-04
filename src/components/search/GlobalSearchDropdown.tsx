@@ -8,6 +8,8 @@ import {
   isArtPiece,
   isSeaCreature,
 } from '../../lib/utils';
+import { ItemIcon } from '../ItemIcon';
+import { useGameHasIcons } from '../itemIconUtils';
 
 const SEARCH_HISTORY_KEY = 'ac-curator-search-history';
 const MAX_HISTORY = 8;
@@ -111,6 +113,7 @@ export function GlobalSearchDropdown({
   const [activeIdx, setActiveIdx] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const useIcons = useGameHasIcons(gameId);
 
   const visibleCategories = useMemo<CategoryId[]>(() => {
     const cats: CategoryId[] = ['fish', 'bugs', 'fossils'];
@@ -341,15 +344,26 @@ export function GlobalSearchDropdown({
                           onMouseEnter={() => setActiveIdx(idx)}
                           onClick={() => selectIndex(idx)}
                         >
-                          <div
-                            className="ac-gs-row-glyph"
-                            style={{
-                              borderColor: CHIP_VAR[cat],
-                              color: CHIP_VAR[cat],
-                            }}
-                          >
-                            {monogram(it.name)}
-                          </div>
+                          {useIcons ? (
+                            <ItemIcon
+                              gameId={gameId}
+                              category={cat}
+                              id={it.id}
+                              size={24}
+                              className="ac-gs-row-icon"
+                              alt=""
+                            />
+                          ) : (
+                            <div
+                              className="ac-gs-row-glyph"
+                              style={{
+                                borderColor: CHIP_VAR[cat],
+                                color: CHIP_VAR[cat],
+                              }}
+                            >
+                              {monogram(it.name)}
+                            </div>
+                          )}
                           <div className="ac-gs-row-text">
                             <div className="ac-gs-row-name">
                               <span>{it.name}</span>

@@ -1,6 +1,6 @@
 {
   "name": "animalcrossingwebapp",
-  "version": "0.9.0-beta",
+  "version": "0.9.1-beta",
   "description": "Web companion app for tracking museum donations across all five Animal Crossing main-line games (GCN, WW, CF, NL, NH). Live at https://animalcrossingwebapp.vercel.app/",
   "type": "module",
   "main": "index.js",
@@ -9,6 +9,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "extract-data": "node scripts/extract-fish-data.js",
+    "fetch:icons": "tsx scripts/fetch-icons.ts",
+    "spike:icons": "tsx scripts/spike-fandom-coverage.ts",
+    "icons:manifest": "tsx scripts/generate-icon-manifest.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -24,7 +27,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jacuzzicoding/animalcrossingwebapp/issues"
   },
@@ -71,6 +74,7 @@
     "jsdom": "^25.0.0",
     "lint-staged": "^16.4.0",
     "prettier": "^3.6.2",
+    "tsx": "^4.20.6",
     "vitest": "^2.0.0"
   }
 }

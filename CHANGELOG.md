@@ -2,177 +2,56 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [v0.9.1-beta] — 2026-05-04
+
+### Added
+- Animal Crossing (GameCube) item icons — fish, bugs, fossils, and art (118 items total) sourced from the AC Fandom Wiki under CC BY-SA 3.0
+- `<ItemIcon>` shared component renders icons across category rows (32×32), expand panels (64×64, hidden ≤720px), global search results (24×24), and home tab shelf + recent activity (24×24); falls back to the existing tinted-monogram glyph when an icon is missing
+- `/credits` route documenting third-party asset sources and licensing, linked from the sidebar footer
+- `LICENSE` (MIT) and `NOTICE` files at the repo root
+- `manifest.json` per game under `public/icons/<gameId>/` drives icon resolution; `npm run icons:manifest` regenerates it
+- Wiki-scraping scripts (`scripts/fetch-icons.ts`, `scripts/spike-fandom-coverage.ts`) and an expanded `scripts/README.md` with methodology notes
+
+### Changed
+- Icon rendering is data-driven — adding a `manifest.json` for a future game (ACWW, ACCF, ACNL, ACNH) lights up its UI automatically with no code change. Replaces the earlier `GAMES_WITH_ICONS = { ACGCN }` allowlist
+- ESLint config no longer flags `scripts/` Node-only code; `tsx` added as a devDependency so the icon scripts run from `npm` scripts
+
+### Fixed
+- `ItemExpandPanel` padding-left expanded to clear the absolute-positioned icon
+
+### Notes
+- Other games continue to render the existing monogram fallback until their respective icon scrapes ship in subsequent v0.9.x betas
+- Per-piece fossil icons share a single per-species image where the source only provides one render — flagged for hand-drawn replacement on a later polish pass
 
 ## [v0.9.0-beta] — 2026-05-04
 
-### Fixed — Version footer suppresses `release/` branch suffix (#60)
-- **`src/App.tsx`** version footer now hides the `· <branch>` suffix when the active branch starts with `release/`. Production hostname behavior unchanged. Closes #60.
+### Added
+- **New "Meadow" visual design** — full UI rebuild on a fresh design system. Fraunces (display) + Inter (sans) replace Varela Round; new token palette covers surfaces, ink, accents, warnings, and per-category chip colors
+- **Sidebar shell layout** — 280px sticky left sidebar with brand wordmark, active-town card, vertical nav with per-category `donated/total` counts, and Export CSV / Settings footer; replaces the old `MuseumHeader` + `TabBar` + `TownSwitcher` trio
+- **TownManager drawer** — right-side drawer (bottom sheet ≤720px) for town CRUD; replaces the separate Create Town and Edit Town modals. Mounts at the layout level so it overlays every route, retiring the v0.8.1 greyed-out-buttons stopgap. Auto-opens in create mode when there are no towns
+- **Settings page** (`/settings`) — top-level route with About (version, source, storage summary, credits) and Danger zone (reset active town's donations, reset everything)
+- **HomeTab redesign** — hero stat ("X creatures still to donate this month"), leaving-soon aside, segmented `ProgressMeter`, 12-cell month strip, "Leaving end of {month}" and "Just arrived" shelves, and a Latest donations card. Shelf and recent-row clicks jump straight to the matching row in its category tab and pulse-highlight it
+- **Category tab sectioning** — items group into Leaving this month / Available now / Out of season / Already donated, with a redesigned page header showing donated/total and current-month context
+- **Restyled item rows + inline expand panel** — category-tinted monogram glyphs replace icon tiles; donated rows strike through and check off; expand panel shows a 12-cell month grid alongside sell value, shadow size, active hours, and the donate / undonate button. Active-hours and "Leaving soon" / "New this month" pills surface in-row
+- **GlobalSearchDropdown** — unified search anchored under a topbar input on Home. Grouped results across fish/bugs/fossils/art/sea (sea gated on game + data), keyboard nav (↑↓/↵/Esc), and persisted recent-search history. Replaces the standalone Search tab
+- **StatsTab** — replaces `AnalyticsView`. Per-category cards above a 12-month "Yearly rhythm" chart (background bar = items available that month, accent fill = donated). Hemisphere-aware; sea creatures included for ACNL/ACNH
+- **Art data for Wild World and City Folk** (`public/data/acww/art.json`, `public/data/accf/art.json`) — 20 and 23 paintings respectively; loader and StatsTab grid updated. Closes #74
+- **Mobile responsive polish** — breakpoint hierarchy (`980 / 720 / 700 / 480`), 44px minimum touch targets at ≤720px, iOS auto-zoom prevention on search inputs, hero/category title overflow handling, topbar wrap, and full-height sidebar foot links when the sidebar stacks above main
 
-### Changed — Art tab uses inline ItemExpandPanel (#81)
-- **Art tab converted from `DetailModal` bottom-sheet to inline `ItemExpandPanel`.** Art rows now expand inline like fish/bugs/fossils/sea creatures — same `.ac-row` → `.ac-expand` flow. Closes #81 (v0.9 release blocker).
-- **`ItemExpandPanel`** surfaces art-specific fields: `basedOn` (real-world artwork + artist) as the primary stat, plus a Crazy Redd authentication note keyed off `hasFake` (counterfeit-possible vs. always-genuine). Hidden when `hasFake` is undefined (ACGCN/ACWW/ACCF/ACNL data).
-- **`ArtPiece` type** gains optional `hasFake?: boolean` (ACNH-only, sourced from existing `acnh/art.json`).
-- **`DetailModal` retired** — file deleted. It was the only remaining consumer; global search jumps via `onJump` (highlight + scroll), and no other tab uses it. `CategoryTab` drops the `onItemSelect` prop and the `category === 'art'` special-cases. `ACCanvas` drops the `selected` state.
-- **CSS:** `.ac-art-fake-note` (warn / ok variants reusing existing `--warn` / `--accent` tokens) and `.ac-stat-art` italic basedOn rendering, appended to `src/index.css`.
+### Changed
+- **Art tab uses inline expand** — art rows now expand inline like fish/bugs/fossils/sea creatures instead of opening a bottom sheet. Expand panel shows `basedOn` (real-world artwork) and an ACNH-only Crazy Redd authentication note keyed off `hasFake`. Closes #81
+- **Town store API** — `createTown(name, gameId, hemisphere?)` and `updateTown(id, { name?, hemisphere? })`. `playerName` removed from `Town`, the store, CSV exports, and tests. `gameId` is immutable after creation
+- **Hemisphere toggle** lives in TownManager (read-only label in the sidebar)
 
-### Added — Phase 10: Mobile responsive polish
-- **Mobile breakpoint hierarchy** documented (`980 / 720 / 700 / 480`). Surgical CSS additions to `src/index.css` Phase 10 block address touch targets and overflow at iPhone SE (375px) through iPad portrait (768px).
-- **Touch targets ≥44px** at ≤720px: `.ac-tm-close`, `.ac-settings-close`, `.ac-tm-row-edit`, `.ac-tm-ghost / -primary / -danger`, `.ac-gs-history-row`, `.ac-gs-row`, `.ac-donate-btn`, `.ac-chevron`. Hemisphere toggle and segmented controls bumped to comfortable tap sizes.
-- **iOS zoom prevention** — `.ac-search input` rendered at `font-size: 16px` on stacked layouts so Safari does not auto-zoom on focus.
-- **Hero / category title overflow** — `word-break: break-word` on `.ac-hero-headline` and `.ac-category-title`; further font shrink at ≤480px (hero 26px, category 28px, settings 32px).
-- **Recent activity row** at ≤720px — category label hidden so item name + relative time fit on one line at 360–390px.
-- **Topbar wraps** at ≤480px so the search input stays full-width on narrow viewports.
-- **Sidebar foot links** get full 44px tap height when the sidebar stacks above main at ≤980px.
-- **Kbd hint footer** in `GlobalSearchDropdown` hidden at ≤720px (no hardware keyboard assumed). Tap-to-select via existing `onClick` handlers verified.
+### Removed
+- **`MuseumHeader`**, **`TabBar`**, **`TownSwitcher`** — replaced by the sidebar
+- **`CreateTownModal`**, **`EditTownModal`**, **`TownNameFields`**, **`DetailModal`** — replaced by TownManager and the inline expand panel
+- **`AnalyticsView`** and **`SectionCard`** — replaced by StatsTab
+- **`GlobalSearchBar`**, **`GlobalSearchResults`**, **`SearchHistoryPopover`**, **`useSearch`** hook, and the standalone `/search` route — replaced by GlobalSearchDropdown
+- **Varela Round** font — fully retired across `index.html`, `src/index.css`, `App.tsx`, and `version-history.html`
 
-### Verified — Phase 10
-- Sidebar stacks above main at ≤980px (not hidden); ProgressMeter `.ac-meter-5` wraps to 2 rows; TownManager renders as bottom sheet at ≤720px; Settings collapses + danger buttons go full-width at ≤700px; scroll-to + `.ac-row-pulse` highlight is viewport-agnostic.
-
-### Added — Phase 9: StatsTab
-- **`StatsTab` component** (`src/components/StatsTab.tsx`) — replaces `AnalyticsView`. Renders per-category cards (3/4/5 cards, gated by game: fish/bugs/fossils always; art for ACGCN/ACNL/ACNH; sea for ACNL/ACNH) above a 12-column "Yearly rhythm" availability chart. Each card shows category eyebrow tinted with the matching `--chip-*` token, donated/total in Fraunces 32, a thin tinted progress bar, and "X% complete" caption.
-- **Yearly rhythm chart** — 12 stacked columns. Background bar height = `avail / maxAvail`; inner accent fill = `donated / avail`. Number above each column = items available that month. Current month column borders in `--accent`. Includes fish + bugs always; sea creatures added for ACNL/ACNH (Decision 4). Hemisphere-aware via `itemMonths(item, cat, hemisphere)`. Legend below: "Available" / "Already donated".
-- **Phase 9 CSS** appended to `src/index.css` — `.ac-stats`, `.ac-stats-grid` (responsive 3/4/5 → 2 → 1 columns at 980px / 480px), `.ac-statcard` / `-cat` / `-num` / `-of` / `-bar` / `-fill` / `-pct`, `.ac-chartcard`, `.ac-chart` / `-col` / `-bar` / `-bar-bg` / `-bar-fill` / `-num` / `-month`, `.ac-chart-legend` / `-dot` / `-dot-bg` / `-dot-fill`. Current-month column gets accent border via `.ac-chart-col.is-now`.
-
-### Removed — Phase 9
-- **`AnalyticsView`** (`src/components/views/AnalyticsView.tsx`) — superseded by `StatsTab`.
-- **`SectionCard`** (`src/components/views/SectionCard.tsx`) — its only consumer was `AnalyticsView`; new card primitives are inline.
-
-### Decisions — Phase 9
-- **Sea creatures included in the chart for ACNL/ACNH.** Per Decision 4, sea is a first-class category in nav/ProgressMeter/HomeTab/Search, so excluding it from the yearly rhythm would be inconsistent. ACGCN/ACWW/ACCF still chart only fish + bugs (no sea data exists for those games).
-- **3-letter month labels** (`Jan`/`Feb`/…) instead of the 1-letter mocks in the handoff — readable at the production sidebar layout width and at the 980px breakpoint.
-- **Card-count attribute drives grid sizing only.** The component derives the actual list of cards from `gameId` data presence (mirroring `getDataPaths`); `data-card-count` on the grid is set from `cards.length` purely so CSS can pick the right column template.
-
-### Added — Art data for ACWW + ACCF
-- **`public/data/acww/art.json`** — 20 paintings sourced from Wikibooks (`Animal_Crossing:_Wild_World/Paintings`). Schema matches `acnl/art.json` (`id`, `name`, `basedOn`).
-- **`public/data/accf/art.json`** — 23 paintings. City Folk adds 7 over Wild World (dynamic, jolly, moody, proper, scenic, serene, wistful) and drops 4 (dainty, lovely, opulent, rare). `basedOn` strings reuse ACNL phrasing verbatim wherever the real-world reference matches, so cross-game search stays consistent.
-- **Loader fix** (`src/lib/categoryMeta.ts`) — added `'ACWW'` and `'ACCF'` to `GAMES_WITH_ART` so `getDataPaths()` actually fetches the new files. Sidebar's `data.art.length > 0` gate then lights up the tab. Includes corresponding 4-card StatsTab grid (fish/bugs/fossils/art) for both games.
-- Closes #74.
-
-### Added — Phase 8: GlobalSearchDropdown
-- **`GlobalSearchDropdown` component** (`src/components/search/GlobalSearchDropdown.tsx`) — unified search dropdown anchored under a topbar input on the Home tab. Four states: empty + intro hint, empty + recent searches (history), no-match for query, and grouped category results. Shows up to 5 items per group, max 5 groups (fish, bugs, fossils, art, sea). Sea group gated on `gameId ∈ {ACNL, ACNH}` and non-empty data. Art search matches both `name` and `basedOn` (Decision 8 — "Leonardo" → Famous Painting). Each row shows category-tinted monogram glyph, name with `donated` badge, and meta line (habitat / location / part / basedOn / shadow + bells).
-- **Keyboard navigation** — `↑↓` move the active row, `↵` selects + jumps + closes, `Esc` closes the panel. Hovering a row also sets the active index.
-- **Search history** — persists in `localStorage` under `ac-curator-search-history`, max 8 entries, deduplicated, most recent first. Stored on result selection. "Clear" button in the history header empties it.
-- **Result jump wiring** — selecting a result calls `onJump(category, id)`, which sets the active tab via React Router and stamps `highlightId` so `CategoryTab`'s scroll-to + `.ac-row-pulse` animation fires (Decision 10). Identical pattern to Phase 6 home shelves.
-- **Phase 8 CSS** appended to `src/index.css` — `.ac-topbar`, `.ac-search-wrap`, `.ac-search` (rounded pill input with focus ring), `.ac-gs-panel`, `.ac-gs-empty` / `-title` / `-sub` / `-hint`, `.ac-gs-section-head` / `.ac-gs-eyebrow` / `.ac-gs-clear`, `.ac-gs-history` / `-row` / `-icon`, `.ac-gs-group` / `-head` / `-dot` / `-count`, `.ac-gs-row` / `-active` / `-glyph` / `-text` / `-name` / `-donated` / `-meta` / `-arrow`, `.ac-gs-foot` + `kbd` chip styling.
-
-### Removed — Phase 8
-- **`GlobalSearchBar`, `GlobalSearchResults`, `SearchHistoryPopover`** — deleted (`src/components/search/`). Replaced wholesale by `GlobalSearchDropdown`.
-- **`useSearch` hook** — deleted (`src/hooks/useSearch.ts`). Search state now lives inside `GlobalSearchDropdown`.
-- **`'search'` view route** — removed from `ViewId`, `VALID_TABS`, and the Sidebar nav. The retired Search tab is replaced by the dropdown on Home.
-
-### Decisions — Phase 8
-- **Topbar lives only on Home tab.** Per the v0.9.2 spec, other tabs keep their per-tab inline search inside `CategoryTab`. Mounting the topbar on Home only avoids two competing search affordances on category pages.
-- **Click-outside dismisses the panel; result clicks use `onMouseDown` preventDefault.** Without `preventDefault` on mousedown, the input would lose focus before the click handler fired and the dropdown would close mid-click.
-- **Sea group gated on both game and data presence.** Mirrors the gating in Sidebar nav and ProgressMeter — a town whose game JSON happens to be missing sea data still renders correctly without an empty section.
-- **Per-group limit kept at 5.** Matches the v0.9.2 design and keeps the dropdown short enough to scan without scrolling on a 1080p viewport even when all 5 groups have hits.
-
-### Added — Phase 7: CategoryTab sectioning
-- **`CategoryTab` component** (`src/components/CategoryTab.tsx`) — replaces the inline category render in `ACCanvas`. Groups items into four sections (Leaving this month / Available now / Out of season / Already donated), each with an eyebrow header and item count. Empty groups are hidden. December→January wrap is handled via `next = currentMonth === 12 ? 1 : currentMonth + 1`. Donated items always land in "Already donated" regardless of season. Categories without month data (fossils, art) treat all non-donated items as "Available now". Owns its own `expandedId` state — only one row open at a time per tab — and reacts to `highlightId` by opening the matching row before ACCanvas's scroll-to fires.
-- **Category page header** — Fraunces 44 `<em>{donated}</em> of {total} {category}` title and right-aligned meta line ("X% complete" + "Showing availability for {month}" for seasonal categories). Stats card-style header sits above the per-tab search bar.
-- **Phase 7 CSS** appended to `src/index.css` (`.ac-category`, `.ac-category-head`, `.ac-category-title`, `.ac-category-meta`, `.ac-group`, `.ac-group-head`, `.ac-group-title`, `.ac-group-count`, plus `.ac-group-warn` / `.ac-group-accent` / `.ac-group-muted` / `.ac-group-done` tone modifiers). Header collapses to single column ≤700px and the category title shrinks to 32px.
-
-### Removed — Phase 7
-- Inline category render in `ACCanvas` (`CategoryProgress` import + flat `.ac-list` map). The progress display moves into the new category header. `CategoryProgress` itself remains in the codebase for now and is slated for removal during the Phase 9 stats rebuild per the v0.9 retirement list.
-
-### Decisions — Phase 7
-- **Section ordering is fixed and ungrouped categories collapse cleanly.** Fossils and art have no month data, so for those tabs only the "Available now" and "Already donated" groups can ever appear. The ordering still reads naturally; we don't special-case the layout for non-seasonal categories.
-- **Per-tab search lives inside CategoryTab, not above it.** Keeping the search bar inside the new component lets the section grouping recompute on filter without re-flowing the page header. The header always shows totals for the full category, not the filtered subset, so users can see overall progress while narrowing the list.
-- **Art keeps its bottom-sheet `DetailModal`.** The plan's "row click toggles inline expand" rule applies to fish/bugs/fossils; art was already on a different pattern in v0.8 and the v0.9 design preserves that. CategoryTab routes art clicks to the existing `onItemSelect` callback in `ACCanvas` and renders no inline panel for that category.
-- **`ItemExpandPanel` is rendered as a sibling of `CollectibleRow` inside the same `.ac-list`.** This preserves the existing CSS that ties `.ac-row` divider + `.ac-row-pulse` keyframe to the row container without restructuring the row primitive (locked from Phase 5).
-
-### Added — Phase 6: HomeTab + ProgressMeter
-- **`ProgressMeter` component** (`src/components/ProgressMeter.tsx`) — segmented donation progress bar. 4 segments (fish/bugs/fossils/art) for ACGCN/ACWW/ACCF; 5 segments (adds sea) for ACNL/ACNH. Each segment uses its category-tinted Meadow chip token (`--chip-fish`/`--chip-bugs`/`--chip-fossils`/`--chip-art`/`--chip-sea`) and exposes a per-segment aria-label like "Fish: 12 of 40 donated". Pure helper `segmentsForGame` extracted to `src/components/progressMeterUtils.ts` and unit-tested.
-- **`HomeTab` rebuilt** (`src/components/HomeTab.tsx`) — new structure per v0.9 design: hero stat with italic Fraunces accent number ("X creatures still to donate this month"), warn-italic aside ("N leaving soon"), `ProgressMeter` directly underneath, 12-cell month strip with current-month highlight, "Leaving end of {month}" warn-toned shelf, "Just arrived" accent-toned shelf, and a "Latest donations" card. Sea creatures included in shelves and progress for ACNL/ACNH towns. Each shelf card / latest-donations row click fires `jumpTo(category, id)` which sets the active tab and `highlightId` so the matching row scrolls into view and pulses (Decision 10). Hero falls back to "X of Y donated" when the active game has no seasonal categories.
-- **`useJumpToRow` hook** (`src/hooks/useJumpToRow.ts`) — reusable navigation helper. Pushes `/town/:townId/:tab` and sets `highlightId` on the next animation frame; ACCanvas's existing scroll-to-and-pulse effect picks up the change. Will also be wired into `GlobalSearchDropdown` in Phase 8.
-- **Phase 6 CSS** appended to `src/index.css` (`.ac-meter` / `.ac-meter-seg` / `.ac-meter-track` / `.ac-meter-fill` + `.ac-meter-5` responsive modifier, `.ac-home`, `.ac-hero` + `.ac-hero-headline` / `.ac-hero-aside`, `.ac-eyebrow` + `.ac-eyebrow-warn` / `.ac-eyebrow-accent`, `.ac-month-strip` / `.ac-month-cell`, `.ac-shelf-head` / `.ac-shelf-title` / `.ac-shelf-grid` / `.ac-shelf-card` / `.ac-shelf-glyph`, `.ac-month-dots`, `.ac-recent-card` / `.ac-recent-row`). 5-segment ProgressMeter drops fractions between 980-1180px and wraps to 2 rows ≤980px.
-
-### Decisions — Phase 6
-- **Seasonal UI gated on at least one seasonal category having data.** Fish + bugs always seasonal; sea creatures added to the list only for ACNL/ACNH where we ship hemisphere-aware month data. ACGCN/ACWW/ACCF still get the seasonal UI (fish + bugs).
-- **`ProgressMeter` lives on the HomeTab hero, not the sidebar.** The plan allows either; placing it directly under the hero stat keeps the bar near the headline number it relates to and avoids crowding the sidebar's nav counts (which already give per-category progress).
-- **Hero copy adapts to game.** When there are no seasonal categories with data the hero falls back to "{donated} of {total} donated." rather than showing a "0 creatures still to donate" line that would read as empty-state success when it's actually a coverage gap.
-- **Shelves cap at 6 items per shelf.** A horizontal-scroll variant was considered but the v0.9 design uses a 3-column grid; we keep the same grid and slice to a sensible number to avoid an unbounded vertical wall on towns with many in-season items.
-- **`jumpTo` clears `highlightId` to null before re-setting on the next frame.** Without the clear, jumping to a row that's already the highlight target wouldn't retrigger the pulse — the effect dependency is the id and React would batch a same-id setter into a no-op.
-
-### Added — Phase 1: tokens + fonts
-- **Meadow design tokens** — full palette added to `src/index.css` `@theme` block as CSS custom properties (`--bg`, `--surface`, `--surface-alt`, `--ink`, `--ink-soft`, `--ink-muted`, `--border`, `--border-strong`, `--accent`, `--accent-soft`, `--accent-ink`, `--warn`, `--warn-soft`, `--chip-fish`, `--chip-bugs`, `--chip-fossils`, `--chip-art`, `--chip-sea`). Mirrored in `src/lib/colors.ts` as the new `meadow` export.
-- **Fraunces** (variable, opsz 9..144, weights 400/500/600 + italic 400/500) and **Inter** (400/500/600/700) loaded via Google Fonts in `index.html` and `src/index.css`. Registered as `--font-display` and `--font-sans` in `@theme`. New `fontStacks` export in `src/lib/colors.ts`.
-
-### Removed — Phase 1
-- **Varela Round** — fully retired. `@import` removed from `src/index.css`, `index.html`, and `public/version-history.html`. Inline `fontFamily: 'Varela Round, ...'` reference in `src/App.tsx` loading state replaced with Inter. Per locked decision #2 in `docs/v0.9-plan.md`, Fraunces + Inter is the sole type stack.
-
-### Notes
-- This phase is plumbing only. No components consume the new tokens yet; visual output is intentionally near-identical to v0.8.2-alpha. Component restyles begin in Phase 5.
-- **Parchment, Midnight, and Sakura themes are intentionally excluded** per locked decision #2 in `docs/v0.9-plan.md` ("ship Meadow only"). The legacy `colors` export in `src/lib/colors.ts` is kept untouched until later phases retire its consumers.
-
-### Added — Phase 2: sidebar + shell layout
-- **`Sidebar` component** (`src/components/Sidebar.tsx`) — 280px sticky left sidebar with brand mark/wordmark, active-town card, vertical nav with per-category `donated/total` counts, and Export CSV / Settings footer. Uses `<NavLink>` so active state tracks the URL.
-- **App shell layout** in `src/index.css` (`.ac-app`, `.ac-sidebar`, `.ac-main`, `.ac-nav-*`, `.ac-town-*`, `.ac-brand-*`, `.ac-foot-link`, `.ac-hem-toggle`, `.ac-hem-btn`) — CSS grid `280px 1fr`, max-width 1440px centered. Below 980px sidebar stacks above main (CSS grid row change).
-- Sea nav entry gated on `gameId in {ACNL, ACNH}` and presence of sea data; Art nav entry hidden when game has no art.
-- Hemisphere toggle (NH/SH) inline in the sidebar town card for ACNH towns — preserves the toggle that previously lived in `MuseumHeader`. Will move into `TownManager` in Phase 4.
-- Settings nav button routes to `/settings` (route lands in Phase 3).
-
-### Removed — Phase 2
-- **`MuseumHeader`**, **`TabBar`**, **`TownSwitcher`** — deleted. Replaced by `Sidebar`. ACCanvas no longer renders the wood-toned header bar or horizontal tab strip; main column now sits inside `.ac-main`.
-
-### Decisions — Phase 2
-- The plan calls the Active Town card's "Switch town ›" button a Phase 4 stub. Implemented as a temporary lightweight switcher: 0 other towns → opens `CreateTownModal`; 1 other → activates it; 2+ → `window.prompt` picker. Replaced wholesale by `TownManager` in Phase 4.
-- Edit / New town are exposed as small links inside the active-town card so users don't lose town CRUD between Phase 2 and Phase 4 (they previously lived in the now-deleted `TownSwitcher`). Both still wire to the existing `EditTownModal` / `CreateTownModal`, which Phase 4 will retire.
-- Hemisphere toggle relocated to the sidebar town card to avoid regressing the v0.8 functionality that lived in `MuseumHeader`. Phase 4 moves it into `TownManager`.
-- Brand wordmark uses **"Museum Tracker"** (matching the prior MuseumHeader) — not "Curator", per the codename note in `docs/v0.9-plan.md` (no user-facing copy says "Curator").
-
-### Added — Phase 3: settings page
-- **`SettingsPage` component** (`src/components/SettingsPage.tsx`) — full-page settings route with two sections: **About** (version, source link, live storage summary, credits) and **Danger zone** (reset donations for active town, reset everything). No Appearance section per locked decision #3.
-- **`SettingsRoute` wrapper** (`src/components/SettingsRoute.tsx`) — renders the Sidebar + SettingsPage in the same shell layout as `ACCanvas`, so the sidebar (active town, nav, footer) stays in place when at `/settings`.
-- **`/settings` route** added to `App.tsx`. Sidebar Settings link now navigates to it; Esc and the close button navigate back to `/town/:id/home` (or `/` if there's no active town).
-- **Store reset actions** in `src/lib/store.ts`: `resetActiveTownDonations()` clears `donated` and `donatedAt` for the active town only; `resetAll()` empties towns + donations + clears `ac-curator-search-history` from localStorage. Both are gated behind native `confirm()` per locked decision #7.
-- **Settings page styles** in `src/index.css` (`.ac-settings`, `.ac-settings-head`, `.ac-settings-eyebrow`, `.ac-settings-title`, `.ac-settings-close`, `.ac-settings-section`, `.ac-settings-card`, `.ac-about-list`, `.ac-settings-danger`, `.ac-danger-row`, `.ac-danger-btn`, `.ac-danger-btn-strong`, `ac-fade-up` keyframe). Responsive collapse at ≤700px (title 56→40px, About list single-column, Danger rows stack with full-width buttons).
-
-### Decisions — Phase 3
-- **No Appearance section** — locked decision #3. Meadow is the only theme in v0.9, so a one-card theme switcher would feel hollow. Brought back when there are real alternatives.
-- **Eyebrow text on Settings header** is "Museum Tracker" rather than "Curator" — matches the brand-wordmark decision from Phase 2 (the codename note in `docs/v0.9-plan.md`).
-- **Reset donations is disabled** when there's no active town, instead of being hidden — keeps the Danger zone shape stable across states.
-- **Settings is a top-level route** (`/settings`) rather than nested under `/town/:townId/settings`. The settings page is a property of the app, not the town — and a user mid-reset-everything wouldn't have an active town to nest under.
-
-### Added — Phase 5: CollectibleRow + ItemExpandPanel restyle
-- **`CollectibleRow`** (`src/components/CollectibleRow.tsx`) — rebuilt to match the v0.9 design. Replaces icon tile with a category-tinted **monogram glyph** (32×32, 1.5px border, Fraunces initials). Donated state fills the glyph with the chip color and inverts text. Donated rows strike through the name and add a `●` accent checkmark. Meta line uses `·` separators with category-specific bits (habitat for fish, part for fossils, shadow for sea, italic `basedOn` for art) and a tabular bells value. Renders `Leaving soon` (warn pill) or `New this month` (accent pill) per current-month wrap logic, plus an active-hours pill for sea creatures and an animated chevron. Stamps `data-row-id={item.id}` so jump-to logic can locate it. Accepts new `highlighted`, `currentMonth`, `hemisphere` props.
-- **`ItemExpandPanel`** (`src/components/ItemExpandPanel.tsx`) — rebuilt as a two-column grid (`1fr 240px`, padded so the left column aligns with the row text after the glyph). Left column is the 12-cell `MonthGrid` with current-month highlight; right column stacks `bells · sell value`, optional `shadow size` and `active hours`, optional notes block, and the donate / undonate button at the bottom. Donate now lives only inside the panel — the row no longer shows a separate `DonateToggle`.
-- **`MonthGrid`** (`src/components/shared/MonthGrid.tsx`) — re-skinned to use `.ac-monthgrid` / `.ac-monthcell` (12-column grid, square cells, accent-soft fill for available months, inset accent ring for the current month). Now accepts a `current` prop.
-- **Scroll-to + highlight wiring** — `ACCanvas` owns `highlightId` state plus an effect that, on change, expands the matching row, schedules a `scrollIntoView({ behavior: 'smooth', block: 'center' })` on the next animation frame, and clears the state after the 1.4s pulse so re-jumping retriggers the effect (Decision 10). Phase 6 (`HomeTab` shelves) and Phase 8 (`GlobalSearchDropdown`) wire callers to the setter; the state shell is in place.
-- **Phase 5 CSS** appended to `src/index.css`: `.ac-row`, `.ac-row-main`, `.ac-row-expanded`, `.ac-row-donated`, `.ac-row-pulse` + `@keyframes ac-row-pulse`, `.ac-glyph`, `.ac-row-text`, `.ac-row-name`, `.ac-row-checkmark`, `.ac-row-meta`, `.ac-row-meta-bit`, `.ac-row-meta-italic`, `.ac-row-meta-bells`, `.ac-row-side`, `.ac-row-time`, `.ac-chevron`, `.ac-pill` + `.ac-pill-warn` / `.ac-pill-accent`, `.ac-expand`, `.ac-expand-section`, `.ac-expand-label`, `.ac-monthgrid`, `.ac-monthcell` + states, `.ac-expand-side`, `.ac-stat`, `.ac-stat-num`, `.ac-stat-num-text`, `.ac-stat-label`, `.ac-note`, `.ac-donate-btn` + `.ac-donate-btn-on`, plus a 980px breakpoint that collapses the expand panel to a single column.
-- Category list now wraps rows in a single `.ac-list` card (one rounded surface with internal dividers) instead of free-floating bordered rows.
-
-### Decisions — Phase 5
-- **`highlightId` state lives in `ACCanvas`, not `App`.** The plan/spec says "App owns highlightId," but `HomeTab`, the search results, and the category lists are all rendered inside `ACCanvas` and there is no Phase 5 caller above it. Keeping the state in `ACCanvas` keeps the wiring local; promoting it to `App` is cheap and can happen in Phase 6/8 if a caller above the router outlet ever needs it.
-- **Donate / undonate is panel-only.** The design's row no longer has its own donate button — toggling moves into the expand panel, matching the v0.9.2 mockup. The row's `onToggle` prop is kept (optional) for back-compat with `GlobalSearchResults`, which Phase 8 will replace.
-- **Time pill is sea-only.** The design's `item.time` field exists on sea creatures in our schema (Fish/Bug have `hours: number[]`, not a formatted string). Wiring fish/bug time displays would need a formatter — out of scope for Phase 5; revisit alongside `hours` rendering in v0.9.x.
-- **Shadow size shown for sea creatures only**, not fish — our `Fish` type has no `shadow` field, so issue #59 (display shadow size) is partially addressed for sea creatures via the new stats stack but does not change fish rendering. Issue stays open for fish-specific shadow data work.
-
-### Added — Phase 4: TownManager drawer
-- **`TownManager` component** (`src/components/TownManager.tsx`) — right-side drawer (420px) that mounts at the layout level in `App.tsx`, so it overlays every route (home, category tabs, settings) without z-index or `overflow-hidden` issues. Below 720px it renders as a bottom sheet. Contains: the list of towns with active-town indicator, inline row edit (name + hemisphere only), a `+ New town` form (name + game + hemisphere), and per-row delete with native `confirm()` guard.
-- **`useUIStore`** (`src/lib/uiStore.ts`) — small non-persisted Zustand store for transient UI state (`townManagerOpen`, `townManagerForceCreate`). Exposes `openTownManager(forceCreate?)` and `closeTownManager()`.
-- **Auto-open in create mode when no towns exist** — `App.tsx` opens the TownManager forced-create when `towns.length === 0`. The drawer hides its close button, ignores Esc, and ignores scrim clicks in this state — equivalent to the previous "required" behavior on `CreateTownModal`.
-- **`GAME_LIST`** export in `src/lib/types.ts` — ordered array of `Game`, used by the create-town form's game selector.
-- **TownManager styles** in `src/index.css` (`.ac-tm-scrim`, `.ac-tm-drawer`, `.ac-tm-row*`, `.ac-tm-form`, `.ac-tm-seg`, `.ac-tm-cta`, `.ac-tm-newform`, `.ac-tm-empty`, `ac-fade` / `ac-slide` / `ac-slide-up` keyframes). Bottom-sheet variant at `(max-width: 720px)`.
-
-### Changed — Phase 4
-- **`Sidebar`** — the Phase 2 bridge stubs are removed: the `window.prompt` switcher, the Edit / + New buttons inside the active-town card, and the inline NH/SH segmented toggle. The single `Switch town ›` button now opens the TownManager. Hemisphere is shown as a read-only `Hem. NH` / `Hem. SH` label (editing happens in the drawer). Sidebar no longer takes `onOpenCreateTown` / `onOpenEditTown` props.
-- **`useAppStore.createTown`** signature is `(name, gameId, hemisphere?)` — `playerName` removed. **`useAppStore.updateTown`** signature is `(id, patch: TownPatch)` where `TownPatch` is `{ name?, hemisphere? }`. `gameId` is intentionally not part of the patch (Decision 1 — game is immutable post-create).
-- **`Town` type** — `playerName: string` field removed (Decision 5). Existing values in localStorage are silently dropped on next write; no migration step required.
-- **`downloadCSV` / `buildCSV`** no longer take a `playerName` argument; the "Player" row is removed from CSV exports.
-
-### Removed — Phase 4
-- **`CreateTownModal`** (`src/components/modals/CreateTownModal.tsx`) — replaced by TownManager's New Town form.
-- **`EditTownModal`** (`src/components/modals/EditTownModal.tsx`) — replaced by TownManager's inline row edit.
-- **`TownNameFields`** (`src/components/shared/TownNameFields.tsx`) — no remaining consumers.
-- **v0.8.1 greyed-out-buttons stopgap** — no longer needed; the TownManager drawer mounts at the layout level and works on every route, resolving the issue the stopgap worked around.
-
-### Decisions — Phase 4
-- **Decision 1 honored** — the inline edit form has no game `<select>`. The game is shown as a read-only badge with the hint "Game can't be changed after creation." `handleSave` builds a patch object that contains only `name` and `hemisphere`, never `gameId`.
-- **Decision 5 honored** — `playerName` removed from `Town`, store, CSV export, and tests. No migration callback because Zustand's `persist` simply ignores fields not in the schema.
-- **Hemisphere persistence** — the store keeps `hemisphere: Hemisphere` (`'NH'` | `'SH'`, default `'NH'`). The drawer passes `null` from the patch when the game isn't ACNH; `updateTown` ignores nulls so a town's stored hemisphere never gets clobbered.
-- **TownManager state lives in a separate `useUIStore`** rather than inside `useAppStore`, so the drawer's open/closed state isn't persisted to localStorage across reloads.
-- **Auto-open path replaces the `required` flag** — `CreateTownModal`'s `required={noTowns}` pattern is replaced by `App.tsx` opening the drawer in `forceCreate` mode whenever the store hydrates with zero towns. Same UX (modal-like, can't be dismissed) implemented as a single behavior gate inside the new component.
+### Fixed
+- **Version footer suppresses `release/` branch suffix** (#60) — the `· <branch>` suffix is hidden on `release/*` branches; production hostname behavior unchanged
 
 ## [v0.8.2-alpha] — 2026-05-01
 
