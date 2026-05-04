@@ -16,6 +16,8 @@ import {
 } from '../lib/utils';
 import { ProgressMeter } from './ProgressMeter';
 import { useJumpToRow } from '../hooks/useJumpToRow';
+import { ItemIcon } from './ItemIcon';
+import { gameHasIcons } from './itemIconUtils';
 
 const MONTH_FULL = [
   'January',
@@ -271,6 +273,7 @@ export default function HomeTab({
             currentMonth={currentMonth}
             warn
             onPick={(cat, id) => jumpTo(cat, id)}
+            gameId={gameId}
           />
         </section>
       )}
@@ -289,6 +292,7 @@ export default function HomeTab({
             items={justArrived}
             currentMonth={currentMonth}
             onPick={(cat, id) => jumpTo(cat, id)}
+            gameId={gameId}
           />
         </section>
       )}
@@ -311,11 +315,22 @@ export default function HomeTab({
                 className="ac-recent-row"
                 onClick={() => jumpTo(r.category, r.id)}
               >
-                <span
-                  className="ac-recent-cat-dot"
-                  style={{ backgroundColor: CAT_VAR[r.category] }}
-                  aria-hidden="true"
-                />
+                {gameHasIcons(gameId) ? (
+                  <ItemIcon
+                    gameId={gameId}
+                    category={r.category}
+                    id={r.id}
+                    size={24}
+                    className="ac-recent-icon"
+                    alt=""
+                  />
+                ) : (
+                  <span
+                    className="ac-recent-cat-dot"
+                    style={{ backgroundColor: CAT_VAR[r.category] }}
+                    aria-hidden="true"
+                  />
+                )}
                 <span className="ac-recent-name">{r.name}</span>
                 <span className="ac-recent-cat">{CAT_LABEL[r.category]}</span>
                 <span className="ac-recent-time">
@@ -335,12 +350,15 @@ function ShelfGrid({
   currentMonth,
   warn,
   onPick,
+  gameId,
 }: {
   items: ShelfItem[];
   currentMonth: number;
   warn?: boolean;
   onPick: (category: CategoryId, id: string) => void;
+  gameId: GameId;
 }) {
+  const useIcons = gameHasIcons(gameId);
   return (
     <div className="ac-shelf-grid">
       {items.slice(0, 6).map(item => {
@@ -351,13 +369,24 @@ function ShelfGrid({
             className="ac-shelf-card"
             onClick={() => onPick(item.category, item.id)}
           >
-            <span
-              className="ac-shelf-glyph"
-              style={{ borderColor: tint, color: tint }}
-              aria-hidden="true"
-            >
-              {monogram(item.name)}
-            </span>
+            {useIcons ? (
+              <ItemIcon
+                gameId={gameId}
+                category={item.category}
+                id={item.id}
+                size={24}
+                className="ac-shelf-icon"
+                alt=""
+              />
+            ) : (
+              <span
+                className="ac-shelf-glyph"
+                style={{ borderColor: tint, color: tint }}
+                aria-hidden="true"
+              >
+                {monogram(item.name)}
+              </span>
+            )}
             <span className="ac-shelf-card-body">
               <span className="ac-shelf-card-name">{item.name}</span>
               <span className="ac-shelf-card-meta">

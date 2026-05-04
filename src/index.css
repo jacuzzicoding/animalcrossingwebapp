@@ -1502,3 +1502,22 @@
   .ac-topbar { flex-wrap: wrap; }
   .ac-search-wrap { max-width: 100%; min-width: 0; }
 }
+
+/* v0.9.1 — ItemIcon */
+.ac-expand { position: relative; }
+.ac-expand-icon {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 64px;
+  height: 64px;
+  display: block;
+}
+@media (max-width: 720px) {
+  .ac-expand-icon { display: none; }
+}
+.ac-row-icon { display: inline-block; }
+.ac-gs-row-icon { display: inline-block; flex: none; }
+.ac-shelf-icon { display: inline-block; flex: none; }
+.ac-recent-icon { display: inline-block; flex: none; }
+

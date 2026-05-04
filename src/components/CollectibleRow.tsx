@@ -9,7 +9,9 @@ import {
   isSeaCreature,
   type AnyItem,
 } from '../lib/utils';
-import type { CategoryId } from '../lib/types';
+import type { CategoryId, GameId } from '../lib/types';
+import { ItemIcon } from './ItemIcon';
+import { gameHasIcons } from './itemIconUtils';
 
 function getInitials(name: string): string {
   return name
@@ -81,6 +83,7 @@ export function CollectibleRow({
   highlighted,
   hemisphere,
   currentMonth,
+  gameId,
 }: {
   item: AnyItem;
   category: CategoryId;
@@ -90,6 +93,7 @@ export function CollectibleRow({
   highlighted?: boolean;
   hemisphere?: 'NH' | 'SH';
   currentMonth?: number;
+  gameId?: GameId;
 }) {
   const name = displayName(item, category);
   const bells = itemBells(item, category);
@@ -119,7 +123,18 @@ export function CollectibleRow({
   return (
     <div data-row-id={item.id} className={classes}>
       <button type="button" className="ac-row-main" onClick={onClick}>
-        <Glyph name={name} category={category} donated={checked} />
+        {gameId && gameHasIcons(gameId) ? (
+          <ItemIcon
+            gameId={gameId}
+            category={category}
+            id={item.id}
+            size={32}
+            className="ac-row-icon"
+            alt=""
+          />
+        ) : (
+          <Glyph name={name} category={category} donated={checked} />
+        )}
         <div className="ac-row-text">
           <div className="ac-row-name">
             <span>{name}</span>

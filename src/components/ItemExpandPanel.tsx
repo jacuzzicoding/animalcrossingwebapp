@@ -9,7 +9,9 @@ import {
   formatTimestamp,
   type AnyItem,
 } from '../lib/utils';
-import type { CategoryId } from '../lib/types';
+import type { CategoryId, GameId } from '../lib/types';
+import { ItemIcon } from './ItemIcon';
+import { gameHasIcons } from './itemIconUtils';
 
 export function ItemExpandPanel({
   item,
@@ -19,6 +21,7 @@ export function ItemExpandPanel({
   onToggle,
   hemisphere,
   currentMonth,
+  gameId,
 }: {
   item: AnyItem;
   category: CategoryId;
@@ -27,6 +30,7 @@ export function ItemExpandPanel({
   onToggle: () => void;
   hemisphere?: 'NH' | 'SH';
   currentMonth?: number;
+  gameId?: GameId;
 }) {
   const bells = itemBells(item, category);
   const months = itemMonths(item, category, hemisphere);
@@ -40,8 +44,21 @@ export function ItemExpandPanel({
 
   const hasMonths = !!(months && months.length > 0);
 
+  const showIcon = gameId && gameHasIcons(gameId);
+
   return (
     <div className={`ac-expand${hasMonths ? '' : ' ac-expand-no-months'}`}>
+      {showIcon && (
+        <div className="ac-expand-icon">
+          <ItemIcon
+            gameId={gameId!}
+            category={category}
+            id={item.id}
+            size={64}
+            alt=""
+          />
+        </div>
+      )}
       {hasMonths && (
         <div className="ac-expand-section">
           <div className="ac-expand-label">Available in</div>

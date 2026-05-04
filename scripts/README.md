@@ -6,6 +6,28 @@ For the methodology behind this folder (why a resolver chain + overrides map, ho
 
 ---
 
+## `generate-icon-manifest.ts` — re-emit `manifest.json` from on-disk icons
+
+Walks `public/icons/<gameId>/{fish,bugs,fossils,art,sea_creatures}/` for every game directory present and writes `public/icons/<gameId>/manifest.json` shaped as `{ [category]: { [id]: filename } }`. The on-disk extension is preserved per file (Fandom serves a mix of `png`/`jpg`), and the consuming UI cannot guess the extension at render time without this lookup.
+
+`fetch-icons.ts` writes the same manifest as part of a scrape, so re-running this script after a clean scrape is a no-op. Where it earns its keep:
+
+- After a manual icon swap (e.g. replacing a single sprite with a higher-quality one).
+- After committing icons fetched outside of `fetch-icons.ts`.
+- As a quick cross-check that `manifest.json` matches what's actually on disk.
+
+Catalog order (from `public/data/<gameId>/<category>.json`) is preserved when the matching data file exists; otherwise entries fall back to filesystem (sorted) order. This keeps the output identical to what `fetch-icons.ts` would have written for the same set of files.
+
+### Run
+
+```bash
+npm run icons:manifest
+```
+
+No env vars, no CLI args. Re-run after every icon commit.
+
+---
+
 ## `fetch-icons.ts` — scrape item icons from the Fandom AC wiki
 
 Reads `public/data/<gameId>/{fish,bugs,fossils,art}.json`, resolves each item against the Fandom AC wiki, downloads the lead image, and writes:
