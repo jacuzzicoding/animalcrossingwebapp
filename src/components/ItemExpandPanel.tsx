@@ -29,7 +29,9 @@ export function ItemExpandPanel({
 }) {
   const bells = itemBells(item, category);
   const months = itemMonths(item, category, hemisphere);
-  const notes = itemNotes(item, category);
+  // Sea creatures render `time` as the "active hours" stat below; suppress the
+  // notes block to avoid showing the same string twice.
+  const notes = isSeaCreature(item) ? undefined : itemNotes(item);
   const cm = currentMonth ?? new Date().getMonth() + 1;
   const shadow = isSeaCreature(item) ? item.shadow : undefined;
   const time = isSeaCreature(item) ? item.time : undefined;

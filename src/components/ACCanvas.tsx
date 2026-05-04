@@ -290,7 +290,6 @@ export default function ACCanvas() {
                     results={globalResults}
                     query={globalQuery}
                     donated={activeTownDonated}
-                    onToggle={id => toggle(id)}
                     onSelect={(item, category) => {
                       if (globalQuery.trim())
                         pushRecentSearch(globalQuery.trim());

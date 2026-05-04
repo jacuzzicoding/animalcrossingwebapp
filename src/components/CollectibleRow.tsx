@@ -85,8 +85,6 @@ export function CollectibleRow({
   item: AnyItem;
   category: CategoryId;
   checked: boolean;
-  /** Kept for back-compat with callers; toggling now happens from inside the expand panel. */
-  onToggle?: () => void;
   onClick: () => void;
   expanded?: boolean;
   highlighted?: boolean;
