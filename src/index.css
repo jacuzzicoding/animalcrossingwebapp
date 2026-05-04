@@ -1423,3 +1423,63 @@
   .ac-chart-month { font-size: 10px; }
   .ac-chart-num { font-size: 10px; }
 }
+
+/* ── Phase 10: Mobile responsive polish ── */
+@media (max-width: 980px) {
+  /* Sidebar foot links and town actions need adequate tap area when stacked */
+  .ac-foot-link { min-height: 44px; padding: 12px 14px; display: flex; align-items: center; }
+  .ac-town-switch, .ac-town-edit { min-height: 32px; padding: 6px 0; }
+  /* Search input padding bigger for tap */
+  .ac-search { padding: 10px 14px; }
+  .ac-search input { font-size: 16px; /* prevent iOS zoom */ }
+}
+
+@media (max-width: 720px) {
+  /* Hero + category title shrink already handled; ensure no overflow */
+  .ac-hero-headline { word-break: break-word; }
+  .ac-category-title { word-break: break-word; }
+  /* Recent row: allow category label to truncate before time */
+  .ac-recent-row { gap: 8px; padding: 12px; }
+  .ac-recent-cat { display: none; }
+  /* Settings close 44px */
+  .ac-settings-close { width: 44px; height: 44px; font-size: 16px; }
+  /* TownManager close 44px */
+  .ac-tm-close { width: 44px; height: 44px; font-size: 24px; border-radius: 10px; }
+  /* TownManager row-edit min tap target */
+  .ac-tm-row-edit { min-width: 48px; }
+  /* TownManager action buttons full tap height */
+  .ac-tm-ghost, .ac-tm-primary, .ac-tm-danger { min-height: 44px; padding: 10px 16px; }
+  .ac-tm-seg button { min-height: 36px; }
+  /* Hemisphere toggle bigger */
+  .ac-hem-btn { min-height: 28px; padding: 4px 10px; font-size: 12px; }
+  /* GlobalSearch history rows tap-friendly */
+  .ac-gs-history-row { min-height: 44px; padding: 10px 12px; }
+  .ac-gs-row { min-height: 48px; }
+  .ac-gs-clear { min-height: 32px; padding: 6px 10px; }
+  /* Settings danger button already full-width at 700; chevron tap */
+  .ac-chevron { font-size: 22px; padding: 0 4px; }
+  /* Donate button full tap */
+  .ac-donate-btn { min-height: 44px; }
+  /* Hide kbd hint footer on touch devices (no keyboard) */
+  .ac-gs-foot { display: none; }
+  /* Sidebar nav items keep 44 (already set) but reduce vertical padding waste */
+  .ac-nav { gap: 2px; }
+}
+
+@media (max-width: 480px) {
+  .ac-hero-headline { font-size: 26px; }
+  .ac-hero-aside { font-size: 20px; }
+  .ac-category-title { font-size: 28px; }
+  .ac-settings-title { font-size: 32px; }
+  .ac-main { padding: 18px 14px 60px; }
+  .ac-sidebar { padding: 20px 16px; }
+  /* Expand panel: tighter on tiny screens */
+  .ac-expand { padding: 4px 14px 18px 14px; }
+  /* Monthgrid labels shrink */
+  .ac-monthcell-label { font-size: 9px; }
+  /* Town card name not clipped */
+  .ac-town-name { font-size: 20px; word-break: break-word; }
+  /* Topbar wraps if needed */
+  .ac-topbar { flex-wrap: wrap; }
+  .ac-search-wrap { max-width: 100%; min-width: 0; }
+}

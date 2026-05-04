@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ## [Unreleased] — v0.9.0-beta (in progress)
 
+### Added — Phase 10: Mobile responsive polish
+- **Mobile breakpoint hierarchy** documented (`980 / 720 / 700 / 480`). Surgical CSS additions to `src/index.css` Phase 10 block address touch targets and overflow at iPhone SE (375px) through iPad portrait (768px).
+- **Touch targets ≥44px** at ≤720px: `.ac-tm-close`, `.ac-settings-close`, `.ac-tm-row-edit`, `.ac-tm-ghost / -primary / -danger`, `.ac-gs-history-row`, `.ac-gs-row`, `.ac-donate-btn`, `.ac-chevron`. Hemisphere toggle and segmented controls bumped to comfortable tap sizes.
+- **iOS zoom prevention** — `.ac-search input` rendered at `font-size: 16px` on stacked layouts so Safari does not auto-zoom on focus.
+- **Hero / category title overflow** — `word-break: break-word` on `.ac-hero-headline` and `.ac-category-title`; further font shrink at ≤480px (hero 26px, category 28px, settings 32px).
+- **Recent activity row** at ≤720px — category label hidden so item name + relative time fit on one line at 360–390px.
+- **Topbar wraps** at ≤480px so the search input stays full-width on narrow viewports.
+- **Sidebar foot links** get full 44px tap height when the sidebar stacks above main at ≤980px.
+- **Kbd hint footer** in `GlobalSearchDropdown` hidden at ≤720px (no hardware keyboard assumed). Tap-to-select via existing `onClick` handlers verified.
+
+### Verified — Phase 10
+- Sidebar stacks above main at ≤980px (not hidden); ProgressMeter `.ac-meter-5` wraps to 2 rows; TownManager renders as bottom sheet at ≤720px; Settings collapses + danger buttons go full-width at ≤700px; scroll-to + `.ac-row-pulse` highlight is viewport-agnostic.
+
 ### Added — Phase 9: StatsTab
 - **`StatsTab` component** (`src/components/StatsTab.tsx`) — replaces `AnalyticsView`. Renders per-category cards (3/4/5 cards, gated by game: fish/bugs/fossils always; art for ACGCN/ACNL/ACNH; sea for ACNL/ACNH) above a 12-column "Yearly rhythm" availability chart. Each card shows category eyebrow tinted with the matching `--chip-*` token, donated/total in Fraunces 32, a thin tinted progress bar, and "X% complete" caption.
 - **Yearly rhythm chart** — 12 stacked columns. Background bar height = `avail / maxAvail`; inner accent fill = `donated / avail`. Number above each column = items available that month. Current month column borders in `--accent`. Includes fish + bugs always; sea creatures added for ACNL/ACNH (Decision 4). Hemisphere-aware via `itemMonths(item, cat, hemisphere)`. Legend below: "Available" / "Already donated".
