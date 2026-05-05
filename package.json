@@ -12,6 +12,7 @@
     "fetch:icons": "tsx scripts/fetch-icons.ts",
     "spike:icons": "tsx scripts/spike-fandom-coverage.ts",
     "icons:manifest": "tsx scripts/generate-icon-manifest.ts",
+    "audit:icons": "tsx scripts/audit-icon-coverage.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -73,7 +74,9 @@
     "husky": "^9.1.7",
     "jsdom": "^25.0.0",
     "lint-staged": "^16.4.0",
+    "pngquant-bin": "^9.0.0",
     "prettier": "^3.6.2",
+    "sharp": "^0.34.5",
     "tsx": "^4.20.6",
     "vitest": "^2.0.0"
   }
