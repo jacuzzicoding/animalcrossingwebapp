@@ -321,7 +321,7 @@ export default function HomeTab({
                     gameId={gameId}
                     category={r.category}
                     id={r.id}
-                    size={24}
+                    size={32}
                     className="ac-recent-icon"
                     alt=""
                   />
@@ -375,7 +375,7 @@ function ShelfGrid({
                 gameId={gameId}
                 category={item.category}
                 id={item.id}
-                size={24}
+                size={32}
                 className="ac-shelf-icon"
                 alt=""
               />

@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased] — v0.9.2 (in progress on `development`)
+
+### Added
+- 2048×2048 hand-drawn source PNGs committed under `icon-sources/<category>/<id>.png` as the canonical originals. The first two land here: `icon-sources/fish/sea-bass.png` and `icon-sources/fish/koi.png`
+- `scripts/export-icons.ts` — local-only pipeline that resizes 2048 sources to 512×512, palette-quantizes via pngquant, and writes the deploy assets to `public/icons/<category>/<id>.png`. Idempotent (skips when the output is newer than its source); supports `--force` and `--dry-run`. Wired as `npm run icons:export`. Not run in CI
+
+### Changed
+- Item icon render sizes increased to give the hand-drawn art room to read: category rows 32→48, expand panel 64→192 (with a 128 step at ≤1180px and existing hide-at-≤720 unchanged), search dropdown 24→32, home shelf + recent rows 24→32. Fallback monogram glyphs scaled to match: `.ac-glyph` 32→48, `.ac-gs-row-glyph` 28→32. Expand panel `padding-left` extended to clear the larger absolute-positioned icon
+
 ## [v0.9.1-beta] — 2026-05-04
 
 ### Added

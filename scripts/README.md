@@ -30,6 +30,24 @@ No env vars, no CLI args. Re-run after every icon commit.
 
 ---
 
+## `export-icons.ts` — resize + optimize 2048 hand-drawn sources to 512 deploy assets
+
+Walks `icon-sources/<category>/<id>.png` (2048×2048 originals, committed) and writes optimized 512×512 PNGs to `public/icons/<category>/<id>.png`. Pipeline is `sharp.resize → pngquant --quality=65-90 --speed=1 --strip` — the same recipe that produced ~97% byte reduction on the first hand-drawn icons (commit `09df4cc`).
+
+Idempotent: per-file output is skipped when its mtime is newer than the source's. Pass `--force` to re-export every file, or `--dry-run` to compute and report sizes without writing.
+
+```bash
+npm run icons:export                  # incremental
+npm run icons:export -- --dry-run     # report only
+npm run icons:export -- --force       # re-export everything
+```
+
+Adding a new icon: paint at 2048×2048 with transparency → drop at `icon-sources/<category>/<id>.png` (where `<id>` matches the catalog id from `public/data/<gameId>/<category>.json`) → `npm run icons:export` → `npm run icons:manifest` → commit both the source and the deploy asset. Sources stay in the repo so the pipeline is reproducible from git alone.
+
+This script does **not** run in CI. Vercel builds use whatever's committed under `public/icons/`. Native binaries (`sharp`, `pngquant-bin`) are devDependencies only.
+
+---
+
 ## `audit-icon-coverage.ts` — per-game gap report
 
 Reads every `public/data/<gameId>/<category>.json`, applies `RENAME_OVERRIDES`, and reports which catalog ids are covered by the flat manifest. Writes `docs/v0.9.2-icon-coverage-audit.md` with summary numbers and per-game uncovered lists. The uncovered list per game is the input to scoping for v0.9.4-v0.9.7 gap-fill releases.

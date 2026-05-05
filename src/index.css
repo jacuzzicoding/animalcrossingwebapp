@@ -356,8 +356,8 @@
 .ac-gs-row:hover { background: var(--surface-alt); }
 .ac-gs-row-active { background: var(--accent-soft); }
 .ac-gs-row-glyph {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: 1.5px solid;
   border-radius: 6px;
   display: grid;
@@ -839,7 +839,7 @@
 }
 
 .ac-glyph {
-  width: 32px; height: 32px;
+  width: 48px; height: 48px;
   border: 1.5px solid;
   border-radius: 8px;
   display: grid; place-items: center;
@@ -902,7 +902,7 @@
   display: grid;
   grid-template-columns: 1fr 240px;
   gap: 28px;
-  padding: 4px 18px 22px 88px;
+  padding: 4px 18px 22px 216px;
   background: var(--surface-alt);
 }
 .ac-expand-no-months { grid-template-columns: 1fr; }
@@ -1512,11 +1512,20 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  width: 64px;
-  height: 64px;
+  width: 192px;
+  height: 192px;
   display: block;
 }
+/* Tablet / smaller laptop: shrink the centerpiece + tighten panel padding to
+   keep the MonthGrid + stats column readable. Below 720 the icon is hidden
+   and the panel reverts to its compact left padding (set in the earlier
+   @media (max-width: 720px) rule above). */
+@media (max-width: 1180px) {
+  .ac-expand { padding-left: 152px; }
+  .ac-expand-icon { width: 128px; height: 128px; }
+}
 @media (max-width: 720px) {
+  .ac-expand { padding-left: 18px; }
   .ac-expand-icon { display: none; }
 }
 .ac-row-icon { display: inline-block; }

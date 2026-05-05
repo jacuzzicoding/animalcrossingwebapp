@@ -129,7 +129,7 @@ export function CollectibleRow({
             gameId={gameId}
             category={category}
             id={item.id}
-            size={32}
+            size={48}
             className="ac-row-icon"
             alt=""
           />

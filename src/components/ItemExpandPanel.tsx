@@ -54,7 +54,7 @@ export function ItemExpandPanel({
             gameId={gameId}
             category={category}
             id={item.id}
-            size={64}
+            size={192}
             alt=""
           />
         </div>
