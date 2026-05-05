@@ -11,7 +11,7 @@ import {
 } from '../lib/utils';
 import type { CategoryId, GameId } from '../lib/types';
 import { ItemIcon } from './ItemIcon';
-import { useGameHasIcons } from './itemIconUtils';
+import { useHasIcon } from './itemIconUtils';
 
 function getInitials(name: string): string {
   return name
@@ -95,7 +95,7 @@ export function CollectibleRow({
   currentMonth?: number;
   gameId?: GameId;
 }) {
-  const useIcons = useGameHasIcons(gameId ?? 'ACGCN') && !!gameId;
+  const showIcon = useHasIcon(category, item.id);
   const name = displayName(item, category);
   const bells = itemBells(item, category);
   const months = itemMonths(item, category, hemisphere);
@@ -124,9 +124,9 @@ export function CollectibleRow({
   return (
     <div data-row-id={item.id} className={classes}>
       <button type="button" className="ac-row-main" onClick={onClick}>
-        {useIcons ? (
+        {showIcon ? (
           <ItemIcon
-            gameId={gameId!}
+            gameId={gameId}
             category={category}
             id={item.id}
             size={32}

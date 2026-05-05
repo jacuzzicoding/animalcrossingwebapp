@@ -12,6 +12,7 @@
     "fetch:icons": "tsx scripts/fetch-icons.ts",
     "spike:icons": "tsx scripts/spike-fandom-coverage.ts",
     "icons:manifest": "tsx scripts/generate-icon-manifest.ts",
+    "audit:icons": "tsx scripts/audit-icon-coverage.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",

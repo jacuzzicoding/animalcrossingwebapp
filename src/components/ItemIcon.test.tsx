@@ -7,15 +7,26 @@ import {
   act,
 } from '@testing-library/react';
 import { ItemIcon } from './ItemIcon';
-import { __resetItemIconCacheForTests, useGameHasIcons } from './itemIconUtils';
+import {
+  __resetItemIconCacheForTests,
+  canonicalizeId,
+  resolveIconUrl,
+  useHasIcon,
+  useIconChecker,
+} from './itemIconUtils';
 
 const SAMPLE_MANIFEST = {
   fish: {
-    'sea-bass': 'sea-bass.jpg',
-    'pale-chub': 'pale-chub.png',
+    'sea-bass': 'png',
+    'pale-chub': 'png',
   },
   bugs: {
-    ant: 'ant.png',
+    ant: 'png',
+    'citrus-longhorn-beetle': 'png',
+  },
+  fossils: {
+    placeholder: 'png',
+    'sabretooth-skull': 'png',
   },
 };
 
@@ -35,19 +46,59 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+describe('resolveIconUrl', () => {
+  it('builds a flat URL from manifest extension', () => {
+    expect(resolveIconUrl(SAMPLE_MANIFEST, 'fish', 'sea-bass')).toBe(
+      '/icons/fish/sea-bass.png'
+    );
+  });
+
+  it('applies RENAME_OVERRIDES before lookup', () => {
+    expect(canonicalizeId('citrus-long-horned-beetle')).toBe(
+      'citrus-longhorn-beetle'
+    );
+    expect(
+      resolveIconUrl(SAMPLE_MANIFEST, 'bugs', 'citrus-long-horned-beetle')
+    ).toBe('/icons/bugs/citrus-longhorn-beetle.png');
+  });
+
+  it('returns null for an id absent from the manifest', () => {
+    expect(
+      resolveIconUrl(SAMPLE_MANIFEST, 'fish', 'not-a-real-fish')
+    ).toBeNull();
+  });
+
+  it('falls back to the fossil placeholder for an unknown fossil id', () => {
+    expect(resolveIconUrl(SAMPLE_MANIFEST, 'fossils', 'unknown-fossil')).toBe(
+      '/icons/fossils/placeholder.png'
+    );
+  });
+
+  it('returns null for an unknown fossil if no placeholder is committed', () => {
+    const manifest = { fossils: {} };
+    expect(resolveIconUrl(manifest, 'fossils', 'unknown')).toBeNull();
+  });
+
+  it('canonicalizes sabertooth → sabretooth before lookup', () => {
+    expect(resolveIconUrl(SAMPLE_MANIFEST, 'fossils', 'sabertooth-skull')).toBe(
+      '/icons/fossils/sabretooth-skull.png'
+    );
+  });
+});
+
 describe('ItemIcon', () => {
-  it('renders an <img> with the URL constructed from the manifest entry', async () => {
+  it('renders an <img> with the URL constructed from the flat manifest', async () => {
     vi.stubGlobal('fetch', mockManifestFetch(SAMPLE_MANIFEST));
 
     const { container } = render(
-      <ItemIcon gameId="ACGCN" category="fish" id="sea-bass" size={32} />
+      <ItemIcon category="fish" id="sea-bass" size={32} />
     );
 
     await waitFor(() => {
       expect(container.querySelector('img')).not.toBeNull();
     });
     const img = container.querySelector('img') as HTMLImageElement;
-    expect(img.getAttribute('src')).toBe('/icons/acgcn/fish/sea-bass.jpg');
+    expect(img.getAttribute('src')).toBe('/icons/fish/sea-bass.png');
     expect(img.getAttribute('width')).toBe('32');
     expect(img.getAttribute('height')).toBe('32');
     expect(img.getAttribute('alt')).toMatch(/sea bass icon/i);
@@ -56,13 +107,10 @@ describe('ItemIcon', () => {
   it('renders the placeholder when the manifest has no entry for the id', async () => {
     vi.stubGlobal('fetch', mockManifestFetch(SAMPLE_MANIFEST));
 
-    render(
-      <ItemIcon gameId="ACGCN" category="fish" id="not-a-real-fish" size={32} />
-    );
+    render(<ItemIcon category="bugs" id="not-a-real-bug" size={32} />);
 
-    // Placeholder span uses initials and an alt-derived aria-label.
     const placeholder = await screen.findByRole('img', {
-      name: /not a real fish icon/i,
+      name: /not a real bug icon/i,
     });
     expect(placeholder.tagName).toBe('SPAN');
     expect(placeholder.textContent).toBe('NA');
@@ -71,7 +119,7 @@ describe('ItemIcon', () => {
   it('renders the placeholder when the manifest fetch fails (404)', async () => {
     vi.stubGlobal('fetch', mockManifestFetch(null, false));
 
-    render(<ItemIcon gameId="ACGCN" category="fish" id="sea-bass" size={32} />);
+    render(<ItemIcon category="fish" id="sea-bass" size={32} />);
 
     await waitFor(() => {
       expect(screen.getByRole('img', { name: /sea bass icon/i }).tagName).toBe(
@@ -84,7 +132,7 @@ describe('ItemIcon', () => {
     vi.stubGlobal('fetch', mockManifestFetch(SAMPLE_MANIFEST));
 
     const { container } = render(
-      <ItemIcon gameId="ACGCN" category="fish" id="sea-bass" size={32} />
+      <ItemIcon category="fish" id="sea-bass" size={32} />
     );
 
     await waitFor(() => {
@@ -105,11 +153,11 @@ describe('ItemIcon', () => {
   it('reserves dimensions on the wrapper before the image loads', () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(() => new Promise(() => {})) // never resolves
+      vi.fn(() => new Promise(() => {}))
     );
 
     const { container } = render(
-      <ItemIcon gameId="ACGCN" category="fish" id="sea-bass" size={48} />
+      <ItemIcon category="fish" id="sea-bass" size={48} />
     );
     const wrapper = container.firstElementChild as HTMLElement;
     expect(wrapper.style.width).toBe('48px');
@@ -118,51 +166,50 @@ describe('ItemIcon', () => {
   });
 });
 
-describe('useGameHasIcons — data-driven gate', () => {
-  it('returns false synchronously while the manifest probe is unknown (in flight)', () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => new Promise(() => {})) // never resolves → state stays unknown
-    );
+describe('manifest cache', () => {
+  it('fetches the flat manifest only once across multiple consumers', async () => {
+    const fetchMock = mockManifestFetch(SAMPLE_MANIFEST);
+    vi.stubGlobal('fetch', fetchMock);
 
-    const { result } = renderHook(() => useGameHasIcons('ACGCN'));
-    expect(result.current).toBe(false);
+    const a = renderHook(() => useHasIcon('fish', 'sea-bass'));
+    const b = renderHook(() => useHasIcon('fish', 'pale-chub'));
+
+    await waitFor(() => expect(a.result.current).toBe(true));
+    await waitFor(() => expect(b.result.current).toBe(true));
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
+});
 
-  it('transitions unknown → present when the manifest fetch returns valid JSON', async () => {
+describe('useHasIcon / useIconChecker', () => {
+  it('useHasIcon returns false during in-flight, true once present', async () => {
     vi.stubGlobal('fetch', mockManifestFetch(SAMPLE_MANIFEST));
-
-    const { result } = renderHook(() => useGameHasIcons('ACGCN'));
+    const { result } = renderHook(() => useHasIcon('fish', 'sea-bass'));
     expect(result.current).toBe(false);
     await waitFor(() => expect(result.current).toBe(true));
   });
 
-  it('transitions unknown → absent on a 404, and stays false', async () => {
-    vi.stubGlobal('fetch', mockManifestFetch(null, false));
-
-    const { result } = renderHook(() => useGameHasIcons('ACWW'));
-    expect(result.current).toBe(false);
-    // Give the in-flight promise a tick to settle into `absent`.
-    await waitFor(() => {
-      // result stays false; we infer the state-machine transitioned via a
-      // second hook call hitting the cached `absent` state on next render.
-      expect(result.current).toBe(false);
-    });
+  it('useHasIcon honors RENAME_OVERRIDES', async () => {
+    vi.stubGlobal('fetch', mockManifestFetch(SAMPLE_MANIFEST));
+    const { result } = renderHook(() =>
+      useHasIcon('bugs', 'citrus-long-horned-beetle')
+    );
+    await waitFor(() => expect(result.current).toBe(true));
   });
 
-  it('transitions unknown → absent when the manifest JSON is malformed', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        json: async () => ({ not_a_category: 'oops' }),
-      } as Response)
-    );
+  it('useIconChecker returns a predicate keyed on the loaded manifest', async () => {
+    vi.stubGlobal('fetch', mockManifestFetch(SAMPLE_MANIFEST));
+    const { result } = renderHook(() => useIconChecker());
+    await waitFor(() => {
+      expect(result.current('fish', 'sea-bass')).toBe(true);
+    });
+    expect(result.current('fish', 'not-a-real-fish')).toBe(false);
+    expect(result.current('bugs', 'citrus-long-horned-beetle')).toBe(true);
+  });
 
-    const { result } = renderHook(() => useGameHasIcons('ACNH'));
-    expect(result.current).toBe(false);
-    // Wait for the in-flight promise to settle into `absent`.
+  it('useHasIcon stays false when the manifest is absent (404)', async () => {
+    vi.stubGlobal('fetch', mockManifestFetch(null, false));
+    const { result } = renderHook(() => useHasIcon('fish', 'sea-bass'));
     await waitFor(() => expect(result.current).toBe(false));
   });
 });
