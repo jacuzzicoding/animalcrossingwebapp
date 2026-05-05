@@ -91,19 +91,17 @@ async function processOne(category: string, filename: string): Promise<Result> {
   const outPath = join(outDir, filename);
   const sourceBytes = statSync(sourcePath).size;
 
-  if (
-    !FORCE &&
-    !DRY_RUN &&
-    existsSync(outPath) &&
-    statSync(outPath).mtimeMs > statSync(sourcePath).mtimeMs
-  ) {
-    return {
-      category,
-      id,
-      sourceBytes,
-      outputBytes: statSync(outPath).size,
-      status: 'skipped',
-    };
+  if (!FORCE && !DRY_RUN && existsSync(outPath)) {
+    const outStat = statSync(outPath);
+    if (outStat.mtimeMs >= statSync(sourcePath).mtimeMs) {
+      return {
+        category,
+        id,
+        sourceBytes,
+        outputBytes: outStat.size,
+        status: 'skipped',
+      };
+    }
   }
 
   const resized = await sharp(sourcePath)

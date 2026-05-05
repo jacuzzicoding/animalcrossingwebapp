@@ -1528,16 +1528,14 @@ body {
   height: 192px;
   display: block;
 }
-/* Tablet / smaller laptop: shrink the centerpiece + tighten panel padding to
-   keep the MonthGrid + stats column readable. Below 720 the icon is hidden
-   and the panel reverts to its compact left padding (set in the earlier
-   @media (max-width: 720px) rule above). */
-@media (max-width: 1180px) {
-  .ac-expand { padding-left: 152px; min-height: 152px; }
-  .ac-expand-icon { width: 128px; height: 128px; }
-}
+/* Below 720 the icon is hidden; the earlier @media (max-width: 720px) rule
+   above sets the compact panel padding. A future polish pass may
+   reintroduce a tablet shrink — the previous CSS-only attempt didn't work
+   because <ItemIcon size={192}> hardcodes its wrapper dimensions inline,
+   so the media query couldn't take effect without refactoring the
+   component. */
 @media (max-width: 720px) {
-  .ac-expand { padding-left: 18px; min-height: 0; }
+  .ac-expand { min-height: 0; }
   .ac-expand-icon { display: none; }
 }
 .ac-row-icon { display: inline-block; }
