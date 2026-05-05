@@ -11,7 +11,7 @@ import {
 } from '../lib/utils';
 import type { CategoryId, GameId } from '../lib/types';
 import { ItemIcon } from './ItemIcon';
-import { useGameHasIcons } from './itemIconUtils';
+import { useHasIcon } from './itemIconUtils';
 
 export function ItemExpandPanel({
   item,
@@ -44,17 +44,17 @@ export function ItemExpandPanel({
 
   const hasMonths = !!(months && months.length > 0);
 
-  const showIcon = useGameHasIcons(gameId ?? 'ACGCN') && !!gameId;
+  const showIcon = useHasIcon(category, item.id);
 
   return (
     <div className={`ac-expand${hasMonths ? '' : ' ac-expand-no-months'}`}>
       {showIcon && (
         <div className="ac-expand-icon">
           <ItemIcon
-            gameId={gameId!}
+            gameId={gameId}
             category={category}
             id={item.id}
-            size={64}
+            size={192}
             alt=""
           />
         </div>

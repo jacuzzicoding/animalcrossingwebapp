@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { CategoryId, GameId } from '../lib/types';
-import { useManifestState } from './itemIconUtils';
+import { resolveIconUrl, useManifestState } from './itemIconUtils';
 
 function humanize(id: string): string {
   return id
@@ -11,42 +11,44 @@ function humanize(id: string): string {
 }
 
 /**
- * Render an item icon for a given (gameId, category, id) triple.
+ * Render an item icon for a given (category, id) pair.
  *
  * Reserves `size × size` before the image loads so layout never shifts. If the
  * manifest entry is missing, or the `<img>` fails to load, falls back to a
  * neutral placeholder glyph (the item id's monogram on a tinted square).
  *
- * Manifests are loaded lazily, once per gameId, and shared across all mounted
- * instances via a module-level cache (see itemIconUtils.ts).
+ * The flat manifest is loaded lazily, once per session, and shared across all
+ * mounted instances via a module-level cache (see itemIconUtils.ts).
+ *
+ * `gameId` is accepted for callsite ergonomics but is not used by the
+ * resolver — under the flat hierarchy, one drawing per item id serves every
+ * game that has the item.
  */
 export function ItemIcon({
-  gameId,
   category,
   id,
   size,
   className,
   alt,
 }: {
-  gameId: GameId;
+  gameId?: GameId;
   category: CategoryId;
   id: string;
   size: number;
   className?: string;
   alt?: string;
 }) {
-  const state = useManifestState(gameId);
+  const state = useManifestState();
   const [errored, setErrored] = useState(false);
 
   useEffect(() => {
     setErrored(false);
-  }, [gameId, category, id]);
+  }, [category, id]);
 
-  const filename =
-    state.status === 'present' ? state.manifest[category]?.[id] : undefined;
-  const src = filename
-    ? `/icons/${gameId.toLowerCase()}/${category}/${filename}`
-    : null;
+  const src =
+    state.status === 'present'
+      ? resolveIconUrl(state.manifest, category, id)
+      : null;
 
   const altText = alt ?? `${humanize(id)} icon`;
 

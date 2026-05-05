@@ -1,29 +1,56 @@
 import { useEffect, useState } from 'react';
-import type { CategoryId, GameId } from '../lib/types';
+import type { CategoryId } from '../lib/types';
 
-type CategoryMap = Record<string, string>;
-export type GameManifest = Partial<Record<CategoryId, CategoryMap>>;
+/**
+ * Flat icon manifest. Values are file extensions; the filename is always
+ * `<id>.<ext>` under `public/icons/<category>/`.
+ */
+export type CategoryMap = Record<string, string>;
+export type IconManifest = Partial<Record<CategoryId, CategoryMap>>;
 
-// Tri-state per gameId. `unknown` = no probe yet (or in flight); `present` =
-// fetch returned a usable manifest; `absent` = fetch 404'd or returned
-// malformed JSON. Callers treat `unknown` as "don't render the icon yet" so
-// no fetch-driven flicker shows up while the probe is in flight.
 export type ManifestState =
   | { status: 'unknown' }
-  | { status: 'present'; manifest: GameManifest }
+  | { status: 'present'; manifest: IconManifest }
   | { status: 'absent' };
 
-const cache = new Map<GameId, ManifestState>();
-const inflight = new Map<GameId, Promise<void>>();
-const subscribers = new Map<GameId, Set<() => void>>();
+/**
+ * Cross-game id aliases. Same drawing, different spellings between catalogs.
+ * Canonical id is the older-game spelling. Applied before manifest lookup.
+ *
+ * Per-category prefixing isn't needed today — catalog ids don't collide
+ * across categories. If that ever changes, key as `"<category>/<id>"`.
+ */
+export const RENAME_OVERRIDES: Record<string, string> = {
+  // bugs
+  'citrus-long-horned-beetle': 'citrus-longhorn-beetle',
+  'rajah-brookes-birdwing': 'rajah-brooke-birdwing',
+  'man-faced-stink-bug': 'manfaced-stink-bug',
+  'giant-water-bug': 'giant-waterbug',
+  'queen-alexandras-birdwing': 'queen-alexandra-birdwing',
+  // fossils — older games use "sabretooth"; ACNH uses "sabertooth"
+  'sabertooth-skull': 'sabretooth-skull',
+  'sabertooth-torso': 'sabretooth-torso',
+  'sabertooth-tail': 'sabretooth-tail',
+  // fossils — older games use the full "pachycephalosaurus"
+  'pachycephalosaur-skull': 'pachycephalosaurus-skull',
+  'pachycephalosaur-tail': 'pachycephalosaurus-tail',
+  // fossils — ACNH adds the explicit "-skull" suffix
+  'peking-man': 'peking-man-skull',
+};
 
-function notify(gameId: GameId) {
-  const subs = subscribers.get(gameId);
-  if (!subs) return;
-  for (const cb of subs) cb();
+export function canonicalizeId(id: string): string {
+  return RENAME_OVERRIDES[id] ?? id;
 }
 
-function isUsableManifest(value: unknown): value is GameManifest {
+let cache: ManifestState = { status: 'unknown' };
+let inflight: Promise<void> | null = null;
+const subscribers = new Set<() => void>();
+
+function notify() {
+  for (const cb of subscribers) cb();
+}
+
+function isUsableManifest(value: unknown): value is IconManifest {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const known: CategoryId[] = [
     'fish',
@@ -39,86 +66,115 @@ function isUsableManifest(value: unknown): value is GameManifest {
       return false;
     }
   }
-  // At least one recognised category must carry entries.
   return known.some(cat => {
     const entry = (value as Record<string, unknown>)[cat];
     return entry && typeof entry === 'object' && Object.keys(entry).length > 0;
   });
 }
 
-export function getManifestState(gameId: GameId): ManifestState {
-  return cache.get(gameId) ?? { status: 'unknown' };
+export function getManifestState(): ManifestState {
+  return cache;
 }
 
-export function loadManifest(gameId: GameId): Promise<void> {
-  const existing = inflight.get(gameId);
-  if (existing) return existing;
-  // Mark in-flight as `unknown` (still indistinguishable from "not probed yet"
-  // for callers — the only thing they care about is `present` vs not).
-  if (!cache.has(gameId)) cache.set(gameId, { status: 'unknown' });
-  const url = `/icons/${gameId.toLowerCase()}/manifest.json`;
-  const promise = fetch(url)
+export function loadManifest(): Promise<void> {
+  if (inflight) return inflight;
+  const promise = fetch('/icons/manifest.json')
     .then(r => {
       if (!r.ok) throw new Error(`status ${r.status}`);
       return r.json();
     })
     .then((parsed: unknown) => {
       if (!isUsableManifest(parsed)) {
-        cache.set(gameId, { status: 'absent' });
+        cache = { status: 'absent' };
         return;
       }
-      cache.set(gameId, { status: 'present', manifest: parsed });
+      cache = { status: 'present', manifest: parsed };
     })
     .catch(() => {
-      cache.set(gameId, { status: 'absent' });
+      cache = { status: 'absent' };
     })
     .finally(() => {
-      inflight.delete(gameId);
-      notify(gameId);
+      inflight = null;
+      notify();
     });
-  inflight.set(gameId, promise);
+  inflight = promise;
   return promise;
 }
 
-export function subscribeManifest(gameId: GameId, cb: () => void): () => void {
-  const subs = subscribers.get(gameId) ?? new Set<() => void>();
-  subs.add(cb);
-  subscribers.set(gameId, subs);
-  return () => subs.delete(cb);
+export function subscribeManifest(cb: () => void): () => void {
+  subscribers.add(cb);
+  return () => {
+    subscribers.delete(cb);
+  };
 }
 
 /**
- * Subscribe to a gameId's manifest state. Triggers a one-time lazy probe of
- * `/icons/<gameId>/manifest.json` on first call per gameId. Returns the
- * current state synchronously and re-renders when the probe settles.
+ * Subscribe to the flat icon manifest. Triggers a one-time lazy probe of
+ * `/icons/manifest.json` on first call. Returns the current state
+ * synchronously and re-renders when the probe settles.
  */
-export function useManifestState(gameId: GameId): ManifestState {
+export function useManifestState(): ManifestState {
   const [, force] = useState(0);
   useEffect(() => {
-    const unsub = subscribeManifest(gameId, () => force(n => n + 1));
-    if (!cache.has(gameId)) {
-      void loadManifest(gameId);
+    const unsub = subscribeManifest(() => force(n => n + 1));
+    if (cache.status === 'unknown' && !inflight) {
+      void loadManifest();
     }
     return unsub;
-  }, [gameId]);
-  return getManifestState(gameId);
+  }, []);
+  return getManifestState();
 }
 
 /**
- * True iff a usable `manifest.json` is committed for the given game. Probes
- * the file lazily on first call; returns false during the in-flight window so
- * callers fall back to the textual-glyph render path until the probe settles.
- *
- * No code change is needed when a new game's icon set ships — the probe sees
- * the manifest the next time the page loads and `<ItemIcon>` lights up.
+ * Resolve `(category, id)` to a public URL or null. Applies `RENAME_OVERRIDES`
+ * before manifest lookup. Fossils with no specific entry fall back to a
+ * generic `fossils/placeholder.<ext>` when committed; until then, callers
+ * render the monogram fallback.
  */
-export function useGameHasIcons(gameId: GameId): boolean {
-  return useManifestState(gameId).status === 'present';
+export function resolveIconUrl(
+  manifest: IconManifest,
+  category: CategoryId,
+  id: string
+): string | null {
+  const canonical = canonicalizeId(id);
+  const ext = manifest[category]?.[canonical];
+  if (ext) return `/icons/${category}/${canonical}.${ext}`;
+  if (category === 'fossils') {
+    const placeholderExt = manifest.fossils?.placeholder;
+    if (placeholderExt) return `/icons/fossils/placeholder.${placeholderExt}`;
+  }
+  return null;
+}
+
+/**
+ * Returns a stable predicate `(category, id) => boolean` keyed off the current
+ * manifest state. Use inside list renders where calling `useHasIcon` per row
+ * would violate the rules of hooks.
+ */
+export function useIconChecker(): (
+  category: CategoryId,
+  id: string
+) => boolean {
+  const state = useManifestState();
+  if (state.status !== 'present') return () => false;
+  const manifest = state.manifest;
+  return (category, id) => resolveIconUrl(manifest, category, id) !== null;
+}
+
+/**
+ * True iff the manifest has resolved AND has an entry for `(category, id)`
+ * after rename canonicalization. Returns false during the in-flight probe so
+ * callers don't flash a placeholder before the manifest lands.
+ */
+export function useHasIcon(category: CategoryId, id: string): boolean {
+  const state = useManifestState();
+  if (state.status !== 'present') return false;
+  return resolveIconUrl(state.manifest, category, id) !== null;
 }
 
 // Test seam — reset the module-level manifest cache between tests.
 export function __resetItemIconCacheForTests() {
-  cache.clear();
-  inflight.clear();
+  cache = { status: 'unknown' };
+  inflight = null;
   subscribers.clear();
 }

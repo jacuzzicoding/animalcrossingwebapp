@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.1-beta (2026-05-04) — adds Animal Crossing (GameCube) item icons across category rows, expand panels, global search, and home tab. Previous: v0.9.0-beta (full UI revamp — Sidebar, TownManager, sectioned CategoryTab, redesigned HomeTab + StatsTab, GlobalSearchDropdown, mobile responsive). See `docs/v0.9-plan.md` and `docs/v0.9.1-icons-plan.md` for plans, `CHANGELOG.md` for the full entries.**
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.2-beta (2026-05-05) — cross-game icon routing (flat hierarchy + RENAME_OVERRIDES), first two hand-drawn icons (sea bass, koi), bigger expand-panel icons, `npm run icons:export` pipeline, ActivityFeed migrated to `<ItemIcon>`. Previous: v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/v0.9-plan.md`, `docs/v0.9.1-icons-plan.md`, and `docs/v0.9.2-icon-routing-plan.md` for plans, `CHANGELOG.md` for the full entries.**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -166,6 +166,9 @@ public/data/acnh/
   fossils.json              # 86 fossil pieces
   art.json                  # 43 paintings (hasFake flag)
   sea_creatures.json        # 40 sea creatures (NH/SH months)
+icon-sources/                # 2048×2048 hand-drawn PNG originals — committed (not gitignored).
+                             # Mirrors public/icons/ layout: `<category>/<id>.png`.
+                             # Run `npm run icons:export` to regenerate the 512 deploy assets.
 docs/
   dev-process.md            # PR checklist and dev process rules for Claude Code sessions
   architecture.md           # Deep architectural context: store schema, migrations, multi-game types
@@ -293,6 +296,10 @@ Pending:
 - PR (a) — Fandom scraper, `OVERRIDES` map, full ACGCN icon set committed under `public/icons/acgcn/` with per-game `manifest.json` (PR #86, shipped)
 - PR (b) — `<ItemIcon>` component + UI wiring in CollectibleRow / ItemExpandPanel / GlobalSearchDropdown / HomeTab; `scripts/generate-icon-manifest.ts` standalone re-emitter; `GAMES_WITH_ICONS` gate scoped to ACGCN until other games' icon scrapes ship (this PR)
 - PR (c) — `NOTICE` at the repo root + in-app `/credits` route + release prep (pending)
+
+### v0.9.2-beta — Hand-drawn icons (in progress)
+- PR #94 (shipped) — flat icon hierarchy + cross-game routing simplification + first two hand-drawn icons (fish/sea-bass, fish/koi) optimized 2048→512 with sharp + pngquant
+- PR (b) — bumped icon render sizes (rows 48, expand panel 192, search/home 32) + `scripts/export-icons.ts` reproducible pipeline + 2048 originals committed to `icon-sources/` (this PR)
 
 ### v1.0 — Launch ready
 - Branding, SEO, accessibility, performance audit

@@ -2,6 +2,26 @@
 
 All notable changes to this project are documented here.
 
+## [v0.9.2-beta] — 2026-05-05
+
+### Added
+- 2048×2048 hand-drawn source PNGs committed under `icon-sources/<category>/<id>.png` as the canonical originals. The first two land here: `icon-sources/fish/sea-bass.png` and `icon-sources/fish/koi.png`
+- `scripts/export-icons.ts` — local-only pipeline that resizes 2048 sources to 512×512, palette-quantizes via pngquant, and writes the deploy assets to `public/icons/<category>/<id>.png`. Idempotent (skips when the output is newer than its source); supports `--force` and `--dry-run`. Wired as `npm run icons:export`. Not run in CI
+- `scripts/audit-icon-coverage.ts` — reports per-game icon coverage against catalog data, surfaces missing items and orphan files. Wired as `npm run audit:icons`
+
+### Changed
+- **Cross-game icon routing** — items shared across games (sea bass, koi, common butterfly, every shared fossil) now share a single icon file. Icon hierarchy flattened from per-game subdirectories to `public/icons/<category>/<id>.png`; a `RENAME_OVERRIDES` map handles ids that differ between games; resolver simplified accordingly. Adding a new game's catalog now lights up icon coverage automatically wherever ids match
+- Item icon render sizes increased to give the hand-drawn art room to read: category rows 32→48, expand panel 64→192 (with a 128 step at ≤1180px and existing hide-at-≤720 unchanged), search dropdown 24→32, home shelf + recent rows 24→32. Fallback monogram glyphs scaled to match: `.ac-glyph` 32→48, `.ac-gs-row-glyph` 28→32. Expand panel `padding-left` extended to clear the larger absolute-positioned icon
+- `ActivityFeed` (recent donations card on Home) renders `<ItemIcon>` instead of the legacy `CATEGORY_META` monogram tile — final surface migrated to the shared icon component (Closes #97)
+- `public/version-history.html` trimmed for clarity; v0.9.0 release date corrected; emoji removed from the velocity banner
+
+### Fixed
+- Mona Lisa icon clipped at the bottom of the expand panel — added a min-height for the art icon slot
+- iOS overscroll bounce revealed the wrong background colour — `html` and `body` background unified
+
+### Notes
+- ACGCN icons remain wiki-sourced; the two hand-drawn replacements (sea-bass, koi) preview the long-term direction. No regression to existing ACGCN coverage
+
 ## [v0.9.1-beta] — 2026-05-04
 
 ### Added
