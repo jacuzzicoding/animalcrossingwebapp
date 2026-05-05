@@ -53,6 +53,14 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* Paint the page bg on html/body so iOS Safari overscroll, the dynamic
+   toolbar reveal, and any >1440px viewport gutters show cream instead of
+   the user-agent white that would otherwise leak through outside .ac-app. */
+html,
+body {
+  background: var(--bg);
+}
+
 /* ── App shell (v0.9 Phase 2) ── */
 .ac-app {
   display: grid;
@@ -904,6 +912,10 @@
   gap: 28px;
   padding: 4px 18px 22px 216px;
   background: var(--surface-alt);
+  /* Keep the absolute-positioned 192px icon inside the panel even when no
+     MonthGrid is rendered (art category). The 1180/720 steps below mirror
+     the icon's responsive cascade. */
+  min-height: 216px;
 }
 .ac-expand-no-months { grid-template-columns: 1fr; }
 .ac-expand-section { min-width: 0; }
@@ -1521,11 +1533,11 @@
    and the panel reverts to its compact left padding (set in the earlier
    @media (max-width: 720px) rule above). */
 @media (max-width: 1180px) {
-  .ac-expand { padding-left: 152px; }
+  .ac-expand { padding-left: 152px; min-height: 152px; }
   .ac-expand-icon { width: 128px; height: 128px; }
 }
 @media (max-width: 720px) {
-  .ac-expand { padding-left: 18px; }
+  .ac-expand { padding-left: 18px; min-height: 0; }
   .ac-expand-icon { display: none; }
 }
 .ac-row-icon { display: inline-block; }
