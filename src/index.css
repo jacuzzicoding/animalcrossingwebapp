@@ -53,6 +53,14 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* Paint the page bg on html/body so iOS Safari overscroll, the dynamic
+   toolbar reveal, and any >1440px viewport gutters show cream instead of
+   the user-agent white that would otherwise leak through outside .ac-app. */
+html,
+body {
+  background: var(--bg);
+}
+
 /* ── App shell (v0.9 Phase 2) ── */
 .ac-app {
   display: grid;
@@ -356,8 +364,8 @@
 .ac-gs-row:hover { background: var(--surface-alt); }
 .ac-gs-row-active { background: var(--accent-soft); }
 .ac-gs-row-glyph {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: 1.5px solid;
   border-radius: 6px;
   display: grid;
@@ -839,7 +847,7 @@
 }
 
 .ac-glyph {
-  width: 32px; height: 32px;
+  width: 48px; height: 48px;
   border: 1.5px solid;
   border-radius: 8px;
   display: grid; place-items: center;
@@ -902,8 +910,12 @@
   display: grid;
   grid-template-columns: 1fr 240px;
   gap: 28px;
-  padding: 4px 18px 22px 88px;
+  padding: 4px 18px 22px 216px;
   background: var(--surface-alt);
+  /* Keep the absolute-positioned 192px icon inside the panel even when no
+     MonthGrid is rendered (art category). The 1180/720 steps below mirror
+     the icon's responsive cascade. */
+  min-height: 216px;
 }
 .ac-expand-no-months { grid-template-columns: 1fr; }
 .ac-expand-section { min-width: 0; }
@@ -1512,11 +1524,18 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  width: 64px;
-  height: 64px;
+  width: 192px;
+  height: 192px;
   display: block;
 }
+/* Below 720 the icon is hidden; the earlier @media (max-width: 720px) rule
+   above sets the compact panel padding. A future polish pass may
+   reintroduce a tablet shrink — the previous CSS-only attempt didn't work
+   because <ItemIcon size={192}> hardcodes its wrapper dimensions inline,
+   so the media query couldn't take effect without refactoring the
+   component. */
 @media (max-width: 720px) {
+  .ac-expand { min-height: 0; }
   .ac-expand-icon { display: none; }
 }
 .ac-row-icon { display: inline-block; }

@@ -349,7 +349,7 @@ export function GlobalSearchDropdown({
                               gameId={gameId}
                               category={cat}
                               id={it.id}
-                              size={24}
+                              size={32}
                               className="ac-gs-row-icon"
                               alt=""
                             />

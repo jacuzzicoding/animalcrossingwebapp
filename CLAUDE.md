@@ -166,6 +166,9 @@ public/data/acnh/
   fossils.json              # 86 fossil pieces
   art.json                  # 43 paintings (hasFake flag)
   sea_creatures.json        # 40 sea creatures (NH/SH months)
+icon-sources/                # 2048×2048 hand-drawn PNG originals — committed (not gitignored).
+                             # Mirrors public/icons/ layout: `<category>/<id>.png`.
+                             # Run `npm run icons:export` to regenerate the 512 deploy assets.
 docs/
   dev-process.md            # PR checklist and dev process rules for Claude Code sessions
   architecture.md           # Deep architectural context: store schema, migrations, multi-game types
@@ -293,6 +296,10 @@ Pending:
 - PR (a) — Fandom scraper, `OVERRIDES` map, full ACGCN icon set committed under `public/icons/acgcn/` with per-game `manifest.json` (PR #86, shipped)
 - PR (b) — `<ItemIcon>` component + UI wiring in CollectibleRow / ItemExpandPanel / GlobalSearchDropdown / HomeTab; `scripts/generate-icon-manifest.ts` standalone re-emitter; `GAMES_WITH_ICONS` gate scoped to ACGCN until other games' icon scrapes ship (this PR)
 - PR (c) — `NOTICE` at the repo root + in-app `/credits` route + release prep (pending)
+
+### v0.9.2-beta — Hand-drawn icons (in progress)
+- PR #94 (shipped) — flat icon hierarchy + cross-game routing simplification + first two hand-drawn icons (fish/sea-bass, fish/koi) optimized 2048→512 with sharp + pngquant
+- PR (b) — bumped icon render sizes (rows 48, expand panel 192, search/home 32) + `scripts/export-icons.ts` reproducible pipeline + 2048 originals committed to `icon-sources/` (this PR)
 
 ### v1.0 — Launch ready
 - Branding, SEO, accessibility, performance audit
