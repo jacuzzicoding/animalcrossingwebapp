@@ -45,13 +45,15 @@ function readCatalogIds(gameId: string, category: string): string[] | null {
 
 function listGameDirs(): string[] {
   if (!existsSync(DATA_ROOT)) return [];
-  return readdirSync(DATA_ROOT).filter(name => {
-    try {
-      return statSync(join(DATA_ROOT, name)).isDirectory();
-    } catch {
-      return false;
-    }
-  });
+  return readdirSync(DATA_ROOT)
+    .sort()
+    .filter(name => {
+      try {
+        return statSync(join(DATA_ROOT, name)).isDirectory();
+      } catch {
+        return false;
+      }
+    });
 }
 
 function buildCategoryMap(category: string): Record<string, string> {

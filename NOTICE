@@ -8,3 +8,14 @@ Item icons (public/icons/acgcn/**/*.{png,jpg,jpeg})
 Animal Crossing and all related game assets, characters, item names, and visual
 designs are trademarks of Nintendo Co., Ltd. This project is an unofficial fan
 tool and is not affiliated with, endorsed by, or supported by Nintendo.
+
+## Build-time tools
+
+This project's build pipeline uses the following open-source tools to optimize images. They are not distributed as part of the user-facing application; they run only locally during the icon export pipeline.
+
+sharp — https://github.com/lovell/sharp
+- License: Apache License 2.0
+- License URL: https://www.apache.org/licenses/LICENSE-2.0
+
+pngquant (via pngquant-bin) — https://pngquant.org
+- License: BSD-style (see https://github.com/kornelski/pngquant#license)
