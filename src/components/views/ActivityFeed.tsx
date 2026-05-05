@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { CATEGORY_META } from '../../lib/categoryMeta';
+import { useMemo } from 'react';
 import { CATEGORY_ORDER } from '../../lib/constants';
 import { EmptyState } from '../shared/EmptyState';
+import { ItemIcon } from '../ItemIcon';
 import {
   displayName,
   formatRelativeDate,
@@ -75,23 +75,18 @@ export function ActivityFeed({
           </div>
           <div className="space-y-2">
             {group.items.map(entry => {
-              const { Icon } = CATEGORY_META[entry.category];
               return (
                 <div
                   key={`${entry.itemId}-${entry.ts}`}
                   className="flex items-center gap-3 rounded-[14px] border px-4 py-3"
                   style={{ borderColor: '#b8dfc8', backgroundColor: '#f2faf6' }}
                 >
-                  <div
-                    className="shrink-0 rounded-xl p-2"
-                    style={{
-                      backgroundColor: '#EDE3D0',
-                      border: '1px solid #E7DAC4',
-                    }}
-                    aria-hidden
-                  >
-                    <Icon className="w-4 h-4" />
-                  </div>
+                  <ItemIcon
+                    category={entry.category}
+                    id={entry.itemId}
+                    size={32}
+                    alt=""
+                  />
                   <div className="min-w-0 flex-1">
                     <div
                       className="font-medium text-sm truncate"
