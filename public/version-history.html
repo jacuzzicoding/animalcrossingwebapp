@@ -38,12 +38,6 @@
       margin-bottom: 3rem;
     }
 
-    .leaf-deco {
-      font-size: 2.5rem;
-      margin-bottom: .5rem;
-      display: block;
-    }
-
     header h1 {
       font-size: 2rem;
       color: var(--wood);
@@ -240,11 +234,11 @@
     }
 
     .tl-bullets li::before {
-      content: '🍃';
+      content: '·';
       position: absolute;
-      left: 0;
-      font-size: .7rem;
-      top: .1rem;
+      left: .25rem;
+      color: var(--muted);
+      font-weight: bold;
     }
 
     /* ── Currently building ── */
@@ -420,7 +414,6 @@
 <div class="page">
 
   <header>
-    <span class="leaf-deco">🍃</span>
     <h1>Animal Crossing Web App</h1>
     <p>Version history &amp; roadmap · Updated May 4, 2026</p>
   </header>
@@ -428,7 +421,7 @@
   <!-- Velocity banner -->
   <div class="velocity-banner">
     <div>
-      <div class="headline">🚀 v0.1 → v0.9 in 24 days</div>
+      <div class="headline">v0.1 to v0.9 in 24 days</div>
       <div class="sub">Twelve releases. Blathers can't keep up.</div>
     </div>
     <div class="vel-stats">
@@ -453,7 +446,7 @@
 
   <!-- Shipped timeline -->
   <section>
-    <h2>🏅 Shipped versions</h2>
+    <h2>Shipped versions</h2>
     <div class="timeline">
 
       <!-- v0.9.1-beta -->
@@ -467,22 +460,21 @@
           <div class="tl-card-head">
             <span class="version-badge">v0.9.1-beta</span>
             <span class="version-title">ACGCN item icons</span>
-            <span class="velocity-chip">same day as v0.9.0</span>
+            <span class="velocity-chip">1 day after v0.9.0</span>
           </div>
           <ul class="tl-bullets">
-            <li>Animal Crossing (GameCube) item icons — fish, bugs, fossils, art (118 items) sourced from the AC Fandom Wiki under CC BY-SA 3.0</li>
-            <li><code>&lt;ItemIcon&gt;</code> shared component renders icons across category rows, expand panels, global search results, and home tab strips</li>
-            <li>Data-driven manifest probe — adding a <code>manifest.json</code> for a future game lights up its UI with no code change</li>
-            <li>New <code>/credits</code> route documenting third-party asset sources and licensing</li>
-            <li>Repository now ships <code>LICENSE</code> (MIT) and <code>NOTICE</code> files at the root</li>
-            <li>Other games (ACWW, ACCF, ACNL, ACNH) continue to render the existing monogram fallback until their icon scrapes ship in subsequent v0.9.x betas</li>
+            <li>Animal Crossing (GameCube) item icons across fish, bugs, fossils, and art — 118 items, sourced from the AC Fandom Wiki under CC BY-SA 3.0</li>
+            <li>Icons appear across category rows, expand panels, global search results, and home tab strips</li>
+            <li>Future games light up automatically when their icon assets land — no code change required</li>
+            <li>New /credits route documenting third-party asset sources and licensing</li>
+            <li>Other games (ACWW, ACCF, ACNL, ACNH) keep the existing monogram fallback until their icon sets ship</li>
           </ul>
         </div>
       </div>
 
       <!-- v0.9.0-beta -->
       <div class="tl-entry">
-        <div class="tl-date">May 4<br/>2026</div>
+        <div class="tl-date">May 3<br/>2026</div>
         <div class="tl-spine">
           <div class="tl-dot"></div>
           <div class="tl-line"></div>
@@ -491,20 +483,19 @@
           <div class="tl-card-head">
             <span class="version-badge">v0.9.0-beta</span>
             <span class="version-title">Curator UI revamp</span>
-            <span class="velocity-chip">3 days after v0.8.2</span>
+            <span class="velocity-chip">2 days after v0.8.2</span>
           </div>
           <ul class="tl-bullets">
-            <li>Full Meadow design language — Fraunces + Inter type, moss-green accent, retired Varela Round + parchment palette</li>
-            <li>Sidebar shell replaces MuseumHeader + TabBar + TownSwitcher; per-category counts, sea nav gated for ACNL/ACNH</li>
-            <li>TownManager drawer unifies create/edit/delete (resolves the v0.8.1 greyed-out modal stopgap); game immutable post-creation, `playerName` deprecated</li>
-            <li>Settings page with About + Danger zone (reset active-town donations, reset everything)</li>
-            <li>HomeTab rebuilt — hero stat, month strip, leaving-soon + just-arrived shelves, ProgressMeter (4 or 5 segments by game)</li>
-            <li>CategoryTab sectioned (Leaving / Available / Out of season / Already donated) with month-wrap logic</li>
-            <li>GlobalSearchDropdown with category groups, keyboard nav (↑↓↵esc), search history, art `basedOn` matching preserved</li>
-            <li>StatsTab redesigned — per-category cards (3/4/5 by game) and yearly rhythm chart</li>
-            <li>Art tab now uses inline ItemExpandPanel; DetailModal retired</li>
-            <li>ACWW + ACCF art data shipped (Closes #74); Meadow tokens, scroll-to + pulse highlight, full mobile responsive pass at 980/720/700/480 breakpoints</li>
-            <li>Bug fixes: ACNH all-caught-up (#71), art modal close (#81), version footer suffix (#60), modal sticky-label (#26)</li>
+            <li>Full Meadow design language — Fraunces + Inter type, moss-green accent, retired the old parchment palette</li>
+            <li>New sidebar shell with per-category counts replaces the old top-nav header</li>
+            <li>Unified TownManager drawer for create, switch, edit, and delete</li>
+            <li>Settings page with About + Danger zone (reset active town's donations, reset everything)</li>
+            <li>HomeTab rebuilt — hero stat, month strip, leaving-soon and just-arrived shelves, segmented progress meter</li>
+            <li>CategoryTab sectioned into Leaving / Available / Out of season / Already donated</li>
+            <li>Global search dropdown with category groups, keyboard navigation, and search history</li>
+            <li>StatsTab redesigned — per-category cards and a yearly rhythm chart</li>
+            <li>Art tab now uses the same inline expand panel as every other category</li>
+            <li>Wild World + City Folk art data added; full mobile responsive pass</li>
           </ul>
         </div>
       </div>
@@ -519,13 +510,13 @@
         <div class="tl-card">
           <div class="tl-card-head">
             <span class="version-badge">v0.8.2-alpha</span>
-            <span class="version-title">Sea Creatures tab + cleanup</span>
+            <span class="version-title">Sea Creatures tab</span>
             <span class="velocity-chip">1 day after v0.8.1</span>
           </div>
           <ul class="tl-bullets">
-            <li>Sea Creatures tab — surfaces 40-species ACNH data (and ACNL) with the same expand-panel UX as Fish and Bugs; tab hidden for other games</li>
-            <li>Sea creatures included in Home tab progress grid, global search, and CSV export</li>
-            <li>Detail modal now resets on tab change — defensive state cleanup (Closes #26)</li>
+            <li>Sea Creatures tab — 40-species set for ACNH and ACNL with the same expand-panel UX as Fish and Bugs</li>
+            <li>Sea creatures included in the home tab progress grid, global search, and CSV export</li>
+            <li>Detail modal now resets cleanly on tab change</li>
           </ul>
         </div>
       </div>
@@ -540,13 +531,12 @@
         <div class="tl-card">
           <div class="tl-card-head">
             <span class="version-badge">v0.8.1-alpha</span>
-            <span class="version-title">Edit Town modal fix + issue hygiene</span>
+            <span class="version-title">Edit Town modal fix</span>
             <span class="velocity-chip">1 day after v0.8.0</span>
           </div>
           <ul class="tl-bullets">
-            <li>Edit Town modal no longer dismisses immediately on open — state lifted to ACCanvas, always-mounted pattern</li>
-            <li>Edit/new-town buttons greyed out on museum category tabs (stopgap until v0.9 layout revamp)</li>
-            <li>Bug filing workflow documented; backfilled issues #51–#53</li>
+            <li>Edit Town modal no longer dismisses immediately on open</li>
+            <li>Edit/new-town buttons greyed out on category tabs as a stopgap until the v0.9 layout revamp</li>
           </ul>
         </div>
       </div>
@@ -567,12 +557,10 @@
           <ul class="tl-bullets">
             <li>New Leaf data — 72 fish, 70 bugs, 72 fossils, 36 art, 35 sea creatures</li>
             <li>New Horizons data — 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures with NH/SH hemisphere months</li>
-            <li>All five games now fully selectable in Create Town modal</li>
-            <li>Hemisphere toggle — per-town NH/SH selector for ACNH towns; month grids respect hemisphere</li>
-            <li>Item detail inline expand — fish, bugs, and fossils expand in-place with month grid, sell value, habitat, and notes; art opens bottom-sheet modal</li>
-            <li>React Router v6 — every town and tab now has a shareable URL; browser back/forward works</li>
-            <li>Detail modal backdrop fix — modal no longer closes immediately after opening</li>
-            <li>Town switcher fixes — no duplicate entries, dropdown escapes clipped header via fixed positioning</li>
+            <li>All five games now fully selectable when creating a town</li>
+            <li>Per-town hemisphere toggle for ACNH; month grids respect hemisphere</li>
+            <li>Inline item details — fish, bugs, and fossils expand in place with month grid, sell value, habitat, and notes</li>
+            <li>URL-based routing — every town and tab has a shareable URL; browser back/forward works</li>
           </ul>
         </div>
       </div>
@@ -591,14 +579,12 @@
             <span class="velocity-chip">2 days after v0.6.1</span>
           </div>
           <ul class="tl-bullets">
-            <li>Multi-game store schema — 3-level donation tracking (townId → gameId → itemId)</li>
+            <li>Multi-game foundation — donations now scoped per town and per game so a single user can track several games at once</li>
             <li>Wild World &amp; City Folk data added (40–56 fish, bugs; 52 fossils each)</li>
-            <li>Game selector in Create Town modal with visual card UI</li>
-            <li>ACCanvas decomposed from ~2175 lines → 298-line orchestration shell (14 new modules)</li>
-            <li>Zustand v2 migration with lossless backfill for existing towns</li>
-            <li>Edit/rename town with inline modal</li>
-            <li>ErrorBoundary, type guards, hydration guard, pre-commit hooks</li>
-            <li>Seasonal analytics bug fixed — was counting all donations as Spring</li>
+            <li>Game selector when creating a town, with a visual card UI</li>
+            <li>Edit/rename town</li>
+            <li>Major internal refactor — split the monolithic canvas component into composable modules</li>
+            <li>Seasonal analytics bug fixed — was previously counting all donations as Spring</li>
           </ul>
         </div>
       </div>
@@ -617,8 +603,7 @@
             <span class="velocity-chip fast">1 day after v0.6.0</span>
           </div>
           <ul class="tl-bullets">
-            <li>Restored files deleted during bad v0.6.0 merge into main</li>
-            <li>Fixed corrupted main branch state</li>
+            <li>Restored main branch after a bad v0.6.0 merge</li>
             <li>Home tab routing stability improvements</li>
           </ul>
         </div>
@@ -638,7 +623,7 @@
             <span class="velocity-chip fast">1 day after v0.5</span>
           </div>
           <ul class="tl-bullets">
-            <li>New Home tab — seasonal availability overview</li>
+            <li>New Home tab — seasonal availability overview at a glance</li>
             <li>"Available this month" — fish &amp; bugs catchable right now</li>
             <li>"Leaving soon" — creatures departing at month's end</li>
             <li>Progress overview cards for all four museum categories</li>
@@ -662,11 +647,9 @@
           </div>
           <ul class="tl-bullets">
             <li>CSV export — download donations as a spreadsheet</li>
-            <li>Error banner &amp; full-page error state UI</li>
-            <li>Vitest unit tests — store &amp; utils</li>
-            <li>Vercel Analytics wired up</li>
+            <li>Error banner and full-page error state UI</li>
             <li>Monthly availability chart for fish &amp; bugs</li>
-            <li>Enriched JSON with <code>months[]</code> availability arrays</li>
+            <li>Vercel Analytics wired up</li>
           </ul>
         </div>
       </div>
@@ -706,10 +689,8 @@
           </div>
           <ul class="tl-bullets">
             <li>Create and switch between multiple towns</li>
-            <li>TownSwitcher in header + Create Town modal</li>
-            <li>Donations keyed by townId in Zustand store</li>
-            <li>Activity feed per town; <code>vercel.json</code> added</li>
-            <li>Expo/React Native parallel app removed — Vite only</li>
+            <li>Town switcher in header + Create Town modal</li>
+            <li>Per-town activity feed</li>
           </ul>
         </div>
       </div>
@@ -731,7 +712,6 @@
             <li>Item detail modal</li>
             <li>Per-category search &amp; filter</li>
             <li>Donation timestamps</li>
-            <li>Full four-category museum tracking UI in ACCanvas</li>
           </ul>
         </div>
       </div>
@@ -746,14 +726,12 @@
         <div class="tl-card">
           <div class="tl-card-head">
             <span class="version-badge">v0.1.0</span>
-            <span class="version-title">Initial release 🎉</span>
+            <span class="version-title">Initial release</span>
           </div>
           <ul class="tl-bullets">
             <li>Basic museum donation tracking (Fish, Bugs, Fossils, Art)</li>
-            <li>Zustand + localStorage persistence</li>
             <li>Cozy parchment/GameCube aesthetic</li>
             <li>40 fish · 40 bugs · 25 fossils · 13 art pieces</li>
-            <li>GitHub CI + Vercel deployment</li>
           </ul>
         </div>
       </div>
@@ -763,7 +741,7 @@
 
   <!-- Currently building -->
   <section>
-    <h2>🔨 Currently building — v1.0</h2>
+    <h2>Currently building — v1.0</h2>
     <div class="building-card">
       <div class="building-head">
         <span class="building-badge">UP NEXT</span>
@@ -771,7 +749,7 @@
         <span class="building-note">polish, PWA, accessibility</span>
       </div>
 
-      <p class="checklist-section">✅ Recently shipped (v0.9.1-beta)</p>
+      <p class="checklist-section">Recently shipped (v0.9.1-beta)</p>
       <div class="checklist">
         <div class="check-item done">
           <div class="box">✓</div>
@@ -779,7 +757,7 @@
         </div>
         <div class="check-item done">
           <div class="box">✓</div>
-          <span class="text">Data-driven icon manifest — drop in a manifest.json per game and the UI picks it up automatically</span>
+          <span class="text">Future games light up automatically when their icon assets are added</span>
         </div>
         <div class="check-item done">
           <div class="box">✓</div>
@@ -787,11 +765,11 @@
         </div>
         <div class="check-item done">
           <div class="box">✓</div>
-          <span class="text">v0.9.0-beta Meadow UI revamp — Sidebar, TownManager, sectioned CategoryTab, GlobalSearchDropdown, mobile responsive pass</span>
+          <span class="text">v0.9.0-beta Meadow UI revamp — Sidebar, TownManager, sectioned CategoryTab, mobile responsive</span>
         </div>
       </div>
 
-      <p class="checklist-section">⬜ Planned</p>
+      <p class="checklist-section">Planned</p>
       <div class="checklist">
         <div class="check-item todo">
           <div class="box">·</div>
@@ -803,7 +781,7 @@
         </div>
         <div class="check-item todo">
           <div class="box">·</div>
-          <span class="text">Full accessibility audit (#76, #82) — keyboard nav, ARIA, focus rings</span>
+          <span class="text">Full accessibility audit — keyboard nav, ARIA, focus rings</span>
         </div>
         <div class="check-item todo">
           <div class="box">·</div>
@@ -819,7 +797,7 @@
 
   <!-- Roadmap lanes -->
   <section>
-    <h2>🗺️ Roadmap</h2>
+    <h2>Roadmap</h2>
     <div class="lanes">
 
       <div class="lane v09">
@@ -839,7 +817,7 @@
       <div class="lane v10">
         <div class="lane-head">
           <span class="lane-badge">v1.0</span>
-          <span class="lane-title">Launch ready 🌟</span>
+          <span class="lane-title">Launch ready</span>
         </div>
         <ul class="lane-items">
           <li>Branding &amp; identity polish</li>
@@ -853,7 +831,7 @@
       <div class="lane vpost">
         <div class="lane-head">
           <span class="lane-badge">Post-1.0</span>
-          <span class="lane-title">What's next ✨</span>
+          <span class="lane-title">What's next</span>
         </div>
         <ul class="lane-items">
           <li>Cloud sync / account support</li>
@@ -869,7 +847,7 @@
 
   <!-- Velocity detail -->
   <section>
-    <h2>⚡ Velocity detail</h2>
+    <h2>Velocity detail</h2>
     <div style="background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
       <table style="width:100%; border-collapse:collapse; font-size:.85rem;">
         <thead>
@@ -909,7 +887,7 @@
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.5.0</td>
             <td style="padding:.6rem 1rem;">Apr 13</td>
             <td style="padding:.6rem 1rem;">&lt;1 day</td>
-            <td style="padding:.6rem 1rem;">CSV export + tests + Vercel Analytics</td>
+            <td style="padding:.6rem 1rem;">CSV export + error UI + analytics</td>
           </tr>
           <tr style="border-top:1px solid var(--border); background:#fafafa;">
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.6.0</td>
@@ -918,7 +896,7 @@
             <td style="padding:.6rem 1rem;">Home screen tab</td>
           </tr>
           <tr style="border-top:1px solid var(--border);">
-            <td style="padding:.6rem 1rem; color:var(--gold); font-weight:bold;">v0.6.1 🔧</td>
+            <td style="padding:.6rem 1rem; color:var(--gold); font-weight:bold;">v0.6.1</td>
             <td style="padding:.6rem 1rem;">Apr 15</td>
             <td style="padding:.6rem 1rem;">1 day</td>
             <td style="padding:.6rem 1rem;">Hotfix — main branch restored</td>
@@ -933,13 +911,13 @@
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.8.0-alpha</td>
             <td style="padding:.6rem 1rem;">Apr 29</td>
             <td style="padding:.6rem 1rem;">12 days</td>
-            <td style="padding:.6rem 1rem;">Full game coverage — ACNL + ACNH, 1,000+ items, inline details, React Router</td>
+            <td style="padding:.6rem 1rem;">Full game coverage — ACNL + ACNH, 1,000+ items, inline details, URL routing</td>
           </tr>
           <tr style="border-top:1px solid var(--border); background:#fafafa;">
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.8.1-alpha</td>
             <td style="padding:.6rem 1rem;">Apr 30</td>
             <td style="padding:.6rem 1rem;">1 day</td>
-            <td style="padding:.6rem 1rem;">Edit Town modal fix + issue tracking hygiene</td>
+            <td style="padding:.6rem 1rem;">Edit Town modal fix</td>
           </tr>
           <tr style="border-top:1px solid var(--border);">
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.8.2-alpha</td>
@@ -949,14 +927,14 @@
           </tr>
           <tr style="border-top:1px solid var(--border); background:#fafafa;">
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.0-beta</td>
-            <td style="padding:.6rem 1rem;">May 4</td>
-            <td style="padding:.6rem 1rem;">3 days</td>
+            <td style="padding:.6rem 1rem;">May 3</td>
+            <td style="padding:.6rem 1rem;">2 days</td>
             <td style="padding:.6rem 1rem;">Curator UI revamp — Meadow design, Sidebar, TownManager, sectioned categories</td>
           </tr>
           <tr style="border-top:1px solid var(--border);">
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.1-beta</td>
             <td style="padding:.6rem 1rem;">May 4</td>
-            <td style="padding:.6rem 1rem;">same day</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
             <td style="padding:.6rem 1rem;">ACGCN item icons + /credits route + MIT LICENSE/NOTICE</td>
           </tr>
         </tbody>
@@ -965,7 +943,7 @@
   </section>
 
   <footer>
-    <p>🍃 <a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.1-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+    <p><a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.1-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
   </footer>
 
 </div>
