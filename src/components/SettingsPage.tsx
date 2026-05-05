@@ -21,7 +21,7 @@ export function SettingsPage() {
   }, [donated]);
 
   const townCount = towns.length;
-  const version = import.meta.env.VITE_APP_VERSION ?? '0.9.1-beta';
+  const version = import.meta.env.VITE_APP_VERSION ?? '0.9.2-beta';
 
   function handleClose() {
     if (activeTownId) {

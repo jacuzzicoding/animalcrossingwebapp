@@ -67,8 +67,9 @@ export function CreditsPage() {
           </p>
           <p>
             Animal Crossing (GameCube) icons were added in v0.9.1-beta.
-            Additional games will be added in subsequent v0.9.x releases.
-            Hand-drawn replacements are planned for a later polish pass.
+            Cross-game icon routing landed in v0.9.2-beta along with the first
+            two hand-drawn replacements (sea bass, koi). Additional games and
+            hand-drawn icons will land in subsequent v0.9.x releases.
           </p>
         </div>
       </section>

@@ -415,22 +415,22 @@
 
   <header>
     <h1>Animal Crossing Web App</h1>
-    <p>Version history &amp; roadmap · Updated May 4, 2026</p>
+    <p>Version history &amp; roadmap · Updated May 5, 2026</p>
   </header>
 
   <!-- Velocity banner -->
   <div class="velocity-banner">
     <div>
-      <div class="headline">v0.1 to v0.9 in 24 days</div>
-      <div class="sub">Twelve releases. Blathers can't keep up.</div>
+      <div class="headline">v0.1 to v0.9 in 25 days</div>
+      <div class="sub">Thirteen releases. Blathers can't keep up.</div>
     </div>
     <div class="vel-stats">
       <div class="vel-stat">
-        <div class="num">12</div>
+        <div class="num">13</div>
         <div class="label">releases shipped</div>
       </div>
       <div class="vel-stat">
-        <div class="num">24</div>
+        <div class="num">25</div>
         <div class="label">days elapsed</div>
       </div>
       <div class="vel-stat">
@@ -448,6 +448,29 @@
   <section>
     <h2>Shipped versions</h2>
     <div class="timeline">
+
+      <!-- v0.9.2-beta -->
+      <div class="tl-entry">
+        <div class="tl-date">May 5<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.9.2-beta</span>
+            <span class="version-title">Cross-game icons + first hand-drawn pieces</span>
+            <span class="velocity-chip">1 day after v0.9.1</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Cross-game icon routing — items shared across games (sea bass, koi, common butterfly) now share a single icon file rather than duplicating per game</li>
+            <li>First two hand-drawn icons land — sea bass and koi — a preview of the long-term direction away from wiki-sourced art</li>
+            <li>Bigger icons in the expand panel, up to 192px on wide screens, so the artwork has room to read</li>
+            <li>New <code>npm run icons:export</code> pipeline turns 2048 source paintings into optimized 512 deploy assets</li>
+            <li>Polish: Mona Lisa expand-panel clipping fixed; iOS overscroll background no longer flashes the wrong colour</li>
+          </ul>
+        </div>
+      </div>
 
       <!-- v0.9.1-beta -->
       <div class="tl-entry">
@@ -937,13 +960,19 @@
             <td style="padding:.6rem 1rem;">1 day</td>
             <td style="padding:.6rem 1rem;">ACGCN item icons + /credits route + MIT LICENSE/NOTICE</td>
           </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.2-beta</td>
+            <td style="padding:.6rem 1rem;">May 5</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Cross-game icon routing + first hand-drawn icons + bigger sizes</td>
+          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <footer>
-    <p><a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.1-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+    <p><a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.2-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
   </footer>
 
 </div>

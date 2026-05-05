@@ -1,4 +1,4 @@
-# Architecture Reference (v0.9.1-beta)
+# Architecture Reference (v0.9.2-beta)
 
 This document mirrors `.claude/rules/architecture.md` — the canonical copy that Claude Code sessions auto-load. They are kept in lockstep; if they diverge, the `.claude/rules/` copy wins. Update both together.
 
