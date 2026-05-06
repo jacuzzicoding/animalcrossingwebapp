@@ -22,15 +22,18 @@ export function Sidebar({
   data,
   catCounts,
   onExport,
+  onDownloadReport,
 }: {
   townId: string;
   data: AllData;
   catCounts: Stats;
   onExport: () => void;
+  onDownloadReport: () => void;
 }) {
   const navigate = useNavigate();
   const towns = useAppStore(s => s.towns);
   const openTownManager = useUIStore(s => s.openTownManager);
+  const openImportSave = useUIStore(s => s.openImportSave);
   const activeTown = towns.find(t => t.id === townId);
 
   const gameId = activeTown?.gameId ?? 'ACGCN';
@@ -145,7 +148,21 @@ export function Sidebar({
 
       <div className="ac-sidebar-foot">
         <button className="ac-foot-link" onClick={onExport}>
-          Export CSV
+          Export save
+        </button>
+        <button
+          className="ac-foot-link"
+          onClick={openImportSave}
+          title="Import a JSON save file"
+        >
+          Import save
+        </button>
+        <button
+          className="ac-foot-link"
+          onClick={onDownloadReport}
+          title="Human-readable CSV report"
+        >
+          Download report
         </button>
         <button
           className="ac-foot-link"

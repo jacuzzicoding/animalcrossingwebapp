@@ -10,6 +10,7 @@ export function TownManager() {
   const open = useUIStore(s => s.townManagerOpen);
   const forceCreate = useUIStore(s => s.townManagerForceCreate);
   const close = useUIStore(s => s.closeTownManager);
+  const openImportSave = useUIStore(s => s.openImportSave);
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
@@ -22,6 +23,11 @@ export function TownManager() {
   const navigate = useNavigate();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+
+  const handleOpenImportSave = () => {
+    close();
+    openImportSave();
+  };
 
   // Reset transient state when drawer toggles
   useEffect(() => {
@@ -125,8 +131,16 @@ export function TownManager() {
             <div className="ac-tm-empty-glyph">○</div>
             <div className="ac-tm-empty-title">No towns yet</div>
             <div className="ac-tm-empty-sub">
-              Create your first town to start tracking donations.
+              Create your first town to start tracking donations, or import a
+              save file from another device.
             </div>
+            <button
+              type="button"
+              className="ac-tm-empty-import"
+              onClick={handleOpenImportSave}
+            >
+              Import save instead
+            </button>
           </div>
         )}
 
@@ -150,13 +164,24 @@ export function TownManager() {
 
         <footer className="ac-tm-foot">
           {creating ? (
-            <NewTownForm
-              onCancel={() => {
-                if (!forceCreate) setCreating(false);
-              }}
-              onCreate={handleCreate}
-              cancellable={!forceCreate}
-            />
+            <>
+              <NewTownForm
+                onCancel={() => {
+                  if (!forceCreate) setCreating(false);
+                }}
+                onCreate={handleCreate}
+                cancellable={!forceCreate}
+              />
+              {towns.length === 0 && (
+                <button
+                  type="button"
+                  className="ac-tm-import-link"
+                  onClick={handleOpenImportSave}
+                >
+                  or import an existing save
+                </button>
+              )}
+            </>
           ) : (
             <button className="ac-tm-cta" onClick={() => setCreating(true)}>
               <span className="ac-tm-cta-plus">+</span>

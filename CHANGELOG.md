@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here.
 
+## [0.9.3-beta] — 2026-05-06
+
+### Added
+- Hand-drawn `bugs/ant.png` icon (ACGCN) — 2048 source committed at `icon-sources/bugs/ant.png`, exported through the v0.9.2 pipeline. Replaces the wiki-scraped placeholder. Third hand-drawn icon after sea-bass and koi
+- JSON save-file export (v0.9.3 PR 1/2) — new `Export save` button in the sidebar foot writes `ac-save-<town>-<date>.json`, a versioned, lossless format carrying `schemaVersion`, `app`, `appVersion`, `exportedAt`, full `town` metadata (name, gameId, hemisphere for ACNH, createdAt), and the donation list keyed by store-native `itemId` + `category` + ISO `donatedAt`. Schema lives in `src/lib/saveFile.ts`; format is documented in `docs/v0.9.3-csv-import-plan.md` §4. Round-trip importer follows in PR 2
+- JSON save-file import (v0.9.3 PR 2/2) — round-trip companion to the export. New `Import save` button in the sidebar footer and an `Import save instead` affordance in the empty-state TownManager open the import modal. Parser + validator in `src/lib/saveFileImport.ts` rejects non-`schemaVersion=1` files, wrong-app files, missing/malformed required fields, unknown `gameId`, and ACNH saves missing a hemisphere; tolerates malformed donation rows by dropping them with a count. Reconciliation in `src/lib/saveFileReconcile.ts` matches on `(name, gameId)` and produces one of three plans — Replace (wipe + write), Merge (union, earlier `donatedAt` wins on conflict), or Import-as-new (create a fresh town). Items missing from the loaded data files are dropped silently with a count surfaced in the modal. Replace into a town with existing donations gates behind a heavy two-step "YOU CAN NOT GO BACK" confirmation; Replace into an empty town skips it. The store gets a single atomic `applyImportedSave(plan)` action
+
+### Changed
+- The sidebar's single "Export CSV" control is now two distinct buttons — `Export save` (the new JSON save file) and `Download report` (the existing human-readable CSV, unchanged). The CSV remains for users pasting into spreadsheets; the JSON file is the new round-trip artifact
+- The empty-state TownManager (no towns yet) gained an "Import save instead" affordance, so a fresh-device user can restore from a save file without first creating a placeholder town
+
+### Fixed
+- Canvas empty-state message ("Create a town to start tracking your museum donations.") no longer renders behind the TownManager backdrop blur on first load. When `townManagerOpen` is true, the drawer is the active onboarding surface, so the canvas message is suppressed (Closes #107)
+- Import-save affordance now visible during first-load onboarding. Previously, `App.tsx` calling `openTownManager(forceCreate=true)` immediately set `creating=true`, collapsing `showEmptyState` to `false` before first paint and hiding the import button entirely. An "or import an existing save" secondary link is now rendered below the `NewTownForm` whenever `creating && towns.length === 0`
+
 ## [v0.9.2-beta] — 2026-05-05
 
 ### Added
