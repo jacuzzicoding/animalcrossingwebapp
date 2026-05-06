@@ -15,7 +15,6 @@ import ErrorState from './ErrorState';
 
 import { Sidebar } from './Sidebar';
 import { CategoryTab } from './CategoryTab';
-import { EmptyState } from './shared/EmptyState';
 
 import { GlobalSearchDropdown } from './search/GlobalSearchDropdown';
 
@@ -67,7 +66,6 @@ export default function ACCanvas() {
     return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
   });
   const toggle = useAppStore(s => s.toggle);
-
   // Sync URL townId → Zustand activeTownId
   useEffect(() => {
     if (urlTownId && urlTownId !== activeTownId) {
@@ -232,9 +230,7 @@ export default function ACCanvas() {
             />
           )}
 
-          {noTowns ? (
-            <EmptyState message="Create a town to start tracking your museum donations." />
-          ) : (
+          {noTowns ? null : (
             <>
               {activeTab === 'home' ? (
                 <>
