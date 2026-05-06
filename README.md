@@ -66,6 +66,6 @@ Museum data lives in `public/data/<game>/`:
 
 ## Version
 
-Current release: **v0.9.2-beta** (2026-05-05) — cross-game icon routing, first two hand-drawn icons (sea bass, koi), bigger expand-panel icons, `npm run icons:export` pipeline. Previous betas: **v0.9.1-beta** (ACGCN item icons), **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the v0.9 plan.
+Current release: **v0.9.3-beta** (2026-05-06) — JSON save-file export + import (round-trip), onboarding empty-state fixes, third hand-drawn icon (ant). Previous betas: **v0.9.2-beta** (cross-game icon routing + first hand-drawn icons), **v0.9.1-beta** (ACGCN item icons), **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/v0.9-plan.md](docs/v0.9-plan.md) for the v0.9 plan.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).

@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.2-beta (2026-05-05) — cross-game icon routing (flat hierarchy + RENAME_OVERRIDES), first two hand-drawn icons (sea bass, koi), bigger expand-panel icons, `npm run icons:export` pipeline, ActivityFeed migrated to `<ItemIcon>`. Previous: v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/v0.9-plan.md`, `docs/v0.9.1-icons-plan.md`, and `docs/v0.9.2-icon-routing-plan.md` for plans, `CHANGELOG.md` for the full entries.**
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.3-beta (2026-05-06) — JSON save-file export + import (round-trip), onboarding empty-state fixes (closes #107), third hand-drawn icon (ant). Previous: v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/v0.9.3-csv-import-plan.md` for the save-file scoping doc and `CHANGELOG.md` for the full entries.**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -297,9 +297,17 @@ Pending:
 - PR (b) — `<ItemIcon>` component + UI wiring in CollectibleRow / ItemExpandPanel / GlobalSearchDropdown / HomeTab; `scripts/generate-icon-manifest.ts` standalone re-emitter; `GAMES_WITH_ICONS` gate scoped to ACGCN until other games' icon scrapes ship (this PR)
 - PR (c) — `NOTICE` at the repo root + in-app `/credits` route + release prep (pending)
 
-### v0.9.2-beta — Hand-drawn icons (in progress)
-- PR #94 (shipped) — flat icon hierarchy + cross-game routing simplification + first two hand-drawn icons (fish/sea-bass, fish/koi) optimized 2048→512 with sharp + pngquant
-- PR (b) — bumped icon render sizes (rows 48, expand panel 192, search/home 32) + `scripts/export-icons.ts` reproducible pipeline + 2048 originals committed to `icon-sources/` (this PR)
+### v0.9.2-beta — Hand-drawn icons — **shipped 2026-05-05**
+- PR #94 — flat icon hierarchy + cross-game routing simplification + first two hand-drawn icons (fish/sea-bass, fish/koi) optimized 2048→512 with sharp + pngquant
+- PR #99 — bumped icon render sizes (rows 48, expand panel 192, search/home 32) + `scripts/export-icons.ts` reproducible pipeline + 2048 originals committed to `icon-sources/`
+
+### v0.9.3-beta — Save-file round trip + onboarding fixes — **shipped 2026-05-06**
+- PR #104 — third hand-drawn icon: ACGCN ant
+- PR #105 — v0.9.3 CSV/JSON import scoping plan (`docs/v0.9.3-csv-import-plan.md`); 6 questions locked
+- PR #106 — JSON save-file export. Sidebar foot has both `Export save` (JSON) and `Download report` (CSV); filename `ac-save-<safeTown>-<YYYY-MM-DD>.json`
+- PR #108 — JSON save-file import. Parser + reconciler as pure modules. Modal mounted at App layout. Replace / Merge / Import-as-new modes with `(name, gameId)` matching. Two-step destructive Replace confirmation gated on existing-town-has-data. No undo by design
+- PR #109 — Onboarding: secondary "or import an existing save" link below NewTownForm in TownManager during forced-create flow
+- PR #110 — Hide canvas empty-state while TownManager is open (closes Issue #107)
 
 ### v1.0 — Launch ready
 - Branding, SEO, accessibility, performance audit
