@@ -15,7 +15,6 @@ import ErrorState from './ErrorState';
 
 import { Sidebar } from './Sidebar';
 import { CategoryTab } from './CategoryTab';
-import { EmptyState } from './shared/EmptyState';
 
 import { GlobalSearchDropdown } from './search/GlobalSearchDropdown';
 
@@ -24,7 +23,6 @@ import { ActivityFeed } from './views/ActivityFeed';
 
 import { useMuseumData } from '../hooks/useMuseumData';
 import { useCategoryStats } from '../hooks/useCategoryStats';
-import { useUIStore } from '../lib/uiStore';
 
 const VALID_TABS: ViewId[] = [
   'home',
@@ -68,8 +66,6 @@ export default function ACCanvas() {
     return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
   });
   const toggle = useAppStore(s => s.toggle);
-  const townManagerOpen = useUIStore(s => s.townManagerOpen);
-
   // Sync URL townId → Zustand activeTownId
   useEffect(() => {
     if (urlTownId && urlTownId !== activeTownId) {
@@ -234,9 +230,7 @@ export default function ACCanvas() {
             />
           )}
 
-          {noTowns && !townManagerOpen ? (
-            <EmptyState message="Create a town to start tracking your museum donations." />
-          ) : (
+          {noTowns ? null : (
             <>
               {activeTab === 'home' ? (
                 <>
