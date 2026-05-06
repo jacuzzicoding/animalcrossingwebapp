@@ -24,6 +24,11 @@ export function TownManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
+  const handleOpenImportSave = () => {
+    close();
+    openImportSave();
+  };
+
   // Reset transient state when drawer toggles
   useEffect(() => {
     if (!open) {
@@ -132,10 +137,7 @@ export function TownManager() {
             <button
               type="button"
               className="ac-tm-empty-import"
-              onClick={() => {
-                close();
-                openImportSave();
-              }}
+              onClick={handleOpenImportSave}
             >
               Import save instead
             </button>
@@ -174,10 +176,7 @@ export function TownManager() {
                 <button
                   type="button"
                   className="ac-tm-import-link"
-                  onClick={() => {
-                    close();
-                    openImportSave();
-                  }}
+                  onClick={handleOpenImportSave}
                 >
                   or import an existing save
                 </button>

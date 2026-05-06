@@ -76,7 +76,7 @@ describe('TownManager — onboarding import link', () => {
     };
     (useUIStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
       (sel: (s: ReturnType<typeof makeUIStore>) => unknown) =>
-        sel(makeUIStore())
+        sel(makeUIStore({ townManagerForceCreate: false }))
     );
     (useAppStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
       (sel: (s: ReturnType<typeof makeAppStore>) => unknown) =>
