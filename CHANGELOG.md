@@ -6,6 +6,10 @@ All notable changes to this project are documented here.
 
 ### Added
 - Hand-drawn `bugs/ant.png` icon (ACGCN) — 2048 source committed at `icon-sources/bugs/ant.png`, exported through the v0.9.2 pipeline. Replaces the wiki-scraped placeholder. Third hand-drawn icon after sea-bass and koi
+- JSON save-file export (v0.9.3 PR 1/2) — new `Export save` button in the sidebar foot writes `ac-save-<town>-<date>.json`, a versioned, lossless format carrying `schemaVersion`, `app`, `appVersion`, `exportedAt`, full `town` metadata (name, gameId, hemisphere for ACNH, createdAt), and the donation list keyed by store-native `itemId` + `category` + ISO `donatedAt`. Schema lives in `src/lib/saveFile.ts`; format is documented in `docs/v0.9.3-csv-import-plan.md` §4. Round-trip importer follows in PR 2
+
+### Changed
+- The sidebar's single "Export CSV" control is now two distinct buttons — `Export save` (the new JSON save file) and `Download report` (the existing human-readable CSV, unchanged). The CSV remains for users pasting into spreadsheets; the JSON file is the new round-trip artifact
 
 ## [v0.9.2-beta] — 2026-05-05
 

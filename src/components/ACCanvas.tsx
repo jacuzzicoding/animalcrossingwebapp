@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
 import { CATEGORY_META } from '../lib/categoryMeta';
 import { downloadCSV } from '../lib/csvExport';
+import { downloadSaveFile } from '../lib/saveFile';
 import { type AnyItem } from '../lib/utils';
 import type { CategoryId } from '../lib/types';
 import type { AppErrorKind } from '../lib/types';
@@ -154,6 +155,22 @@ export default function ACCanvas() {
 
   function handleExport() {
     if (!activeTown) return;
+    downloadSaveFile({
+      data,
+      donatedMap: activeTownDonated,
+      donatedAtMap: activeTownDonatedAt,
+      town: {
+        name: activeTown.name,
+        gameId: activeTown.gameId,
+        hemisphere: activeTown.hemisphere,
+        createdAt: activeTown.createdAt,
+      },
+      appVersion: import.meta.env.VITE_APP_VERSION ?? 'unknown',
+    });
+  }
+
+  function handleDownloadReport() {
+    if (!activeTown) return;
     downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name);
   }
 
@@ -195,6 +212,7 @@ export default function ACCanvas() {
           data={data}
           catCounts={catCounts}
           onExport={handleExport}
+          onDownloadReport={handleDownloadReport}
         />
       )}
       <main className="ac-main">
