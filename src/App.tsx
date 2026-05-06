@@ -5,6 +5,7 @@ import ACCanvas from './components/ACCanvas';
 import SettingsRoute from './components/SettingsRoute';
 import CreditsRoute from './components/CreditsRoute';
 import { TownManager } from './components/TownManager';
+import { ImportSaveModal } from './components/ImportSaveModal';
 import { useHydration } from './hooks/useHydration';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAppStore } from './lib/store';
@@ -27,13 +28,22 @@ function App() {
   const towns = useAppStore(s => s.towns);
   const openTownManager = useUIStore(s => s.openTownManager);
   const townManagerOpen = useUIStore(s => s.townManagerOpen);
+  const importSaveOpen = useUIStore(s => s.importSaveOpen);
 
-  // Force the TownManager open in create mode whenever there are no towns.
+  // Force the TownManager open in create mode whenever there are no towns,
+  // unless the import-save modal is currently open (the user might be importing
+  // a fresh save instead of creating a town from scratch).
   useEffect(() => {
-    if (hydrated && towns.length === 0 && !townManagerOpen) {
+    if (hydrated && towns.length === 0 && !townManagerOpen && !importSaveOpen) {
       openTownManager(true);
     }
-  }, [hydrated, towns.length, townManagerOpen, openTownManager]);
+  }, [
+    hydrated,
+    towns.length,
+    townManagerOpen,
+    importSaveOpen,
+    openTownManager,
+  ]);
 
   if (!hydrated) {
     return (
@@ -70,6 +80,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <TownManager />
+      <ImportSaveModal />
       <Analytics />
       {typeof window !== 'undefined' && (
         <div
