@@ -22,11 +22,13 @@ export function Sidebar({
   data,
   catCounts,
   onExport,
+  onDownloadReport,
 }: {
   townId: string;
   data: AllData;
   catCounts: Stats;
   onExport: () => void;
+  onDownloadReport: () => void;
 }) {
   const navigate = useNavigate();
   const towns = useAppStore(s => s.towns);
@@ -145,7 +147,14 @@ export function Sidebar({
 
       <div className="ac-sidebar-foot">
         <button className="ac-foot-link" onClick={onExport}>
-          Export CSV
+          Export save
+        </button>
+        <button
+          className="ac-foot-link"
+          onClick={onDownloadReport}
+          title="Human-readable CSV report"
+        >
+          Download report
         </button>
         <button
           className="ac-foot-link"

@@ -4,6 +4,7 @@ import { CreditsPage } from './CreditsPage';
 import { useMuseumData } from '../hooks/useMuseumData';
 import { useCategoryStats } from '../hooks/useCategoryStats';
 import { downloadCSV } from '../lib/csvExport';
+import { downloadSaveFile } from '../lib/saveFile';
 
 const EMPTY_DONATED: Record<string, boolean> = {};
 const EMPTY_DONATED_AT: Record<string, string> = {};
@@ -31,6 +32,22 @@ export default function CreditsRoute() {
 
   function handleExport() {
     if (!activeTown) return;
+    downloadSaveFile({
+      data,
+      donatedMap: activeTownDonated,
+      donatedAtMap: activeTownDonatedAt,
+      town: {
+        name: activeTown.name,
+        gameId: activeTown.gameId,
+        hemisphere: activeTown.hemisphere,
+        createdAt: activeTown.createdAt,
+      },
+      appVersion: import.meta.env.VITE_APP_VERSION ?? 'unknown',
+    });
+  }
+
+  function handleDownloadReport() {
+    if (!activeTown) return;
     downloadCSV(data, activeTownDonated, activeTownDonatedAt, activeTown.name);
   }
 
@@ -42,6 +59,7 @@ export default function CreditsRoute() {
           data={data}
           catCounts={catCounts}
           onExport={handleExport}
+          onDownloadReport={handleDownloadReport}
         />
       )}
       <main className="ac-main">
