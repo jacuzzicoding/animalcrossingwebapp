@@ -13,6 +13,9 @@ All notable changes to this project are documented here.
 - The sidebar's single "Export CSV" control is now two distinct buttons — `Export save` (the new JSON save file) and `Download report` (the existing human-readable CSV, unchanged). The CSV remains for users pasting into spreadsheets; the JSON file is the new round-trip artifact
 - The empty-state TownManager (no towns yet) gained an "Import save instead" affordance, so a fresh-device user can restore from a save file without first creating a placeholder town
 
+### Fixed
+- Import-save affordance now visible during first-load onboarding. Previously, `App.tsx` calling `openTownManager(forceCreate=true)` immediately set `creating=true`, collapsing `showEmptyState` to `false` before first paint and hiding the import button entirely. An "or import an existing save" secondary link is now rendered below the `NewTownForm` whenever `creating && towns.length === 0`
+
 ## [v0.9.2-beta] — 2026-05-05
 
 ### Added

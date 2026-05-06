@@ -162,13 +162,27 @@ export function TownManager() {
 
         <footer className="ac-tm-foot">
           {creating ? (
-            <NewTownForm
-              onCancel={() => {
-                if (!forceCreate) setCreating(false);
-              }}
-              onCreate={handleCreate}
-              cancellable={!forceCreate}
-            />
+            <>
+              <NewTownForm
+                onCancel={() => {
+                  if (!forceCreate) setCreating(false);
+                }}
+                onCreate={handleCreate}
+                cancellable={!forceCreate}
+              />
+              {towns.length === 0 && (
+                <button
+                  type="button"
+                  className="ac-tm-import-link"
+                  onClick={() => {
+                    close();
+                    openImportSave();
+                  }}
+                >
+                  or import an existing save
+                </button>
+              )}
+            </>
           ) : (
             <button className="ac-tm-cta" onClick={() => setCreating(true)}>
               <span className="ac-tm-cta-plus">+</span>

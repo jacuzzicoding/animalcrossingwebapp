@@ -1733,6 +1733,19 @@ body {
   cursor: pointer;
 }
 .ac-tm-empty-import:hover { background: var(--surface-alt); color: var(--ink); }
+.ac-tm-import-link {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.ac-tm-import-link:hover { color: var(--ink-soft); text-decoration: underline; }
 
 @media (max-width: 720px) {
   .ac-im-scrim { align-items: flex-end; padding: 0; }
