@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [0.9.3-beta] — 2026-05-06
 
 ### Added
 - Hand-drawn `bugs/ant.png` icon (ACGCN) — 2048 source committed at `icon-sources/bugs/ant.png`, exported through the v0.9.2 pipeline. Replaces the wiki-scraped placeholder. Third hand-drawn icon after sea-bass and koi
