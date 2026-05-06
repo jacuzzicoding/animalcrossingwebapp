@@ -10,6 +10,7 @@ export function TownManager() {
   const open = useUIStore(s => s.townManagerOpen);
   const forceCreate = useUIStore(s => s.townManagerForceCreate);
   const close = useUIStore(s => s.closeTownManager);
+  const openImportSave = useUIStore(s => s.openImportSave);
 
   const towns = useAppStore(s => s.towns);
   const activeTownId = useAppStore(s => s.activeTownId);
@@ -125,8 +126,19 @@ export function TownManager() {
             <div className="ac-tm-empty-glyph">○</div>
             <div className="ac-tm-empty-title">No towns yet</div>
             <div className="ac-tm-empty-sub">
-              Create your first town to start tracking donations.
+              Create your first town to start tracking donations, or import a
+              save file from another device.
             </div>
+            <button
+              type="button"
+              className="ac-tm-empty-import"
+              onClick={() => {
+                close();
+                openImportSave();
+              }}
+            >
+              Import save instead
+            </button>
           </div>
         )}
 

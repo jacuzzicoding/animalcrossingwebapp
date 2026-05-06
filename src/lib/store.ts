@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { GameId } from './types';
 import { migrateStore } from './storeMigrations';
+import type { ImportPlan } from './saveFileReconcile';
 
 export type Hemisphere = 'NH' | 'SH';
 
@@ -37,6 +38,8 @@ interface AppState {
   getActiveTown: () => Town | undefined;
   resetActiveTownDonations: () => void;
   resetAll: () => void;
+  /** Apply a parsed save-file ImportPlan atomically. Returns the affected townId. */
+  applyImportedSave: (plan: ImportPlan) => string;
 }
 
 function generateId(): string {
@@ -165,6 +168,104 @@ export const useAppStore = create<AppState>()(
           delete donatedAt[activeTownId];
           return { donated, donatedAt };
         }),
+
+      applyImportedSave: plan => {
+        let resultTownId = '';
+        set(state => {
+          if (plan.kind === 'create') {
+            const id = generateId();
+            const newTown: Town = {
+              id,
+              name: plan.newTown.name,
+              gameId: plan.newTown.gameId,
+              hemisphere: plan.newTown.hemisphere,
+              createdAt: plan.newTown.createdAt,
+            };
+            const itemMap: Record<string, boolean> = {};
+            const atMap: Record<string, string> = {};
+            for (const r of plan.donations) {
+              itemMap[r.itemId] = true;
+              if (r.donatedAt) atMap[r.itemId] = r.donatedAt;
+            }
+            resultTownId = id;
+            return {
+              towns: [...state.towns, newTown],
+              activeTownId: id,
+              donated: {
+                ...state.donated,
+                [id]: { [newTown.gameId]: itemMap },
+              },
+              donatedAt: {
+                ...state.donatedAt,
+                [id]: { [newTown.gameId]: atMap },
+              },
+            };
+          }
+
+          if (plan.kind === 'replace') {
+            const towns = state.towns.map(t => {
+              if (t.id !== plan.townId) return t;
+              const next: Town = { ...t };
+              if (plan.townPatch.name !== undefined)
+                next.name = plan.townPatch.name;
+              if (
+                plan.townPatch.hemisphere !== undefined &&
+                plan.townPatch.hemisphere !== null
+              ) {
+                next.hemisphere = plan.townPatch.hemisphere;
+              }
+              return next;
+            });
+            const itemMap: Record<string, boolean> = {};
+            const atMap: Record<string, string> = {};
+            for (const r of plan.donations) {
+              itemMap[r.itemId] = true;
+              if (r.donatedAt) atMap[r.itemId] = r.donatedAt;
+            }
+            const donated = {
+              ...state.donated,
+              [plan.townId]: {
+                ...(state.donated[plan.townId] ?? {}),
+                [plan.gameId]: itemMap,
+              },
+            };
+            const donatedAt = {
+              ...state.donatedAt,
+              [plan.townId]: {
+                ...(state.donatedAt[plan.townId] ?? {}),
+                [plan.gameId]: atMap,
+              },
+            };
+            resultTownId = plan.townId;
+            return { towns, donated, donatedAt, activeTownId: plan.townId };
+          }
+
+          // merge
+          const itemMap: Record<string, boolean> = {};
+          const atMap: Record<string, string> = {};
+          for (const r of plan.donations) {
+            itemMap[r.itemId] = true;
+            if (r.donatedAt) atMap[r.itemId] = r.donatedAt;
+          }
+          const donated = {
+            ...state.donated,
+            [plan.townId]: {
+              ...(state.donated[plan.townId] ?? {}),
+              [plan.gameId]: itemMap,
+            },
+          };
+          const donatedAt = {
+            ...state.donatedAt,
+            [plan.townId]: {
+              ...(state.donatedAt[plan.townId] ?? {}),
+              [plan.gameId]: atMap,
+            },
+          };
+          resultTownId = plan.townId;
+          return { donated, donatedAt, activeTownId: plan.townId };
+        });
+        return resultTownId;
+      },
 
       resetAll: () => {
         try {

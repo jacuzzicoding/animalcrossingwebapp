@@ -6,6 +6,9 @@ interface UIState {
   townManagerForceCreate: boolean;
   openTownManager: (forceCreate?: boolean) => void;
   closeTownManager: () => void;
+  importSaveOpen: boolean;
+  openImportSave: () => void;
+  closeImportSave: () => void;
 }
 
 export const useUIStore = create<UIState>(set => ({
@@ -15,4 +18,7 @@ export const useUIStore = create<UIState>(set => ({
     set({ townManagerOpen: true, townManagerForceCreate: forceCreate }),
   closeTownManager: () =>
     set({ townManagerOpen: false, townManagerForceCreate: false }),
+  importSaveOpen: false,
+  openImportSave: () => set({ importSaveOpen: true }),
+  closeImportSave: () => set({ importSaveOpen: false }),
 }));
