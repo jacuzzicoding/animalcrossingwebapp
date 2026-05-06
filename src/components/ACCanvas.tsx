@@ -24,6 +24,7 @@ import { ActivityFeed } from './views/ActivityFeed';
 
 import { useMuseumData } from '../hooks/useMuseumData';
 import { useCategoryStats } from '../hooks/useCategoryStats';
+import { useUIStore } from '../lib/uiStore';
 
 const VALID_TABS: ViewId[] = [
   'home',
@@ -67,6 +68,7 @@ export default function ACCanvas() {
     return s.donatedAt[s.activeTownId]?.[town.gameId] ?? EMPTY_DONATED_AT;
   });
   const toggle = useAppStore(s => s.toggle);
+  const townManagerOpen = useUIStore(s => s.townManagerOpen);
 
   // Sync URL townId → Zustand activeTownId
   useEffect(() => {
@@ -232,7 +234,7 @@ export default function ACCanvas() {
             />
           )}
 
-          {noTowns ? (
+          {noTowns && !townManagerOpen ? (
             <EmptyState message="Create a town to start tracking your museum donations." />
           ) : (
             <>
