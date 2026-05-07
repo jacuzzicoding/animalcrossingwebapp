@@ -9,6 +9,10 @@ export function SettingsPage() {
   const activeTownId = useAppStore(s => s.activeTownId);
   const resetActiveTownDonations = useAppStore(s => s.resetActiveTownDonations);
   const resetAll = useAppStore(s => s.resetAll);
+  const silhouettesEnabled = useAppStore(
+    s => s.museumDisplay.silhouettesEnabled
+  );
+  const setSilhouettesEnabled = useAppStore(s => s.setSilhouettesEnabled);
 
   const totalDonations = useMemo(() => {
     let n = 0;
@@ -122,6 +126,37 @@ export function SettingsPage() {
               </dd>
             </div>
           </dl>
+        </div>
+      </section>
+
+      <section className="ac-settings-section">
+        <div className="ac-settings-section-head">
+          <h2 className="ac-settings-section-title">Museum display</h2>
+          <p className="ac-settings-section-sub">
+            Tweak how the museum looks while you collect.
+          </p>
+        </div>
+        <div className="ac-settings-card">
+          <div className="ac-toggle-row">
+            <div className="ac-toggle-text">
+              <div className="ac-toggle-name">
+                Silhouettes for un-donated items
+              </div>
+              <div className="ac-toggle-sub">
+                Hide species art behind a black silhouette until you donate
+                them. Faithful to the in-game museum.
+              </div>
+            </div>
+            <label className="ac-toggle">
+              <input
+                type="checkbox"
+                checked={silhouettesEnabled}
+                onChange={e => setSilhouettesEnabled(e.target.checked)}
+                aria-label="Show silhouettes for un-donated items"
+              />
+              <span className="ac-toggle-slider" aria-hidden="true" />
+            </label>
+          </div>
         </div>
       </section>
 

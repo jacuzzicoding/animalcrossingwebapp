@@ -132,6 +132,7 @@ export function CollectibleRow({
             size={48}
             className="ac-row-icon"
             alt=""
+            donated={checked}
           />
         ) : (
           <Glyph name={name} category={category} donated={checked} />

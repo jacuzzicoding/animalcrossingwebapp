@@ -86,6 +86,7 @@ export function ActivityFeed({
                     id={entry.itemId}
                     size={32}
                     alt=""
+                    donated={true}
                   />
                   <div className="min-w-0 flex-1">
                     <div
