@@ -449,6 +449,30 @@
     <h2>Shipped versions</h2>
     <div class="timeline">
 
+      <!-- v0.9.4-beta -->
+      <div class="tl-entry">
+        <div class="tl-date">May 7<br/>2026</div>
+        <div class="tl-spine">
+          <div class="tl-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-head">
+            <span class="version-badge">v0.9.4-beta</span>
+            <span class="version-title">Silhouette museum + ACWW icon gap-fill</span>
+            <span class="velocity-chip">1 day after v0.9.3</span>
+          </div>
+          <ul class="tl-bullets">
+            <li>Silhouette rendering for un-donated items — un-donated species render as black silhouettes that fade to full color on donation, faithful to the canonical Animal Crossing museum experience (closes #116)</li>
+            <li>New "Museum display" section in Settings exposes a single global toggle (default ON); 300ms reveal animation honors <code>prefers-reduced-motion</code>; screen readers hear species + donation state</li>
+            <li>ACWW icon gap-fill — 84 wiki-scraped items added (21 fish + 27 bugs + 27 fossils + 9 art); ACWW icon coverage now at 100%</li>
+            <li>Cross-game ID matching uplift carries through to ACCF (95.5%), ACNL (49.1%), and ACNH (39.1%) — partial free coverage for the upcoming v0.9.5 / v0.9.6 betas</li>
+            <li>Icon export pipeline's <code>TARGET_SIZE</code> bumped 512 → 768; all four hand-drawn pieces (ant, koi, sea-bass, coelacanth) re-exported at the higher resolution</li>
+            <li>Coelacanth is the fourth hand-drawn icon in the library (after sea-bass, koi, and ant)</li>
+          </ul>
+        </div>
+      </div>
+
       <!-- v0.9.3-beta -->
       <div class="tl-entry">
         <div class="tl-date">May 6<br/>2026</div>
@@ -989,11 +1013,17 @@
             <td style="padding:.6rem 1rem;">1 day</td>
             <td style="padding:.6rem 1rem;">Cross-game icon routing + first hand-drawn icons + bigger sizes</td>
           </tr>
-          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+          <tr style="border-top:1px solid var(--border);">
             <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.3-beta</td>
             <td style="padding:.6rem 1rem;">May 6</td>
             <td style="padding:.6rem 1rem;">1 day</td>
             <td style="padding:.6rem 1rem;">JSON save-file export + import + onboarding fixes + ant icon</td>
+          </tr>
+          <tr style="border-top:1px solid var(--border); background:#fafafa;">
+            <td style="padding:.6rem 1rem; color:var(--leaf); font-weight:bold;">v0.9.4-beta</td>
+            <td style="padding:.6rem 1rem;">May 7</td>
+            <td style="padding:.6rem 1rem;">1 day</td>
+            <td style="padding:.6rem 1rem;">Silhouette rendering + ACWW icon gap-fill (100%) + 768px pipeline + coelacanth</td>
           </tr>
         </tbody>
       </table>
@@ -1001,7 +1031,7 @@
   </section>
 
   <footer>
-    <p><a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.3-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
+    <p><a href="https://animalcrossingwebapp.vercel.app">animalcrossingwebapp.vercel.app</a> · v0.9.4-beta shipped · v1.0 next · Dev preview at <a href="https://development-animalcrossingwebapp.vercel.app">development-animalcrossingwebapp.vercel.app</a></p>
   </footer>
 
 </div>
