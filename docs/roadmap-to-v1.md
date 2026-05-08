@@ -2,11 +2,11 @@
 
 This document is the canonical roadmap. It supersedes any earlier scattered planning notes.
 
-Last updated: **2026-05-07** (after v0.9.3-beta shipped; v0.9.4 in progress).
+Last updated: **2026-05-07** (after v0.9.4-beta shipped).
 
 ## Where the project sits
 
-- **Current public release:** v0.9.3-beta — JSON save-file round-trip (export + import), onboarding empty-state fixes, first hand-drawn bug (ant).
+- **Current public release:** v0.9.4-beta — silhouette rendering for un-donated items, ACWW icon gap-fill (100% coverage), 768px hand-drawn icon pipeline, fourth hand-drawn icon (coelacanth).
 - **Cadence:** roughly one focused beta every 2-4 days since v0.6 (April 2026). The path to v1.0 holds that pace.
 - **Principle:** one focused track per beta. Polish bundles ship as their own betas, not bundled with feature work.
 
@@ -17,7 +17,7 @@ Last updated: **2026-05-07** (after v0.9.3-beta shipped; v0.9.4 in progress).
 | v0.9.1-beta | ACGCN item icons + UI wiring + credits/license | Shipped 2026-05-04 |
 | v0.9.2-beta | Cross-game icon routing + per-game gap audit | Shipped 2026-05-05 |
 | v0.9.3-beta | JSON save-file round-trip (export + import) + first hand-drawn bug (ant) | Shipped 2026-05-06 |
-| v0.9.4-beta | Silhouette rendering for un-donated items + ACWW icon gap-fill + higher-res hand-drawn icons | In progress |
+| v0.9.4-beta | Silhouette rendering for un-donated items + ACWW icon gap-fill + higher-res hand-drawn icons | Shipped 2026-05-07 |
 | v0.9.5-beta | ACNL icon gap-fill (53 items) | Planned |
 | v0.9.6-beta | ACNH icon gap-fill (106 items) | Planned |
 | v0.9.7-beta | SEO basics (OG tags, sitemap, meta, social cards per game) | Planned |
@@ -35,13 +35,13 @@ Shipped 2026-05-06. The original scoping targeted CSV import as the round-trip c
 v0.9.3 also delivered the first hand-drawn bug: ant. The ACGCN ant joins koi, sea-bass, and coelacanth (fish) as the first four hand-drawn pieces in the library.
 
 ### v0.9.4-beta — silhouette rendering + ACWW gap-fill + higher-res hand-drawn icons
-Bundles three related tracks:
+Shipped 2026-05-07. Bundles three related tracks:
 
-**Silhouette rendering (headline feature, issue #116).** CSS-filter-based silhouette rendering for un-donated items across all four categories. A new "Museum display" section in Settings exposes a toggle (default ON). Un-donated items render as a dark silhouette; donating an item triggers a 300ms reveal animation. Faithful to the canonical Animal Crossing museum experience of seeing silhouettes until a piece is donated.
+**Silhouette rendering (headline feature, PR #118, issue #116).** CSS-filter-based silhouette rendering for un-donated items across all four categories. A new "Museum display" section in Settings exposes a toggle (default ON). Un-donated items render as a dark silhouette; donating an item triggers a 300ms reveal animation. `prefers-reduced-motion` is honored, and `aria-label` conveys species + donation state for screen readers. Faithful to the canonical Animal Crossing museum experience of seeing silhouettes until a piece is donated.
 
-**ACWW icon gap-fill.** 9 unique items scraped from the wiki via the established algorithmic-resolver-plus-OVERRIDES pattern. Smallest of the remaining gap-fill releases, sequenced first so the silhouette feature has icon coverage in a second game at launch.
+**ACWW icon gap-fill (PR #119).** 84 items scraped from the Fandom wiki (21 fish + 27 bugs + 27 fossils + 9 art) via the established algorithmic-resolver-plus-OVERRIDES pattern. ACWW icon coverage now stands at 100%. As a side effect of cross-game ID matching introduced in v0.9.2, ACCF coverage rose to 95.5%, ACNL to 49.1%, and ACNH to 39.1% — partial free coverage for the upcoming v0.9.5/v0.9.6 betas.
 
-**Higher-resolution hand-drawn icons.** The icon export pipeline's TARGET_SIZE was bumped from 512 → 768 (PR #115), preserving painterly detail at larger display sizes. Coelacanth shipped as the first new hand-drawn fish under this pipeline (PR #114). These asset changes merged into `development` after the v0.9.3-beta tag, so they ship as part of v0.9.4.
+**Higher-resolution hand-drawn icons.** The icon export pipeline's TARGET_SIZE was bumped from 512 → 768 (PR #115), preserving painterly detail at larger display sizes. All four hand-drawn pieces (ant, koi, sea-bass, coelacanth) were re-exported at the new resolution. Coelacanth (PR #114) is the fourth hand-drawn piece in the library.
 
 One-track-per-beta is preserved in spirit: silhouette is the headline feature. The icon work is supporting asset/data changes, not a parallel feature.
 

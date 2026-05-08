@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.3-beta (2026-05-06) — JSON save-file export + import (round-trip), onboarding empty-state fixes (closes #107), third hand-drawn icon (ant). Previous: v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/v0.9.3-csv-import-plan.md` for the save-file scoping doc and `CHANGELOG.md` for the full entries.**
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.4-beta (2026-05-07) — silhouette rendering for un-donated items (closes #116), ACWW icon gap-fill (100% coverage), icon pipeline bumped 512→768, fourth hand-drawn icon (coelacanth). Previous: v0.9.3-beta (JSON save-file round-trip), v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/roadmap-to-v1.md` for the path to v1.0 and `CHANGELOG.md` for the full entries.**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -306,15 +306,18 @@ Do not add new top-level tabs without updating the tab switch in ACCanvas, the n
 - PR #109 — Onboarding: secondary "or import an existing save" link below NewTownForm in TownManager during forced-create flow
 - PR #110 — Hide canvas empty-state while TownManager is open (closes Issue #107)
 
-### v0.9.4-beta — Silhouettes + ACWW icon gap-fill (in progress)
-- Silhouette rendering for un-donated items (Closes #116). CSS `filter: brightness(0)` on existing PNGs (no new assets) with a 300ms fade reveal on donation. Respects `prefers-reduced-motion`. Persisted setting `museumDisplay.silhouettesEnabled` on the app store (default ON, AC-canonical) with one global toggle in a new "Museum display" Settings section. `ItemIcon` accepts a `donated?: boolean` prop and conveys donation state via `alt` text for screen readers
-- ACWW icon scrape + manifest entries for items unique to Wild World after cross-game routing
+### v0.9.4-beta — Silhouettes + ACWW icon gap-fill + 768px hand-drawn pipeline — **shipped 2026-05-07**
+- PR #114 — fourth hand-drawn icon: ACGCN coelacanth (initial 512px export)
+- PR #115 — icon export `TARGET_SIZE` bumped 512 → 768; all four hand-drawn pieces (ant, koi, sea-bass, coelacanth) re-exported at the new resolution to preserve painterly detail at the larger expand-panel render sizes
+- PR #117 — roadmap doc updated to current state (sequence table, post-v1.0 ideas, cloud-gallery section)
+- PR #118 — silhouette rendering for un-donated items (Closes #116). CSS `filter: brightness(0)` on existing PNGs (no new assets) with a 300ms fade reveal on donation. Respects `prefers-reduced-motion`. Persisted setting `museumDisplay.silhouettesEnabled` on the app store (default ON, AC-canonical) with one global toggle in a new "Museum display" Settings section. `ItemIcon` accepts a `donated?: boolean` prop and conveys donation state via `alt` text for screen readers
+- PR #119 — ACWW icon gap-fill: 84 wiki-scraped items (21 fish + 27 bugs + 27 fossils + 9 art) via the established Fandom MediaWiki + algorithmic-resolver-plus-`OVERRIDES` pattern. ACWW now at 100% coverage. Cross-game ID matching also lifted ACCF to 95.5%, ACNL to 49.1%, and ACNH to 39.1%
 
-### v0.9.5-beta — Per-game icon gap fills (next milestone)
-- Icon scrape + manifest for ACCF (~40 fish / ~40 bugs)
-- Icon scrape + manifest for ACNL
-- Icon scrape + manifest for ACNH (largest catalog — sequenced last)
-- `GAMES_WITH_ICONS` gate in `itemIconUtils.ts` expands automatically as each game's `manifest.json` lands; no component-level code change required
+### v0.9.5-beta — ACNL icon gap-fill (next milestone)
+- Icon scrape + manifest for ACNL (53 unique items remain after cross-game routing)
+- ACCF needs no release after the v0.9.4 cross-game uplift (0 unique items remain)
+- ACNH (106 unique items, largest catalog) sequenced for v0.9.6
+- Icon resolution is data-driven via per-game `manifest.json` — adding a manifest lights up coverage automatically; no component-level code change required
 
 ### v1.0 — Launch ready
 - Branding, SEO, accessibility, performance audit
