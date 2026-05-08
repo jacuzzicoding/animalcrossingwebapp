@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+### Added
+- Silhouette rendering for un-donated items (Closes #116) — un-donated species now render as black silhouettes that fade to full color on donation, matching the canonical Animal Crossing museum experience. Implemented as a CSS `filter: brightness(0)` on the existing PNGs (no new assets) with a 300ms reveal transition; honors `prefers-reduced-motion`. New "Museum display" section in Settings with a single global toggle (`museumDisplay.silhouettesEnabled` in the persisted store, default ON). `ItemIcon` accepts a new optional `donated` prop and conveys donation state via `alt` text for screen readers ("Coelacanth, not yet donated" / ", donated"). Applies across category rows, expand panels, Home shelves, search results, and the recent-activity feed
+
 ## [0.9.3-beta] — 2026-05-06
 
 ### Added

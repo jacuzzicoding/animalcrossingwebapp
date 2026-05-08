@@ -306,8 +306,11 @@ Do not add new top-level tabs without updating the tab switch in ACCanvas, the n
 - PR #109 — Onboarding: secondary "or import an existing save" link below NewTownForm in TownManager during forced-create flow
 - PR #110 — Hide canvas empty-state while TownManager is open (closes Issue #107)
 
-### v0.9.4-beta — Per-game icon gap fills (next milestone)
-- Icon scrape + manifest for ACWW (smallest catalog, ~56 fish / ~56 bugs)
+### v0.9.4-beta — Silhouettes + ACWW icon gap-fill (in progress)
+- Silhouette rendering for un-donated items (Closes #116). CSS `filter: brightness(0)` on existing PNGs (no new assets) with a 300ms fade reveal on donation. Respects `prefers-reduced-motion`. Persisted setting `museumDisplay.silhouettesEnabled` on the app store (default ON, AC-canonical) with one global toggle in a new "Museum display" Settings section. `ItemIcon` accepts a `donated?: boolean` prop and conveys donation state via `alt` text for screen readers
+- ACWW icon scrape + manifest entries for items unique to Wild World after cross-game routing
+
+### v0.9.5-beta — Per-game icon gap fills (next milestone)
 - Icon scrape + manifest for ACCF (~40 fish / ~40 bugs)
 - Icon scrape + manifest for ACNL
 - Icon scrape + manifest for ACNH (largest catalog — sequenced last)

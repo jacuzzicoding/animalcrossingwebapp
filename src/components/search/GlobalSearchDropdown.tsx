@@ -352,6 +352,7 @@ export function GlobalSearchDropdown({
                               size={32}
                               className="ac-gs-row-icon"
                               alt=""
+                              donated={isDonated}
                             />
                           ) : (
                             <div

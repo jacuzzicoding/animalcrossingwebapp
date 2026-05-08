@@ -56,6 +56,7 @@ export function ItemExpandPanel({
             id={item.id}
             size={192}
             alt=""
+            donated={checked}
           />
         </div>
       )}
