@@ -55,6 +55,32 @@ export const OVERRIDES: Record<string, Override> = {
   // ACGCN — page exists but lacks pageimages.original; the asset lives at
   // File:Dinosaur egg.png attached to the article.
   'ACGCN/fossils/dinosaur-egg': { file: 'Dinosaur egg.png' },
+
+  // ACWW fossils — Ankylosaurus/Pachycephalosaurus use full -us form on the wiki
+  // while ACWW in-game catalog truncates to Ankylosaur/Pachycephalosaur.
+  'ACWW/fossils/ankylosaur-skull': 'Ankylosaurus',
+  'ACWW/fossils/ankylosaur-torso': 'Ankylosaurus',
+  'ACWW/fossils/ankylosaur-tail': 'Ankylosaurus',
+  'ACWW/fossils/pachycephalosaur-skull': 'Pachycephalosaurus',
+  'ACWW/fossils/pachycephalosaur-torso': 'Pachycephalosaurus',
+  'ACWW/fossils/pachycephalosaur-tail': 'Pachycephalosaurus',
+  // ACWW fossils — pages exist but have no pageimages.original; assets are
+  // attached as File: directly on the article.
+  'ACWW/fossils/fern-fossil': { file: 'Fern fossil.png' },
+  'ACWW/fossils/shark-tooth': { file: 'Shark tooth.png' },
+  'ACWW/fossils/peking-man': { file: 'Peking man.png' },
+
+  // ACWW art — Fandom uses lowercase for subsequent words (same pattern as
+  // ACGCN "Academic painting"). "Fine Painting" would miss; "Fine painting" hits.
+  'ACWW/art/fine-painting': 'Fine painting',
+  'ACWW/art/lovely-painting': 'Lovely painting',
+  'ACWW/art/nice-painting': 'Nice painting',
+  'ACWW/art/opulent-painting': 'Opulent painting',
+  'ACWW/art/perfect-painting': 'Perfect painting',
+  'ACWW/art/rare-painting': 'Rare painting',
+  'ACWW/art/solemn-painting': 'Solemn painting',
+  'ACWW/art/strange-painting': 'Strange painting',
+  'ACWW/art/warm-painting': 'Warm painting',
 };
 
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
