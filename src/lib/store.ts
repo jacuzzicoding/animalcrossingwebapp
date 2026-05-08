@@ -19,6 +19,11 @@ export interface TownPatch {
   hemisphere?: Hemisphere | null;
 }
 
+export interface MuseumDisplaySettings {
+  /** Render un-donated items as black silhouettes; default true (AC-canonical). */
+  silhouettesEnabled: boolean;
+}
+
 interface AppState {
   towns: Town[];
   activeTownId: string | null;
@@ -26,6 +31,8 @@ interface AppState {
   donated: Record<string, Record<string, Record<string, boolean>>>;
   // donatedAt[townId][gameId][itemId] = ISO string
   donatedAt: Record<string, Record<string, Record<string, string>>>;
+  museumDisplay: MuseumDisplaySettings;
+  setSilhouettesEnabled: (enabled: boolean) => void;
 
   createTown: (name: string, gameId: GameId, hemisphere?: Hemisphere) => Town;
   updateTown: (id: string, patch: TownPatch) => void;
@@ -53,6 +60,15 @@ export const useAppStore = create<AppState>()(
       activeTownId: null,
       donated: {},
       donatedAt: {},
+      museumDisplay: { silhouettesEnabled: true },
+
+      setSilhouettesEnabled: enabled =>
+        set(state => ({
+          museumDisplay: {
+            ...state.museumDisplay,
+            silhouettesEnabled: enabled,
+          },
+        })),
 
       createTown: (name, gameId, hemisphere = 'NH') => {
         const town: Town = {

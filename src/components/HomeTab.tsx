@@ -324,6 +324,7 @@ export default function HomeTab({
                     size={32}
                     className="ac-recent-icon"
                     alt=""
+                    donated={true}
                   />
                 ) : (
                   <span
@@ -378,6 +379,7 @@ function ShelfGrid({
                 size={32}
                 className="ac-shelf-icon"
                 alt=""
+                donated={false}
               />
             ) : (
               <span

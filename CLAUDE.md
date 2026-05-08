@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.3-beta (2026-05-06) — JSON save-file export + import (round-trip), onboarding empty-state fixes (closes #107), third hand-drawn icon (ant). Previous: v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/v0.9.3-csv-import-plan.md` for the save-file scoping doc and `CHANGELOG.md` for the full entries.**
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. **Current release: v0.9.4-beta (2026-05-07) — silhouette rendering for un-donated items (closes #116), ACWW icon gap-fill (100% coverage), icon pipeline bumped 512→768, fourth hand-drawn icon (coelacanth). Previous: v0.9.3-beta (JSON save-file round-trip), v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp). See `docs/roadmap-to-v1.md` for the path to v1.0 and `CHANGELOG.md` for the full entries.**
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -276,8 +276,7 @@ Do not add new top-level tabs without updating the tab switch in ACCanvas, the n
   - Art tab persistent label fix — `setSelected(null)` on tab change (PR #57, Closes #26)
   - Branch-label footer suffix for non-main/development/release builds
 
-### v0.9.0-beta — UI revamp (in progress on `development`)
-Phases shipped to `development`:
+### v0.9.0-beta — UI revamp — **shipped 2026-05-03**
 - Phase 1 — Meadow tokens + Fraunces/Inter; Varela Round retired (PR #63)
 - Phase 2 — Sidebar shell; MuseumHeader/TabBar/TownSwitcher retired (PR #65)
 - Phase 3 — Settings page (About + Danger zone) (PR #66)
@@ -287,15 +286,13 @@ Phases shipped to `development`:
 - Phase 7 — CategoryTab sectioning (Leaving / Available / Out of season / Already donated) (PR #73)
 - Phase 8 — GlobalSearchDropdown; GlobalSearchBar/Results/HistoryPopover/`useSearch` retired; a11y polish tracked in Issue #76 (PR #75)
 - Phase 9 — StatsTab rebuild; AnalyticsView + SectionCard retired (PR #77)
-
-Pending:
 - Phase 10 — Mobile responsive verification pass
 - ACWW + ACCF art data (PR #78, closes Issue #74)
 
-### v0.9.1-beta — Item icons (in progress)
-- PR (a) — Fandom scraper, `OVERRIDES` map, full ACGCN icon set committed under `public/icons/acgcn/` with per-game `manifest.json` (PR #86, shipped)
-- PR (b) — `<ItemIcon>` component + UI wiring in CollectibleRow / ItemExpandPanel / GlobalSearchDropdown / HomeTab; `scripts/generate-icon-manifest.ts` standalone re-emitter; `GAMES_WITH_ICONS` gate scoped to ACGCN until other games' icon scrapes ship (this PR)
-- PR (c) — `NOTICE` at the repo root + in-app `/credits` route + release prep (pending)
+### v0.9.1-beta — Item icons — **shipped 2026-05-04**
+- PR (a) — Fandom scraper, `OVERRIDES` map, full ACGCN icon set committed under `public/icons/acgcn/` with per-game `manifest.json` (PR #86)
+- PR (b) — `<ItemIcon>` component + UI wiring in CollectibleRow / ItemExpandPanel / GlobalSearchDropdown / HomeTab; `scripts/generate-icon-manifest.ts` standalone re-emitter; `GAMES_WITH_ICONS` gate scoped to ACGCN until other games' icon scrapes ship
+- PR (c) — `NOTICE` at the repo root + in-app `/credits` route + release prep
 
 ### v0.9.2-beta — Hand-drawn icons — **shipped 2026-05-05**
 - PR #94 — flat icon hierarchy + cross-game routing simplification + first two hand-drawn icons (fish/sea-bass, fish/koi) optimized 2048→512 with sharp + pngquant
@@ -308,6 +305,19 @@ Pending:
 - PR #108 — JSON save-file import. Parser + reconciler as pure modules. Modal mounted at App layout. Replace / Merge / Import-as-new modes with `(name, gameId)` matching. Two-step destructive Replace confirmation gated on existing-town-has-data. No undo by design
 - PR #109 — Onboarding: secondary "or import an existing save" link below NewTownForm in TownManager during forced-create flow
 - PR #110 — Hide canvas empty-state while TownManager is open (closes Issue #107)
+
+### v0.9.4-beta — Silhouettes + ACWW icon gap-fill + 768px hand-drawn pipeline — **shipped 2026-05-07**
+- PR #114 — fourth hand-drawn icon: ACGCN coelacanth (initial 512px export)
+- PR #115 — icon export `TARGET_SIZE` bumped 512 → 768; all four hand-drawn pieces (ant, koi, sea-bass, coelacanth) re-exported at the new resolution to preserve painterly detail at the larger expand-panel render sizes
+- PR #117 — roadmap doc updated to current state (sequence table, post-v1.0 ideas, cloud-gallery section)
+- PR #118 — silhouette rendering for un-donated items (Closes #116). CSS `filter: brightness(0)` on existing PNGs (no new assets) with a 300ms fade reveal on donation. Respects `prefers-reduced-motion`. Persisted setting `museumDisplay.silhouettesEnabled` on the app store (default ON, AC-canonical) with one global toggle in a new "Museum display" Settings section. `ItemIcon` accepts a `donated?: boolean` prop and conveys donation state via `alt` text for screen readers
+- PR #119 — ACWW icon gap-fill: 84 wiki-scraped items (21 fish + 27 bugs + 27 fossils + 9 art) via the established Fandom MediaWiki + algorithmic-resolver-plus-`OVERRIDES` pattern. ACWW now at 100% coverage. Cross-game ID matching also lifted ACCF to 95.5%, ACNL to 49.1%, and ACNH to 39.1%
+
+### v0.9.5-beta — ACNL icon gap-fill (next milestone)
+- Icon scrape + manifest for ACNL (53 unique items remain after cross-game routing)
+- ACCF needs no release after the v0.9.4 cross-game uplift (0 unique items remain)
+- ACNH (106 unique items, largest catalog) sequenced for v0.9.6
+- Icon resolution is data-driven via per-game `manifest.json` — adding a manifest lights up coverage automatically; no component-level code change required
 
 ### v1.0 — Launch ready
 - Branding, SEO, accessibility, performance audit

@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+## [0.9.4-beta] — 2026-05-07
+
+### Added
+- **Silhouette rendering for un-donated items** (PR #118, Closes #116) — un-donated species now render as black silhouettes that fade to full color on donation, matching the canonical Animal Crossing museum experience. Implemented as a CSS `filter: brightness(0)` on the existing PNGs (no new assets) with a 300ms reveal transition; honors `prefers-reduced-motion`. New "Museum display" section in Settings with a single global toggle (`museumDisplay.silhouettesEnabled` in the persisted store, default ON). `ItemIcon` accepts a new optional `donated` prop and conveys donation state via `alt` text for screen readers ("Coelacanth, not yet donated" / ", donated"). Applies across category rows, expand panels, Home shelves, search results, and the recent-activity feed
+- **ACWW icon gap-fill** (PR #119) — 84 wiki-scraped items added (21 fish + 27 bugs + 27 fossils + 9 art) via the established Fandom MediaWiki + algorithmic-resolver-plus-`OVERRIDES` pattern documented in `docs/wiki-scraping-pattern.md`. ACWW icon coverage now stands at 100%. As a side effect of cross-game ID matching, ACCF coverage rose to 95.5%, ACNL to 49.1%, and ACNH to 39.1% — partial free coverage for the upcoming v0.9.5/v0.9.6 betas
+- Hand-drawn `fish/coelacanth.png` icon (PR #114) — fourth hand-drawn piece in the library after sea-bass, koi, and ant. 2048 source committed at `icon-sources/fish/coelacanth.png`
+
+### Changed
+- **Icon export pipeline `TARGET_SIZE` bumped 512 → 768** (PR #115) — `scripts/export-icons.ts` now resizes 2048 sources to 768×768 (was 512). All four hand-drawn pieces (ant, koi, sea-bass, coelacanth) re-exported at the new resolution. Preserves painterly detail at the larger expand-panel render sizes introduced in v0.9.2 without changing the source workflow
+
 ## [0.9.3-beta] — 2026-05-06
 
 ### Added

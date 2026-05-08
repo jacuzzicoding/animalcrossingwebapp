@@ -2,14 +2,14 @@
  * export-icons.ts
  *
  * Local-only icon export pipeline. Walks 2048×2048 PNG sources committed
- * under `icon-sources/<category>/<id>.png` and writes optimized 512×512
+ * under `icon-sources/<category>/<id>.png` and writes optimized 768×768
  * deploy assets to `public/icons/<category>/<id>.png`.
  *
  * Recipe (reverse-engineered from the v0.9.2 ad-hoc optimization in commit
  * 09df4cc, which produced ~97% byte reduction on the first two hand-drawn
  * icons):
  *
- *   1. sharp.resize(512, 512, { fit: 'inside' }).png() — preserves alpha,
+ *   1. sharp.resize(768, 768, { fit: 'inside' }).png() — preserves alpha,
  *      RGBA buffer to stdin of pngquant.
  *   2. pngquant --quality=65-90 --speed=1 --strip --force - — palette
  *      quantization to 8-bit colormap PNG. Output is what gets committed.
@@ -26,7 +26,7 @@
  *      transparency.
  *   2. Drop the file at `icon-sources/<category>/<id>.png` where <id> is
  *      the catalog id from `public/data/<gameId>/<category>.json`.
- *   3. `npm run icons:export` — emits the optimized 512 to public/icons/.
+ *   3. `npm run icons:export` — emits the optimized 768 to public/icons/.
  *   4. `npm run icons:manifest` — refresh `public/icons/manifest.json`.
  *   5. Commit both the source and the deploy asset.
  *
@@ -49,7 +49,7 @@ import pngquantPath from 'pngquant-bin';
 const ROOT = process.cwd();
 const SOURCES_ROOT = join(ROOT, 'icon-sources');
 const OUTPUT_ROOT = join(ROOT, 'public', 'icons');
-const TARGET_SIZE = 512;
+const TARGET_SIZE = 768;
 const PNGQUANT_ARGS = [
   '--quality=65-90',
   '--speed=1',

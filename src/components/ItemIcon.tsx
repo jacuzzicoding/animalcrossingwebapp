@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { CategoryId, GameId } from '../lib/types';
+import { useAppStore } from '../lib/store';
 import { resolveIconUrl, useManifestState } from './itemIconUtils';
 
 function humanize(id: string): string {
@@ -30,6 +31,7 @@ export function ItemIcon({
   size,
   className,
   alt,
+  donated,
 }: {
   gameId?: GameId;
   category: CategoryId;
@@ -37,8 +39,13 @@ export function ItemIcon({
   size: number;
   className?: string;
   alt?: string;
+  /** Donation state for this item. Pass `false` for un-donated items to allow silhouette rendering. Omit/`true` for donated. */
+  donated?: boolean;
 }) {
   const state = useManifestState();
+  const silhouettesEnabled = useAppStore(
+    s => s.museumDisplay.silhouettesEnabled
+  );
   const [errored, setErrored] = useState(false);
 
   useEffect(() => {
@@ -50,7 +57,16 @@ export function ItemIcon({
       ? resolveIconUrl(state.manifest, category, id)
       : null;
 
-  const altText = alt ?? `${humanize(id)} icon`;
+  const isSilhouette = donated === false && silhouettesEnabled;
+  const baseAlt = alt ?? `${humanize(id)} icon`;
+  const altText =
+    alt === ''
+      ? ''
+      : donated === false
+        ? `${humanize(id)}, not yet donated`
+        : donated === true
+          ? `${humanize(id)}, donated`
+          : baseAlt;
 
   const wrapperStyle: React.CSSProperties = {
     width: size,
@@ -62,9 +78,17 @@ export function ItemIcon({
 
   const showPlaceholder = !src || errored;
 
+  const wrapperClass = [
+    'ac-item-icon',
+    isSilhouette ? 'ac-item-icon-silhouette' : '',
+    className ?? '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <span
-      className={`ac-item-icon${className ? ` ${className}` : ''}`}
+      className={wrapperClass}
       style={wrapperStyle}
       aria-hidden={alt === '' ? true : undefined}
     >
