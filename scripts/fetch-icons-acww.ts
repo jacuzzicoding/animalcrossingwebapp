@@ -43,33 +43,95 @@ const DISAMBIG: Record<Category, string | undefined> = {
 // to re-scrape everything, restore it in full and run npx tsx scripts/fetch-icons-acww.ts.
 const MISSING_IDS: Record<Category, string[]> = {
   fish: [
-    'yellow-perch', 'black-bass', 'char', 'king-salmon', 'dorado', 'gar',
-    'sea-butterfly', 'seahorse', 'clownfish', 'zebra-turkeyfish', 'puffer-fish',
-    'horse-mackerel', 'dab', 'olive-flounder', 'octopus', 'football-fish',
-    'tuna', 'blue-marlin', 'ocean-sunfish', 'hammerhead-shark', 'shark',
+    'yellow-perch',
+    'black-bass',
+    'char',
+    'king-salmon',
+    'dorado',
+    'gar',
+    'sea-butterfly',
+    'seahorse',
+    'clownfish',
+    'zebra-turkeyfish',
+    'puffer-fish',
+    'horse-mackerel',
+    'dab',
+    'olive-flounder',
+    'octopus',
+    'football-fish',
+    'tuna',
+    'blue-marlin',
+    'ocean-sunfish',
+    'hammerhead-shark',
+    'shark',
   ],
   bugs: [
-    'yellow-butterfly', 'tiger-butterfly', 'peacock-butterfly', 'monarch-butterfly',
-    'emperor-butterfly', 'agrias-butterfly', 'birdwing-butterfly', 'moth',
-    'oak-silk-moth', 'honeybee', 'orchid-mantis', 'lantern-fly', 'walkingstick',
-    'fruit-beetle', 'scarab-beetle', 'dung-beetle', 'goliath-beetle', 'stag-beetle',
-    'rainbow-stag', 'atlas-beetle', 'elephant-beetle', 'hercules-beetle',
-    'flea', 'pillbug', 'fly', 'tarantula', 'scorpion',
+    'yellow-butterfly',
+    'tiger-butterfly',
+    'peacock-butterfly',
+    'monarch-butterfly',
+    'emperor-butterfly',
+    'agrias-butterfly',
+    'birdwing-butterfly',
+    'moth',
+    'oak-silk-moth',
+    'honeybee',
+    'orchid-mantis',
+    'lantern-fly',
+    'walkingstick',
+    'fruit-beetle',
+    'scarab-beetle',
+    'dung-beetle',
+    'goliath-beetle',
+    'stag-beetle',
+    'rainbow-stag',
+    'atlas-beetle',
+    'elephant-beetle',
+    'hercules-beetle',
+    'flea',
+    'pillbug',
+    'fly',
+    'tarantula',
+    'scorpion',
   ],
   fossils: [
-    'ankylosaur-skull', 'ankylosaur-torso', 'ankylosaur-tail',
-    'dimetrodon-skull', 'dimetrodon-torso', 'dimetrodon-tail',
-    'iguanodon-skull', 'iguanodon-torso', 'iguanodon-tail',
-    'sabretooth-skull', 'sabretooth-torso',
-    'pachycephalosaur-skull', 'pachycephalosaur-torso', 'pachycephalosaur-tail',
-    'parasaur-skull', 'parasaur-torso', 'parasaur-tail',
-    'seismosaur-skull', 'seismosaur-chest', 'seismosaur-hip', 'seismosaur-tail',
+    'ankylosaur-skull',
+    'ankylosaur-torso',
+    'ankylosaur-tail',
+    'dimetrodon-skull',
+    'dimetrodon-torso',
+    'dimetrodon-tail',
+    'iguanodon-skull',
+    'iguanodon-torso',
+    'iguanodon-tail',
+    'sabretooth-skull',
+    'sabretooth-torso',
+    'pachycephalosaur-skull',
+    'pachycephalosaur-torso',
+    'pachycephalosaur-tail',
+    'parasaur-skull',
+    'parasaur-torso',
+    'parasaur-tail',
+    'seismosaur-skull',
+    'seismosaur-chest',
+    'seismosaur-hip',
+    'seismosaur-tail',
     'pteranodon-body',
-    'dino-droppings', 'fern-fossil', 'archaeopteryx', 'peking-man', 'shark-tooth',
+    'dino-droppings',
+    'fern-fossil',
+    'archaeopteryx',
+    'peking-man',
+    'shark-tooth',
   ],
   art: [
-    'fine-painting', 'lovely-painting', 'nice-painting', 'opulent-painting',
-    'perfect-painting', 'rare-painting', 'solemn-painting', 'strange-painting',
+    'fine-painting',
+    'lovely-painting',
+    'nice-painting',
+    'opulent-painting',
+    'perfect-painting',
+    'rare-painting',
+    'solemn-painting',
+    'strange-painting',
     'warm-painting',
   ],
 };
@@ -113,7 +175,9 @@ function tokensOf(s: string): string[] {
       t =>
         t &&
         t.length >= 3 &&
-        !/^(nh|sh|gcn|ww|cf|nl|the|new|horizons|fossil|fish|bug|painting|sculpture|by|of|and|a)$/.test(t)
+        !/^(nh|sh|gcn|ww|cf|nl|the|new|horizons|fossil|fish|bug|painting|sculpture|by|of|and|a)$/.test(
+          t
+        )
     );
 }
 
@@ -158,9 +222,13 @@ function auditPlausible(
       if (r.found && r.via === 'd:html') status = 'miss-html';
       else if (r.found) status = 'hit';
       rows.push({ item, result: r, canonicalId, status });
-      const tag = status === 'hit' ? 'OK  ' : status === 'miss-html' ? 'SKIP' : 'MISS';
-      const idDisplay = item.id === canonicalId ? item.id : `${item.id} → ${canonicalId}`;
-      console.log(`${tag}  ${idDisplay.padEnd(46)}  via=${r.via.padEnd(11)}  ${r.titleResolved ?? '-'}`);
+      const tag =
+        status === 'hit' ? 'OK  ' : status === 'miss-html' ? 'SKIP' : 'MISS';
+      const idDisplay =
+        item.id === canonicalId ? item.id : `${item.id} → ${canonicalId}`;
+      console.log(
+        `${tag}  ${idDisplay.padEnd(46)}  via=${r.via.padEnd(11)}  ${r.titleResolved ?? '-'}`
+      );
       for (const n of r.notes) console.log(`      note: ${n}`);
       await sleep(DELAY_MS);
     }
@@ -181,7 +249,9 @@ function auditPlausible(
       console.log(`  ${row.item.id} → ${filename} (${bytes} bytes)`);
       await sleep(DELAY_MS);
     } catch (e: any) {
-      console.log(`  download failed for ${row.item.id}: ${(e as Error).message}`);
+      console.log(
+        `  download failed for ${row.item.id}: ${(e as Error).message}`
+      );
       row.status = 'miss';
     }
   }
@@ -199,7 +269,8 @@ function auditPlausible(
     console.log(
       `${tag}  ${row.item.category}/${row.item.id} → "${row.result.titleResolved}"  ${urlFilename(row.result.imageUrl!)}`
     );
-    if (!verdict.ok) auditFails.push(`${row.item.category}/${row.item.id}: ${verdict.reason}`);
+    if (!verdict.ok)
+      auditFails.push(`${row.item.category}/${row.item.id}: ${verdict.reason}`);
   }
 
   // Missing log.
@@ -210,9 +281,13 @@ function auditPlausible(
         `${r.item.category}/${r.item.id}\tvia=${r.result.via}\tname="${r.item.name}"\tnotes=${r.result.notes.join(' ; ')}`
     );
     writeFileSync(MISSING_LOG, lines.join('\n') + '\n');
-    console.log(`\n=== Misses: ${misses.length} (logged to ${MISSING_LOG}) ===`);
+    console.log(
+      `\n=== Misses: ${misses.length} (logged to ${MISSING_LOG}) ===`
+    );
     for (const r of misses) {
-      console.log(`  MISS  ${r.item.category}/${r.item.id}  name="${r.item.name}"`);
+      console.log(
+        `  MISS  ${r.item.category}/${r.item.id}  name="${r.item.name}"`
+      );
     }
   } else {
     if (existsSync(MISSING_LOG)) writeFileSync(MISSING_LOG, '');
@@ -224,7 +299,9 @@ function auditPlausible(
   console.log(`Downloaded:    ${hits.length}`);
   console.log(`Missing:       ${misses.length}`);
   console.log(`Bytes on disk: ${bytesTotal} (${totalMB} MB)`);
-  console.log(`Audit:         ${audit.length} sampled, ${auditFails.length} fail`);
+  console.log(
+    `Audit:         ${audit.length} sampled, ${auditFails.length} fail`
+  );
 
   if (auditFails.length) {
     console.log('\nAudit failures:');
