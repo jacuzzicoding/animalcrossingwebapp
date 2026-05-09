@@ -156,10 +156,18 @@ public/data/acww/
   fish.json                 # 56 species (Wild World)
   bugs.json                 # 56 species (Wild World)
   fossils.json              # 52 fossil items (Wild World)
+  art.json                  # 20 paintings (Wild World)
 public/data/accf/
   fish.json                 # 40 species (City Folk)
   bugs.json                 # 40 species (City Folk)
   fossils.json              # 52 fossil items (City Folk)
+  art.json                  # 23 paintings (City Folk)
+public/data/acnl/
+  fish.json                 # fish (New Leaf)
+  bugs.json                 # bugs (New Leaf)
+  fossils.json              # fossils (New Leaf)
+  art.json                  # 36 paintings (New Leaf)
+  sea_creatures.json        # sea creatures (New Leaf)
 public/data/acnh/
   fish.json                 # 81 species (NH/SH months_nh/months_sh)
   bugs.json                 # 80 species (NH/SH months_nh/months_sh)

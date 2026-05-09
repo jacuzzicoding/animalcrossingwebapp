@@ -55,9 +55,9 @@ npm run lint      # Lint with ESLint
 
 Museum data lives in `public/data/<game>/`:
 - `public/data/acgcn/` — GameCube: 40 fish, 40 bugs, 25 fossils, 13 paintings
-- `public/data/acww/` — Wild World: 56 fish, 56 bugs, 52 fossils
-- `public/data/accf/` — City Folk: 40 fish, 40 bugs, 52 fossils
-- `public/data/acnl/` — New Leaf: fish, bugs, fossils
+- `public/data/acww/` — Wild World: 56 fish, 56 bugs, 52 fossils, 20 art
+- `public/data/accf/` — City Folk: 40 fish, 40 bugs, 52 fossils, 23 art
+- `public/data/acnl/` — New Leaf: fish, bugs, fossils, 36 art, sea creatures
 - `public/data/acnh/` — New Horizons: 81 fish, 80 bugs, 86 fossils, 43 art, 40 sea creatures (NH/SH month availability)
 
 > Sea creatures are fully supported for New Horizons and New Leaf — a dedicated Sea entry appears in the sidebar nav for those games (shipped in v0.8.2).

@@ -45,7 +45,7 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persiste
 - `src/components/search/GlobalSearchDropdown.tsx` — Phase 8 unified search dropdown (anchored under Home topbar). Grouped category results (5 groups for ACNL/ACNH, 4 elsewhere), keyboard nav (↑↓↵esc), search history at localStorage key `ac-curator-search-history` (max 8). Replaces GlobalSearchBar / GlobalSearchResults / SearchHistoryPopover.
 
 ### Data
-- `public/data/<gameId>/` — `acgcn/`, `acww/`, `accf/`, `acnl/`, `acnh/` all present. Sea creatures for ACNL + ACNH. Art for ACGCN + ACNH today; ACWW + ACCF art incoming via PR #78 (closes Issue #74).
+- `public/data/<gameId>/` — `acgcn/`, `acww/`, `accf/`, `acnl/`, `acnh/` all present. Sea creatures for ACNL + ACNH. Art for all five games: ACGCN (13), ACWW (20), ACCF (23), ACNL (36), ACNH (43).
 
 ## Store Schema (v3)
 ```
