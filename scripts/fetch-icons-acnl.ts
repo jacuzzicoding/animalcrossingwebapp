@@ -335,7 +335,10 @@ function auditPlausible(
   );
   const sampleSize = Math.max(1, Math.round(hits.length * AUDIT_FRACTION));
   const shuffled = [...risky].sort(() => Math.random() - 0.5);
-  const audit = shuffled.slice(0, Math.max(sampleSize, Math.min(risky.length, 4)));
+  const audit = shuffled.slice(
+    0,
+    Math.max(sampleSize, Math.min(risky.length, 4))
+  );
   console.log(
     `\n=== Audit (${audit.length} of ${risky.length} risky-chain hits, ${hits.length} total) ===`
   );

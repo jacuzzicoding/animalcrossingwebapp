@@ -5,7 +5,7 @@
 //
 // Run: npx tsx scripts/dry-run-acnl-icons.ts
 
-import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import {
   resolveIcon,
@@ -22,7 +22,13 @@ const ICONS_ROOT = 'public/icons';
 const REPORT_PATH = 'scripts/resolve-report-acnl.txt';
 
 type Category = 'fish' | 'bugs' | 'fossils' | 'art' | 'sea_creatures';
-const CATEGORIES: Category[] = ['fish', 'bugs', 'fossils', 'art', 'sea_creatures'];
+const CATEGORIES: Category[] = [
+  'fish',
+  'bugs',
+  'fossils',
+  'art',
+  'sea_creatures',
+];
 
 const DISAMBIG: Record<Category, string | undefined> = {
   fish: 'fish',
@@ -51,7 +57,11 @@ function readCatalog(cat: Category): RawItem[] {
   return JSON.parse(readFileSync(p, 'utf-8')) as RawItem[];
 }
 
-function buildMissing(): { cat: Category; item: RawItem; canonicalId: string }[] {
+function buildMissing(): {
+  cat: Category;
+  item: RawItem;
+  canonicalId: string;
+}[] {
   const manifest = loadManifest();
   const out: { cat: Category; item: RawItem; canonicalId: string }[] = [];
   for (const cat of CATEGORIES) {
@@ -94,7 +104,9 @@ function flagSuspicious(
       .split(/[\s'-]+/)
       .filter(t => t.length >= 4);
     const haystack =
-      title + ' ' + urlFilename(r.imageUrl).toLowerCase().replace(/[._-]/g, ' ');
+      title +
+      ' ' +
+      urlFilename(r.imageUrl).toLowerCase().replace(/[._-]/g, ' ');
     if (nameTokens.length && !nameTokens.some(t => haystack.includes(t))) {
       flags.push('no-shared-token');
     }

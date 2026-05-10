@@ -54,8 +54,7 @@ function loadInput(target: { category: Category; id: string }): ResolveInput {
   );
   const items = JSON.parse(raw) as RawItem[];
   const item = items.find(i => i.id === target.id);
-  if (!item)
-    throw new Error(`${target.category}/${target.id} not in catalog`);
+  if (!item) throw new Error(`${target.category}/${target.id} not in catalog`);
   return {
     gameId: GAME_ID,
     category: target.category,
