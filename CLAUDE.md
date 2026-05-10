@@ -82,6 +82,9 @@ src/
     Sidebar.tsx             # v0.9 Phase 2: 280px left sidebar — brand, active town card, NavLink nav with counts, footer (replaces MuseumHeader/TabBar/TownSwitcher)
     SettingsPage.tsx        # v0.9 Phase 3: full-page Settings — About + Danger zone (no Appearance per locked decision #3)
     SettingsRoute.tsx       # v0.9 Phase 3: route wrapper that mounts Sidebar + SettingsPage at /settings
+    CreditsPage.tsx         # v0.9.1: credits page body — third-party asset sources,
+                            # licensing, and Fandom wiki attribution for icon assets
+    CreditsRoute.tsx        # v0.9.1: route wrapper that mounts Sidebar + CreditsPage at /credits
     ErrorBanner.tsx         # Dismissible inline error notification
     ErrorBoundary.tsx       # Top-level React error boundary; crashes render ErrorState
     ErrorState.tsx          # Full-page error fallback UI
@@ -102,6 +105,9 @@ src/
                             # towns. Inline edit = name + (ACNH-only) hemisphere — game is
                             # read-only post-create (Decision 1). Replaces CreateTownModal,
                             # EditTownModal, TownSwitcher, TownNameFields.
+    ImportSaveModal.tsx     # v0.9.3: import save-file modal, mounted at App layout level.
+                            # File picker → parse/validate → reconcile → apply via
+                            # `applyImportedSave(plan)`. Three modes: Replace / Merge / ImportAsNew.
     StatsTab.tsx            # v0.9 Phase 9: per-category cards (3/4/5 by game) +
                             # 12-column yearly rhythm chart (fish + bugs always,
                             # sea added for ACNL/ACNH). Replaces AnalyticsView.
@@ -143,8 +149,19 @@ src/
     types.ts                # Shared TypeScript interfaces (Town, Donation, GameId, Game, etc.)
     utils.ts                # Helper functions (formatting, date math, type guards)
     csvExport.ts            # CSV export logic for donation data
+    saveFile.ts             # v0.9.3: JSON save-file schema (SaveFile type, schemaVersion=1)
+                            # and serialiser; used by the `Export save` sidebar button
+    saveFileImport.ts       # v0.9.3: parser + validator — rejects bad schema version, wrong app,
+                            # unknown gameId, ACNH saves without hemisphere; drops malformed
+                            # donation rows with a count surfaced in the import modal
+    saveFileReconcile.ts    # v0.9.3: pure reconciler — matches on (name, gameId), produces one of
+                            # three ImportPlan variants (Replace / Merge / ImportAsNew)
     store.test.ts           # Vitest tests for store actions
+    uiStore.test.ts         # Vitest tests for UI store actions
     utils.test.ts           # Vitest tests for utility functions
+    saveFile.test.ts        # Vitest tests for save-file schema + serialiser
+    saveFileImport.test.ts  # Vitest tests for parser + validator
+    saveFileReconcile.test.ts # Vitest tests for reconciler
   test/
     setup.ts                # Vitest setup file
 public/data/acgcn/
