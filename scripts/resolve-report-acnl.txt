@@ -1,0 +1,146 @@
+category	id	canonicalId	in-game-name	via	resolved-title	image-filename	flags
+fish	tadpole	tadpole	Tadpole	a:bare	Tadpole	Tadpole_nh.png	-
+fish	neon-tetra	neon-tetra	Neon Tetra	a:bare	Neon tetra	Neon_Tetra_NH.png	-
+fish	nibble-fish	nibble-fish	Nibble Fish	a:bare	Nibble fish	Nibblefish_NH.jpg	-
+fish	saddled-bichir	saddled-bichir	Saddled Bichir	a:bare	Saddled bichir	Saddled_Bichir.jpg	-
+fish	soft-shelled-turtle	soft-shelled-turtle	Soft-shelled Turtle	a:bare	Soft-shelled turtle	NH-Soft-shelled_turtle.png	-
+fish	snapping-turtle	snapping-turtle	Snapping Turtle	a:bare	Snapping turtle	Snapping_turtle_nh.png	-
+fish	tilapia	tilapia	Tilapia	a:bare	Tilapia	Tilapia_NH.png	-
+fish	pike	pike	Pike	a:bare	Pike	Pike_NH.png	-
+fish	sturgeon	sturgeon	Sturgeon	a:bare	Sturgeon	NH-Sturgeon.png	-
+fish	sea-horse	sea-horse	Sea Horse	a:bare	Seahorse	Nh-sea-horse.jpg	-
+fish	surgeonfish	surgeonfish	Surgeonfish	a:bare	Surgeonfish	Surgeonfish_NH.jpg	-
+fish	butterfly-fish	butterfly-fish	Butterfly Fish	a:bare	Butterfly fish	Nh-butterfly-fish.jpg	-
+fish	napoleonfish	napoleonfish	Napoleonfish	a:bare	Napoleonfish	Napoleon_Fish_%28New_Horizons%29.jpeg	-
+fish	blowfish	blowfish	Blowfish	a:bare	Blowfish	Blowfish_NH.png	-
+fish	anchovy	anchovy	Anchovy	b:disambig	Anchovy (fish)	NH-encyclopedia-Anchovy.png	-
+fish	moray-eel	moray-eel	Moray Eel	a:bare	Moray eel	Moray_Eel_NH.png	-
+fish	ray	ray	Ray	a:bare	Ray	Ray_NH.png	-
+fish	great-white-shark	great-white-shark	Great White Shark	override	Great white shark	Great-White-Shark-in-Animal-Crossing-New-Horizons-1024x576.jpg	-
+fish	whale-shark	whale-shark	Whale Shark	a:bare	Whale shark	Whale_Shark.jpg	-
+fish	saw-shark	saw-shark	Saw Shark	a:bare	Saw shark	Saw.jpg	-
+fish	oarfish	oarfish	Oarfish	a:bare	Oarfish	Nh-oarfish.jpg	-
+fish	giant-trevally	giant-trevally	Giant Trevally	a:bare	Giant trevally	Giant_trevally_nh.png	-
+fish	mahi-mahi	mahi-mahi	Mahi-mahi	a:bare	Mahi-mahi	NH-fish-Mahimahi.png	-
+bugs	common-bluebottle	common-bluebottle	Common Bluebottle	a:bare	Common bluebottle	NH-Common_bluebottle.jpg	-
+bugs	great-purple-emperor	great-purple-emperor	Great Purple Emperor	a:bare	Great purple emperor	NH-Great_Purple_Emperor.png	-
+bugs	rajah-brooke-birdwing	rajah-brooke-birdwing	Rajah Brooke's Birdwing	c:search	Rajah Brooke's birdwing/Gallery	RajaBrookeButterfly.png	gallery-subpage
+bugs	queen-alexandra-birdwing	queen-alexandra-birdwing	Queen Alexandra's Birdwing	a:bare	Queen Alexandra's birdwing	NH-Queen_Alexandra%27s_birdwing.png	-
+bugs	atlas-moth	atlas-moth	Atlas Moth	c:search	Atlas moth/Gallery	NH-Atlas_moth.jpg	gallery-subpage
+bugs	madagascan-sunset-moth	madagascan-sunset-moth	Madagascan Sunset Moth	c:search	Madagascan sunset moth/Gallery	Madagascan_sunset_moth_encyclopedia_%28New_Horizons%29.PNG	gallery-subpage
+bugs	rice-grasshopper	rice-grasshopper	Rice Grasshopper	a:bare	Rice grasshopper	16954.png	-
+bugs	walking-stick	walking-stick	Walking Stick	a:bare	Walking stick	Walking_Stick_NH.png	-
+bugs	walking-leaf	walking-leaf	Walking Leaf	a:bare	Walking leaf	Walking_Leaf_NH.png	-
+bugs	wasp	wasp	Wasp	a:bare	Wasp	NH-Wasp.png	-
+bugs	giant-cicada	giant-cicada	Giant Cicada	a:bare	Giant cicada	Giant_Cicada_NH.png	-
+bugs	cicada-shell	cicada-shell	Cicada Shell	a:bare	Cicada shell	Cicada_Shell_NH.png	-
+bugs	petaltail-dragonfly	petaltail-dragonfly	Petaltail Dragonfly	a:bare	Petaltail dragonfly	Petaltail_dragonfly_encyclopedia_%28New_Leaf%29.jpg	-
+bugs	diving-beetle	diving-beetle	Diving Beetle	a:bare	Diving beetle	NH-diving_beetle.png	-
+bugs	giant-water-bug	giant-waterbug	Giant Water Bug	override	Giant water bug	NH-Giant_water_bug.jpg	-
+bugs	stinkbug	stinkbug	Stinkbug	a:bare	Stinkbug	Stinkbugcritterpedia.png	-
+bugs	man-faced-stinkbug	man-faced-stinkbug	Man-faced Stinkbug	override	Man-faced stink bug	Man-faced_Stink_Bug.jpeg	-
+bugs	tiger-beetle	tiger-beetle	Tiger Beetle	a:bare	Tiger beetle	Tiger_Beetle_NH.png	-
+bugs	violin-beetle	violin-beetle	Violin Beetle	a:bare	Violin beetle	NH-violin_beetle.png	-
+bugs	citrus-longhorn-beetle	citrus-longhorn-beetle	Citrus Long-horned Beetle	a:bare	Citrus long-horned beetle	Citrus_Long-Horned_Beetle_NH.png	-
+bugs	miyama-stag-beetle	miyama-stag-beetle	Miyama Stag Beetle	a:bare	Miyama stag	Miyama_stag_nh.png	-
+bugs	giant-stag-beetle	giant-stag-beetle	Giant Stag Beetle	a:bare	Giant stag	Giant_stag_nh.png	-
+bugs	rainbow-stag-beetle	rainbow-stag-beetle	Rainbow Stag Beetle	a:bare	Rainbow stag	Rainbow_stag_nh.png	-
+bugs	cyclommatus-stag-beetle	cyclommatus-stag-beetle	Cyclommatus Stag Beetle	override	Cyclommatus stag	Cyclommatus_stag_nh.png	-
+bugs	golden-stag-beetle	golden-stag-beetle	Golden Stag Beetle	override	Golden stag	Golden_stag_nh.png	-
+bugs	giraffe-stag-beetle	giraffe-stag-beetle	Giraffe Stag Beetle	override	Giraffe stag	Giraffe_stag_nh.png	-
+bugs	earth-boring-dung-beetle	earth-boring-dung-beetle	Earth-boring Dung Beetle	a:bare	Earth-boring dung beetle	Earth-boring_dung_beetle_nh.png	-
+bugs	centipede	centipede	Centipede	a:bare	Centipede	NH-Centipede.jpg	-
+fossils	brachiosaurus-skull	brachiosaurus-skull	Brachiosaurus	a:bare	Brachiosaurus	NH-Brachio-plaque.jpg	-
+fossils	brachiosaurus-neck	brachiosaurus-neck	Brachiosaurus	a:bare	Brachiosaurus	NH-Brachio-plaque.jpg	-
+fossils	brachiosaurus-torso	brachiosaurus-torso	Brachiosaurus	a:bare	Brachiosaurus	NH-Brachio-plaque.jpg	-
+fossils	brachiosaurus-tail	brachiosaurus-tail	Brachiosaurus	a:bare	Brachiosaurus	NH-Brachio-plaque.jpg	-
+fossils	diplodocus-skull	diplodocus-skull	Diplodocus	a:bare	Diplodocus	Diplodocus.jpeg	-
+fossils	diplodocus-neck	diplodocus-neck	Diplodocus	a:bare	Diplodocus	Diplodocus.jpeg	-
+fossils	diplodocus-torso	diplodocus-torso	Diplodocus	a:bare	Diplodocus	Diplodocus.jpeg	-
+fossils	diplodocus-tail	diplodocus-tail	Diplodocus	a:bare	Diplodocus	Diplodocus.jpeg	-
+fossils	spinosaurus-skull	spinosaurus-skull	Spinosaurus	a:bare	Spinosaurus	Spinosaurus.png	-
+fossils	spinosaurus-torso	spinosaurus-torso	Spinosaurus	a:bare	Spinosaurus	Spinosaurus.png	-
+fossils	spinosaurus-tail	spinosaurus-tail	Spinosaurus	a:bare	Spinosaurus	Spinosaurus.png	-
+fossils	parasaurolophus-skull	parasaurolophus-skull	Parasaurolophus	a:bare	Parasaurolophus	Parasaurolophus.jpeg	-
+fossils	parasaurolophus-torso	parasaurolophus-torso	Parasaurolophus	a:bare	Parasaurolophus	Parasaurolophus.jpeg	-
+fossils	parasaurolophus-tail	parasaurolophus-tail	Parasaurolophus	a:bare	Parasaurolophus	Parasaurolophus.jpeg	-
+fossils	ichthyosaurus-skull	ichthyosaurus-skull	Ichthyosaurus	d:html	Ichthyosaurus	Ichthyosaur.jpg	html-fallback
+fossils	ichthyosaurus-torso	ichthyosaurus-torso	Ichthyosaurus	d:html	Ichthyosaurus	Ichthyosaur.jpg	html-fallback
+fossils	ichthyosaurus-tail	ichthyosaurus-tail	Ichthyosaurus	d:html	Ichthyosaurus	Ichthyosaur.jpg	html-fallback
+fossils	pterodactyl-skull	pterodactyl-skull	Pterodactyl	none	-	-	UNRESOLVED
+fossils	pterodactyl-left-wing	pterodactyl-left-wing	Pterodactyl	none	-	-	UNRESOLVED
+fossils	pterodactyl-right-wing	pterodactyl-right-wing	Pterodactyl	none	-	-	UNRESOLVED
+fossils	megacero-skull	megacero-skull	Megacero	override	Megaloceros	NH-Megaloceros.jpg	-
+fossils	megacero-torso	megacero-torso	Megacero	override	Megaloceros	NH-Megaloceros.jpg	-
+fossils	megacero-tail	megacero-tail	Megacero	override	Megaloceros	NH-Megaloceros.jpg	-
+fossils	archelon-skull	archelon-skull	Archelon	a:bare	Archelon	Archelon.jpeg	-
+fossils	archelon-tail	archelon-tail	Archelon	a:bare	Archelon	Archelon.jpeg	-
+fossils	quetzalcoatlus-skull	quetzalcoatlus-skull	Quetzalcoatlus	a:bare	Quetzalcoatlus	NH-Quetzalcoatlus.jpg	-
+fossils	quetzalcoatlus-left-wing	quetzalcoatlus-left-wing	Quetzalcoatlus	a:bare	Quetzalcoatlus	NH-Quetzalcoatlus.jpg	-
+fossils	quetzalcoatlus-right-wing	quetzalcoatlus-right-wing	Quetzalcoatlus	a:bare	Quetzalcoatlus	NH-Quetzalcoatlus.jpg	-
+fossils	deinony-skull	deinony-skull	Deinony	override	Deinonychus	Deinonychus_NH.jpg	-
+fossils	deinony-torso	deinony-torso	Deinony	override	Deinonychus	Deinonychus_NH.jpg	-
+fossils	deinony-tail	deinony-tail	Deinony	override	Deinonychus	Deinonychus_NH.jpg	-
+fossils	dinopithecus-skull	dinopithecus-skull	Dinopithecus	none	-	-	UNRESOLVED
+fossils	dinopithecus-torso	dinopithecus-torso	Dinopithecus	none	-	-	UNRESOLVED
+fossils	dinopithecus-tail	dinopithecus-tail	Dinopithecus	none	-	-	UNRESOLVED
+fossils	anomalocaris	anomalocaris	Anomalocaris	a:bare	Anomalocaris	NH-Furniture_Anolmalocaris.png	-
+fossils	australopith	australopith	Australopith	override	Australopithecus	Australopith.jpeg	-
+fossils	dunkleosteus	dunkleosteus	Dunkleosteus	a:bare	Dunkleosteus	NH-Furniture-dunkleosteus.png	-
+fossils	eusthenopteron	eusthenopteron	Eusthenopteron	a:bare	Eusthenopteron	NH-Furniture-Eusthenopteron.jpeg	-
+fossils	juramaia	juramaia	Juramaia	a:bare	Juramaia	NH-Furniture-juramaia.png	-
+fossils	myllokunmingia	myllokunmingia	Myllokunmingia	a:bare	Myllokunmingia	NH-Furniture-myllokunmingia.png	-
+fossils	opabinia	opabinia	Opabinia	none	-	-	UNRESOLVED
+art	ancient-statue	ancient-statue	Ancient Statue	a:bare	Ancient statue	AncientStatue.jpg	-
+art	beautiful-statue	beautiful-statue	Beautiful Statue	a:bare	Beautiful statue	Venus_de_Milo_Louvre_Ma399_n4.jpg	-
+art	dynamic-painting	dynamic-painting	Dynamic Painting	a:bare	Dynamic painting	TheGreatWaveOffKanagawa.png	-
+art	gallant-statue	gallant-statue	Gallant Statue	a:bare	Gallant statue	GallantStatue.jpg	-
+art	graceful-painting	graceful-painting	Graceful Painting	a:bare	Graceful painting	Beauty_Looking_Back.jpg	-
+art	jolly-painting	jolly-painting	Jolly Painting	a:bare	Jolly painting	180px-Jolly2.jpg	-
+art	moody-painting	moody-painting	Moody Painting	a:bare	Moody painting	Moody_Painting.jpg	-
+art	mystic-statue	mystic-statue	Mystic Statue	a:bare	Mystic statue	MysticStatue.jpg	-
+art	neutral-painting	neutral-painting	Neutral Painting	a:bare	Neutral painting	Tumblr_mo9ix4piEJ1svownfo5_1280.jpg	-
+art	proper-painting	proper-painting	Proper Painting	a:bare	Proper painting	Proper_Painting.jpeg	-
+art	robust-statue	robust-statue	Robust Statue	a:bare	Robust statue	Disc_thrower.jpg	-
+art	scenic-painting	scenic-painting	Scenic Painting	a:bare	Scenic painting	180px-Scenic2.jpg	-
+art	serene-painting	serene-painting	Serene Painting	a:bare	Serene painting	Ermine.jpg	-
+art	tremendous-statue	tremendous-statue	Tremendous Statue	a:bare	Tremendous statue	NH-Tremendous_Statue_%28real_life%29.jpg	-
+art	valiant-statue	valiant-statue	Valiant Statue	a:bare	Valiant statue	ValiantStatue.jpg	-
+art	wild-painting-left-half	wild-painting-left-half	Wild Painting Left Half	override	Wild painting	Fujin_and_raijin.jpg	-
+art	wild-painting-right-half	wild-painting-right-half	Wild Painting Right Half	override	Wild painting	Fujin_and_raijin.jpg	-
+art	wistful-painting	wistful-painting	Wistful Painting	a:bare	Wistful painting	Wistful_Painting_Real.jpg	-
+sea_creatures	sea-star	sea-star	Sea Star	a:bare	Sea star	600px-Sea_Star_NH.png	-
+sea_creatures	sea-anemone	sea-anemone	Sea Anemone	a:bare	Sea anemone	Sea_anemone_nh.png	-
+sea_creatures	sea-slug	sea-slug	Sea Slug	a:bare	Sea slug	Sea_slug_nh.png	-
+sea_creatures	octopus	octopus	Octopus	b:disambig	Octopus (deep-sea creature)	Octopus_NH.png	-
+sea_creatures	pearl-oyster	pearl-oyster	Pearl Oyster	override	Pearl oyster (deep-sea creature)	Pearl_oyster_nh.png	-
+sea_creatures	scallop	scallop	Scallop	a:bare	Scallop	Scallop_nh.png	-
+sea_creatures	clam	clam	Clam	a:bare	Clam	Clam.png	-
+sea_creatures	whelk	whelk	Whelk	a:bare	Whelk	Whelk_nh.png	-
+sea_creatures	mantis-shrimp	mantis-shrimp	Mantis Shrimp	a:bare	Mantis shrimp	Mantis_Shrimp_NH.png	-
+sea_creatures	lobster	lobster	Lobster	b:disambig	Lobster (deep-sea creature)	Lobster_NH.png	-
+sea_creatures	oyster	oyster	Oyster	a:bare	Oyster	Oyster_nh.png	-
+sea_creatures	turban-shell	turban-shell	Turban Shell	a:bare	Turban shell	Turban_shell_nh.png	-
+sea_creatures	abalone	abalone	Abalone	a:bare	Abalone	Abalone_nh.png	-
+sea_creatures	mussel	mussel	Mussel	a:bare	Mussel	Mussel_nh.png	-
+sea_creatures	sea-urchin	sea-urchin	Sea Urchin	a:bare	Sea urchin	600px-Sea_Urchin_NH.png	-
+sea_creatures	sea-cucumber	sea-cucumber	Sea Cucumber	a:bare	Sea cucumber	Sea_cucumber_nh.png	-
+sea_creatures	sea-grapes	sea-grapes	Sea Grapes	a:bare	Sea grapes	Sea_grapes_nh.png	-
+sea_creatures	sea-pineapple	sea-pineapple	Sea Pineapple	a:bare	Sea pineapple	Sea_Pineapple_NH.png	-
+sea_creatures	nautilus	nautilus	Nautilus	a:bare	Chambered nautilus	Chambered_nautilus_nh.png	-
+sea_creatures	firefly-squid	firefly-squid	Firefly Squid	a:bare	Firefly squid	NH-Critterpedia-Firefly_squid.png	-
+sea_creatures	tiger-prawn	tiger-prawn	Tiger Prawn	a:bare	Tiger prawn	Tiger_Prawn_NH.png	-
+sea_creatures	sakura-shrimp	sakura-shrimp	Sakura Shrimp	none	-	-	UNRESOLVED
+sea_creatures	snow-crab	snow-crab	Snow Crab	a:bare	Snow crab	Snow_Crab_NH.png	-
+sea_creatures	red-king-crab	red-king-crab	Red King Crab	a:bare	Red king crab	Red_King_Crab_NH.png	-
+sea_creatures	dungeness-crab	dungeness-crab	Dungeness Crab	a:bare	Dungeness crab	NH-Critterpedia-Dungeness_crab.png	-
+sea_creatures	spiny-lobster	spiny-lobster	Spiny Lobster	a:bare	Spiny lobster	Spiny_Lobster_NH.png	-
+sea_creatures	horseshoe-crab	horseshoe-crab	Horseshoe Crab	a:bare	Horseshoe crab	Horseshoe_Crab_NH.png	-
+sea_creatures	giant-isopod	giant-isopod	Giant Isopod	a:bare	Giant isopod	Giant_Isopod_NH.png	-
+sea_creatures	moon-jellyfish	moon-jellyfish	Moon Jellyfish	a:bare	Moon jellyfish	Moon_jellyfish_nh.png	-
+sea_creatures	blue-jellyfish	blue-jellyfish	Blue Jellyfish	none	-	-	UNRESOLVED
+sea_creatures	sea-angel	sea-angel	Sea Angel	none	-	-	UNRESOLVED
+sea_creatures	venus-flower-basket	venus-flower-basket	Venus' Flower Basket	a:bare	Venus' flower basket	NH-Critterpedia-Venus%27_flower_basket.png	-
+sea_creatures	flatworm	flatworm	Flatworm	a:bare	Flatworm	Flatworm_NH.png	-
+sea_creatures	spotted-garden-eel	spotted-garden-eel	Spotted Garden Eel	a:bare	Spotted garden eel	Spotted_Garden_Eel_NH.png	-
+sea_creatures	acorn-barnacle	acorn-barnacle	Acorn Barnacle	a:bare	Acorn barnacle	Acorn_Barnacle_NH.png	-
