@@ -81,6 +81,49 @@ export const OVERRIDES: Record<string, Override> = {
   'ACWW/art/solemn-painting': 'Solemn painting',
   'ACWW/art/strange-painting': 'Strange painting',
   'ACWW/art/warm-painting': 'Warm painting',
+
+  // ACNL fossils — in-game catalog truncates/anglicizes the Latin genus.
+  // Megacero → Megaloceros (Irish elk). The c:search step otherwise lands on
+  // "Megacerops" — a different mammal entirely.
+  'ACNL/fossils/megacero-skull': 'Megaloceros',
+  'ACNL/fossils/megacero-torso': 'Megaloceros',
+  'ACNL/fossils/megacero-tail': 'Megaloceros',
+  // Deinony-* → Deinonychus. Same -us-truncation pattern as ACWW
+  // ankylosaur/pachycephalosaur.
+  'ACNL/fossils/deinony-skull': 'Deinonychus',
+  'ACNL/fossils/deinony-torso': 'Deinonychus',
+  'ACNL/fossils/deinony-tail': 'Deinonychus',
+  // Australopith → Australopithecus.
+  'ACNL/fossils/australopith': 'Australopithecus',
+
+  // ACNL fish — the bare "Great white shark" page exists but the algorithmic
+  // chain landed on "Great white shark model" (a furniture page); pin the
+  // species article.
+  'ACNL/fish/great-white-shark': 'Great white shark',
+
+  // ACNL bugs — anglicized / "beetle"-suffix-stripped wiki titles. The
+  // Miyama/Giant/Rainbow stag set already worked via a:bare; these three
+  // didn't because their in-game names include "beetle" but the wiki pages
+  // drop it.
+  'ACNL/bugs/cyclommatus-stag-beetle': 'Cyclommatus stag',
+  'ACNL/bugs/golden-stag-beetle': 'Golden stag',
+  'ACNL/bugs/giraffe-stag-beetle': 'Giraffe stag',
+  // Wiki uses "stink bug" (two words); in-game catalog uses "stinkbug".
+  'ACNL/bugs/man-faced-stinkbug': 'Man-faced stink bug',
+  // Bare "Giant water bug" page exists; algorithmic chain otherwise lands on
+  // "Giant water bug model" (furniture).
+  'ACNL/bugs/giant-water-bug': 'Giant water bug',
+
+  // ACNL art — split-panel paintings collapse to the single wiki article
+  // (same shape as fossil pieces sharing one whole-species image).
+  'ACNL/art/wild-painting-left-half': 'Wild painting',
+  'ACNL/art/wild-painting-right-half': 'Wild painting',
+
+  // ACNL sea creatures — wiki indexes as "Pearl oyster (deep-sea creature)"
+  // (lowercase second word). MediaWiki only auto-capitalizes the first
+  // character, so the b:disambig probe with the in-game-cased "Pearl Oyster"
+  // misses; pin the lowercase title.
+  'ACNL/sea_creatures/pearl-oyster': 'Pearl oyster (deep-sea creature)',
 };
 
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -244,6 +287,12 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
   const rejected: string[] = [];
   for (const h of hits)
     (allTokensPresent(input.name, h) ? accepted : rejected).push(h);
+  // 2026-05-10 (v0.9.5 spike): MediaWiki search frequently ranks "<Title>/Gallery"
+  // subpages above their parent article (seen on great-white-shark and
+  // rajah-brooke-birdwing in the ACNL spike). Push subpage titles to the back
+  // so the parent article wins when both exist; preserves the gallery as a
+  // fallback if the parent has no pageimages.
+  accepted.sort((x, y) => Number(x.includes('/')) - Number(y.includes('/')));
   if (rejected.length) notes.push(`search rejected: [${rejected.join(' | ')}]`);
   if (accepted.length) notes.push(`search accepted: [${accepted.join(' | ')}]`);
   for (const cand of accepted) {
