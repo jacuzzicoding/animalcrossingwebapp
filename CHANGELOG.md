@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
-## [0.9.4-beta] — 2026-05-07
+## [v0.9.4-beta] — 2026-05-07
 
 ### Added
 - **Silhouette rendering for un-donated items** (PR #118, Closes #116) — un-donated species now render as black silhouettes that fade to full color on donation, matching the canonical Animal Crossing museum experience. Implemented as a CSS `filter: brightness(0)` on the existing PNGs (no new assets) with a 300ms reveal transition; honors `prefers-reduced-motion`. New "Museum display" section in Settings with a single global toggle (`museumDisplay.silhouettesEnabled` in the persisted store, default ON). `ItemIcon` accepts a new optional `donated` prop and conveys donation state via `alt` text for screen readers ("Coelacanth, not yet donated" / ", donated"). Applies across category rows, expand panels, Home shelves, search results, and the recent-activity feed
@@ -14,7 +14,7 @@ All notable changes to this project are documented here.
 ### Changed
 - **Icon export pipeline `TARGET_SIZE` bumped 512 → 768** (PR #115) — `scripts/export-icons.ts` now resizes 2048 sources to 768×768 (was 512). All four hand-drawn pieces (ant, koi, sea-bass, coelacanth) re-exported at the new resolution. Preserves painterly detail at the larger expand-panel render sizes introduced in v0.9.2 without changing the source workflow
 
-## [0.9.3-beta] — 2026-05-06
+## [v0.9.3-beta] — 2026-05-06
 
 ### Added
 - Hand-drawn `bugs/ant.png` icon (ACGCN) — 2048 source committed at `icon-sources/bugs/ant.png`, exported through the v0.9.2 pipeline. Replaces the wiki-scraped placeholder. Third hand-drawn icon after sea-bass and koi
@@ -300,6 +300,6 @@ All notable changes to this project are documented here.
 - Basic museum donation tracking for all four categories
 - Four-tab navigation (Fish / Bugs / Fossils / Art)
 - Zustand store with `persist` middleware (localStorage)
-- Cozy parchment/GameCube museum aesthetic with inline hex design tokens
+- Cozy parchment/GameCube aesthetic with inline hex design tokens
 - Data files: `fish.json` (40 species), `bugs.json` (40 species), `fossils.json` (25 items), `art.json` (13 paintings)
 - GitHub CI workflow and Vercel deployment
