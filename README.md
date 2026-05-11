@@ -54,6 +54,7 @@ npm run lint      # Lint with ESLint
 ## Data
 
 Museum data lives in `public/data/<game>/`:
+
 - `public/data/acgcn/` — GameCube: 40 fish, 40 bugs, 25 fossils, 13 paintings
 - `public/data/acww/` — Wild World: 56 fish, 56 bugs, 52 fossils, 20 art
 - `public/data/accf/` — City Folk: 40 fish, 40 bugs, 52 fossils, 23 art
@@ -66,6 +67,6 @@ Museum data lives in `public/data/<game>/`:
 
 ## Version
 
-Current release: **v0.9.4-beta** (2026-05-07) — silhouette rendering for un-donated items, ACWW icon gap-fill (100% coverage), 768px hand-drawn icon pipeline, fourth hand-drawn icon (coelacanth). Previous betas: **v0.9.3-beta** (JSON save-file round-trip + onboarding fixes), **v0.9.2-beta** (cross-game icon routing + first hand-drawn icons), **v0.9.1-beta** (ACGCN item icons), **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/roadmap-to-v1.md](docs/roadmap-to-v1.md) for the path to v1.0.
+Current release: **v0.9.5-beta** (2026-05-10) — ACNL icon gap-fill (96.5% coverage, ACCF to 100%), three new hand-drawn icons (frog, robust cicada, brown cicada). Previous betas: **v0.9.4-beta** (silhouette rendering + ACWW icon gap-fill), **v0.9.3-beta** (JSON save-file round-trip + onboarding fixes), **v0.9.2-beta** (cross-game icon routing + first hand-drawn icons), **v0.9.1-beta** (ACGCN item icons), **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/roadmap-to-v1.md](docs/roadmap-to-v1.md) for the path to v1.0.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).

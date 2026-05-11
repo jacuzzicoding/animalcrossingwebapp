@@ -6,35 +6,38 @@ Last updated: **2026-05-07** (after v0.9.4-beta shipped).
 
 ## Where the project sits
 
-- **Current public release:** v0.9.4-beta — silhouette rendering for un-donated items, ACWW icon gap-fill (100% coverage), 768px hand-drawn icon pipeline, fourth hand-drawn icon (coelacanth).
+- **Current public release:** v0.9.5-beta — ACNL icon gap-fill (ACNL 96.5%, ACCF 100%, ACNH 68.8%), three hand-drawn icons (frog, robust cicada, brown cicada), polish nits.
 - **Cadence:** roughly one focused beta every 2-4 days since v0.6 (April 2026). The path to v1.0 holds that pace.
 - **Principle:** one focused track per beta. Polish bundles ship as their own betas, not bundled with feature work.
 
 ## Sequence
 
-| Version | Track | Status |
-|---|---|---|
-| v0.9.1-beta | ACGCN item icons + UI wiring + credits/license | Shipped 2026-05-04 |
-| v0.9.2-beta | Cross-game icon routing + per-game gap audit | Shipped 2026-05-05 |
-| v0.9.3-beta | JSON save-file round-trip (export + import) + first hand-drawn bug (ant) | Shipped 2026-05-06 |
+| Version     | Track                                                                                        | Status             |
+| ----------- | -------------------------------------------------------------------------------------------- | ------------------ |
+| v0.9.1-beta | ACGCN item icons + UI wiring + credits/license                                               | Shipped 2026-05-04 |
+| v0.9.2-beta | Cross-game icon routing + per-game gap audit                                                 | Shipped 2026-05-05 |
+| v0.9.3-beta | JSON save-file round-trip (export + import) + first hand-drawn bug (ant)                     | Shipped 2026-05-06 |
 | v0.9.4-beta | Silhouette rendering for un-donated items + ACWW icon gap-fill + higher-res hand-drawn icons | Shipped 2026-05-07 |
-| v0.9.5-beta | ACNL icon gap-fill (53 items) | Planned |
-| v0.9.6-beta | ACNH icon gap-fill (106 items) | Planned |
-| v0.9.7-beta | SEO basics (OG tags, sitemap, meta, social cards per game) | Planned |
-| v0.9.8-beta | Light monetization footer + polish bug sweep | Planned |
-| v1.0.0 | Final polish + public ship + all hand-drawn icons | Target |
+| v0.9.5-beta | ACNL icon gap-fill + three hand-drawn icons                                                  | Shipped 2026-05-10 |
+| v0.9.6-beta | ACNH icon gap-fill (103 unique items)                                                        | Planned            |
+| v0.9.7-beta | SEO basics (OG tags, sitemap, meta, social cards per game)                                   | Planned            |
+| v0.9.8-beta | Light monetization footer + polish bug sweep                                                 | Planned            |
+| v1.0.0      | Final polish + public ship + all hand-drawn icons                                            | Target             |
 
 ## Track notes
 
 ### v0.9.2-beta — cross-game icon routing
+
 Shipped 2026-05-05. Reverse-indexed the per-game manifests so an item drawn (or scraped) for one game routes to every other game that has it. Generated a per-game audit of what's still missing. The catalog analysis showed 56% of naive-per-game scrape work is redundant — cross-game routing recovers that effort and makes the gap-fill betas dramatically smaller.
 
 ### v0.9.3-beta — JSON save-file round-trip
+
 Shipped 2026-05-06. The original scoping targeted CSV import as the round-trip complement to CSV export; during scoping it became clear that JSON fit the schema needs better — versioned, lossless round-trip, structured per-game donation records. The shipped feature exports a full save file (`ac-save-<town>-<date>.json`) and imports it via a modal with three reconciliation modes: Replace, Merge, and Import as new town. Two-step destructive confirmation guards Replace when the target town has existing data.
 
 v0.9.3 also delivered the first hand-drawn bug: ant. The ACGCN ant joins koi, sea-bass, and coelacanth (fish) as the first four hand-drawn pieces in the library.
 
 ### v0.9.4-beta — silhouette rendering + ACWW gap-fill + higher-res hand-drawn icons
+
 Shipped 2026-05-07. Bundles three related tracks:
 
 **Silhouette rendering (headline feature, PR #118, issue #116).** CSS-filter-based silhouette rendering for un-donated items across all four categories. A new "Museum display" section in Settings exposes a toggle (default ON). Un-donated items render as a dark silhouette; donating an item triggers a 300ms reveal animation. `prefers-reduced-motion` is honored, and `aria-label` conveys species + donation state for screen readers. Faithful to the canonical Animal Crossing museum experience of seeing silhouettes until a piece is donated.
@@ -46,7 +49,12 @@ Shipped 2026-05-07. Bundles three related tracks:
 One-track-per-beta is preserved in spirit: silhouette is the headline feature. The icon work is supporting asset/data changes, not a parallel feature.
 
 ### v0.9.5 / v0.9.6-beta — per-game icon gap fills
+
 After cross-game routing, each remaining game's scrape is much smaller than v0.9.1's was. The per-game catalog audit established the remaining gap sizes:
+
+### v0.9.5-beta — ACNL gap-fill (shipped)
+
+Shipped 2026-05-10. 135 items, ACNL 96.5%, ACCF 100% via cross-game, ACNH 68.8% via cross-game. 10 genuine gaps remain. Resolver improvements (Gallery deprioritization, sea-creature disambig) apply directly to the ACNH scrape next cycle. Three hand-drawn icons (frog, robust cicada, brown cicada) bring the hand-drawn library to seven pieces total.
 
 - ACNL: 53 unique items
 - ACNH: 106 unique items (largest catalog, save for last)
@@ -56,12 +64,15 @@ ACCF has 0 unique items after cross-game routing — no release needed for that 
 Each release uses the same algorithmic-resolver-plus-OVERRIDES pattern documented in [docs/wiki-scraping-pattern.md](./wiki-scraping-pattern.md).
 
 ### v0.9.7-beta — SEO basics
+
 Open Graph tags, sitemap, meta descriptions, social cards per game. One-shot pass to make share links render well and the site discoverable.
 
 ### v0.9.8-beta — Light monetization + polish bug sweep
+
 Ko-fi or GH Sponsors footer link. Sweeps remaining polish bugs (currently tracked: #85 mobile category clipping, #92 v0.9.1 post-release polish bundle, anything new from beta use).
 
 ### v1.0.0 — Final polish + public ship
+
 The moment the project is ready to share publicly. Reddit launch, portfolio link goes live. All 255 hand-drawn icons complete (94 fish + 116 bugs + 45 sea creatures).
 
 ## Post-v1.0 ideas
@@ -76,20 +87,21 @@ Not scoped for the v1.0 release, but worth preserving for future planning:
 The wiki-sourced icons in v0.9.1+ are placeholders. The long-term plan is hand-drawn replacements covering all 5 games via cross-game routing — one drawing per item-id propagates to every game that has it.
 
 Scope decisions:
+
 - **Fossils:** ship one generic placeholder drawing covering all fossil pieces. No per-piece, no per-species. Drops 153 distinct items to 1.
 - **Art:** use actual public-domain artwork (Vitruvian Man, The Birth of Venus, etc. — which is what AC's art pieces depict). Drops 45 hand-drawn pieces to 0.
 - **Fish + bugs + sea creatures:** the real hand-drawn target. Per-category totals: 94 fish, 116 bugs, 45 sea creatures = **255 distinct pieces** for full series coverage.
 
 Per-game new items (the workload added by each release):
 
-| Game | Fish | Bugs | Sea creatures | Total new |
-|---|---:|---:|---:|---:|
-| ACGCN | 40 | 40 | — | 80 |
-| ACWW | 21 | 27 | — | 48 |
-| ACCF | 0 | 0 | — | 0 |
-| ACNL | 23 | 28 | 35 | 86 |
-| ACNH | 10 | 21 | 10 | 41 |
-| **Total** | **94** | **116** | **45** | **255** |
+| Game      |   Fish |    Bugs | Sea creatures | Total new |
+| --------- | -----: | ------: | ------------: | --------: |
+| ACGCN     |     40 |      40 |             — |        80 |
+| ACWW      |     21 |      27 |             — |        48 |
+| ACCF      |      0 |       0 |             — |         0 |
+| ACNL      |     23 |      28 |            35 |        86 |
+| ACNH      |     10 |      21 |            10 |        41 |
+| **Total** | **94** | **116** |        **45** |   **255** |
 
 **Progress as of 2026-05-07:** 4 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish).
 
