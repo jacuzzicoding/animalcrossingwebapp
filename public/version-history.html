@@ -473,6 +473,54 @@
       <section>
         <h2>Shipped versions</h2>
         <div class="timeline">
+          <!-- v0.9.5-beta -->
+          <div class="tl-entry">
+            <div class="tl-date">May 10<br />2026</div>
+            <div class="tl-spine">
+              <div class="tl-dot"></div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-card">
+              <div class="tl-card-head">
+                <span class="version-badge">v0.9.5-beta</span>
+                <span class="version-title"
+                  >ACNL icon gap-fill + three hand-drawn icons</span
+                >
+                <span class="velocity-chip">3 days after v0.9.4</span>
+              </div>
+              <ul class="tl-bullets">
+                <li>
+                  ACNL icon gap-fill — 135 wiki-scraped items added (23 fish +
+                  28 bugs + 34 fossils + 18 art + 32 sea creatures); ACNL
+                  coverage goes from 49.1% → 96.5% (275/285); 10 genuine wiki
+                  gaps remain, logged to <code>scripts/missing-acnl.txt</code>
+                </li>
+                <li>
+                  Cross-game ID matching carries ACCF to 100% coverage and ACNH
+                  to 68.8% — no additional scrape work required for ACCF
+                </li>
+                <li>
+                  Resolver improvements: deprioritize <code>/Gallery</code>
+                  subpages so parent articles win; add
+                  <code>deep-sea creature</code> disambiguation for ACNL/ACNH
+                  sea creatures shared with other categories
+                </li>
+                <li>
+                  Frog is the fifth hand-drawn icon in the library — replaces
+                  the scraped wiki asset under <code>fish/frog.png</code>
+                </li>
+                <li>
+                  Robust cicada and brown cicada are the sixth and seventh
+                  hand-drawn icons, replacing scraped Fandom placeholders under
+                  <code>bugs/</code>
+                </li>
+                <li>
+                  Polish nits: velocity-history headline fix, icon-checker
+                  render memoization, test-stub cleanup
+                </li>
+              </ul>
+            </div>
+          </div>
           <!-- v0.9.4-beta -->
           <div class="tl-entry">
             <div class="tl-date">May 7<br />2026</div>
@@ -1012,7 +1060,7 @@
             <span class="building-note">polish, PWA, accessibility</span>
           </div>
 
-          <p class="checklist-section">Recently shipped (v0.9.4-beta)</p>
+          <p class="checklist-section">Recently shipped (v0.9.5-beta)</p>
           <div class="checklist">
             <div class="check-item done">
               <div class="box">✓</div>
@@ -1469,7 +1517,7 @@
           <a href="https://animalcrossingwebapp.vercel.app"
             >animalcrossingwebapp.vercel.app</a
           >
-          · v0.9.4-beta shipped · v1.0 next · Dev preview at
+          · v0.9.5-beta shipped · v1.0 next · Dev preview at
           <a href="https://development-animalcrossingwebapp.vercel.app"
             >development-animalcrossingwebapp.vercel.app</a
           >
