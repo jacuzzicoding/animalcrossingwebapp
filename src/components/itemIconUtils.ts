@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { CategoryId } from '../lib/types';
 
 /**
@@ -156,9 +156,12 @@ export function useIconChecker(): (
   id: string
 ) => boolean {
   const state = useManifestState();
-  if (state.status !== 'present') return () => false;
-  const manifest = state.manifest;
-  return (category, id) => resolveIconUrl(manifest, category, id) !== null;
+  const manifest = state.status === 'present' ? state.manifest : null;
+  return useMemo(() => {
+    if (!manifest) return () => false;
+    return (category: CategoryId, id: string) =>
+      resolveIconUrl(manifest, category, id) !== null;
+  }, [manifest]);
 }
 
 /**
