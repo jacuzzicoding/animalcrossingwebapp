@@ -2,7 +2,7 @@
 
 This document is the canonical roadmap. It supersedes any earlier scattered planning notes.
 
-Last updated: **2026-05-07** (after v0.9.4-beta shipped).
+Last updated: **2026-05-10** (after v0.9.5-beta shipped).
 
 ## Where the project sits
 
@@ -57,7 +57,7 @@ After cross-game routing, each remaining game's scrape is much smaller than v0.9
 Shipped 2026-05-10. 135 items, ACNL 96.5%, ACCF 100% via cross-game, ACNH 68.8% via cross-game. 10 genuine gaps remain. Resolver improvements (Gallery deprioritization, sea-creature disambig) apply directly to the ACNH scrape next cycle. Three hand-drawn icons (frog, robust cicada, brown cicada) bring the hand-drawn library to seven pieces total.
 
 - ACNL: 53 unique items
-- ACNH: 106 unique items (largest catalog, save for last)
+- ACNH: 103 unique items (largest catalog, save for last)
 
 ACCF has 0 unique items after cross-game routing — no release needed for that game.
 
@@ -103,7 +103,7 @@ Per-game new items (the workload added by each release):
 | ACNH      |     10 |      21 |            10 |        41 |
 | **Total** | **94** | **116** |        **45** |   **255** |
 
-**Progress as of 2026-05-07:** 4 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish).
+**Progress as of 2026-05-10:** 7 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish), frog (fish), robust cicada (bug), brown cicada (bug).
 
 **Procreate canvas:** 2048×2048 px, transparent background, sRGB, exported as PNG. The production pipeline (sharp + pngquant) re-exports to 768×768 for deployment via `npm run icons:export`. Filename matches the canonical kebab-case item id (e.g. `sea-bass.png`, `tiger-swallowtail-butterfly.png`). Originals committed to `icon-sources/` for archival and reproduction.
 
