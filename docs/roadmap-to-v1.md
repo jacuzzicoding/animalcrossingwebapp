@@ -103,7 +103,7 @@ Per-game new items (the workload added by each release):
 | ACNH      |     10 |      21 |            10 |        41 |
 | **Total** | **94** | **116** |        **45** |   **255** |
 
-**Progress as of 2026-05-10:** 7 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish), frog (fish), robust cicada (bug), brown cicada (bug).
+**Progress as of 2026-05-11:** 8 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish), frog (fish), robust cicada (bug), brown cicada (bug), goldfish (fish).
 
 **Procreate canvas:** 2048×2048 px, transparent background, sRGB, exported as PNG. The production pipeline (sharp + pngquant) re-exports to 768×768 for deployment via `npm run icons:export`. Filename matches the canonical kebab-case item id (e.g. `sea-bass.png`, `tiger-swallowtail-butterfly.png`). Originals committed to `icon-sources/` for archival and reproduction.
 
