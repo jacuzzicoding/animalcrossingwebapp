@@ -516,7 +516,11 @@
           rebuild, Settings page, GlobalSearchDropdown, and StatsTab landing in a single PR.
         </p>
         <div class="chart-wrap">
-          <canvas id="locChart"></canvas>
+          <canvas
+            id="locChart"
+            role="img"
+            aria-label="Line chart of cumulative net lines of code at each tagged release from v0.1 (12k) to v0.9.5 (50k). The curve is gradual through v0.8.2 (28k) then jumps sharply at v0.9.0 to 39k — the Meadow design system shipping in a single release."
+          ></canvas>
         </div>
       </div>
 
@@ -525,7 +529,11 @@
         <div class="card">
           <h3>Commits per release</h3>
           <div class="chart-wrap short">
-            <canvas id="commitsChart"></canvas>
+            <canvas
+              id="commitsChart"
+              role="img"
+              aria-label="Bar chart of commits per release. v0.9.0-beta is the tallest bar at 48 commits (highlighted in clay), followed by v0.7.0-alpha at 47 and v0.8.0-alpha at 42. Most other releases sit between 1 and 26 commits."
+            ></canvas>
           </div>
         </div>
         <div class="card">
@@ -535,7 +543,11 @@
             is icon assets (PNG sources + 768px exports + manifests), not code bloat.
           </p>
           <div class="chart-wrap short">
-            <canvas id="filesChart"></canvas>
+            <canvas
+              id="filesChart"
+              role="img"
+              aria-label="Line chart of total file count in the repo at each release. The line stays under 100 files through v0.8.2, then jumps to 131 at v0.9.0, 264 at v0.9.1, and 514 at v0.9.5 — the steep climb is icon asset additions, not code growth."
+            ></canvas>
           </div>
         </div>
       </div>
@@ -654,7 +666,11 @@
             <strong>5-game tier</strong> lights up every single game at once.
           </p>
           <div class="chart-wrap short">
-            <canvas id="overlapChart"></canvas>
+            <canvas
+              id="overlapChart"
+              role="img"
+              aria-label="Horizontal stacked bar chart of cross-game species overlap. 5-game tier: 31 fish + 18 bugs. 4-game: 7 fish + 14 bugs. 3-game: 13 fish + 14 bugs. 2-game: 24 fish + 28 bugs. 1-game: 19 fish + 42 bugs. The 5-game tier is the highest-leverage tier for hand-drawing."
+            ></canvas>
           </div>
         </div>
       </div>
@@ -1022,11 +1038,12 @@
       });
 
       // ─── 5. Per-game horizontal coverage bars ─────────────────────────
-      // For each game: how many fish+bugs are hand-drawn vs scraped (have an icon
-      // file in public/icons/<game>/) vs no icon yet. Approximate scraped coverage
-      // from the manifest gap-fill % reported in CLAUDE.md.
-      // Counts derived directly from public/icons/{fish,bugs}/*.png cross-referenced
-      // against public/data/<game>/{fish,bugs}.json on 2026-05-12.
+      // For each game, counts derived directly from disk on 2026-05-12:
+      //   drawn   = item ids in icon-sources/{fish,bugs}/*.png that also appear
+      //             in public/data/<game>/{fish,bugs}.json
+      //   scraped = item ids with a file in public/icons/{fish,bugs}/*.png
+      //             (the flat cross-game layout introduced in v0.9.2) minus drawn
+      //   missing = total - drawn - scraped
       const games = [
         { name: 'ACGCN', total: 80, drawn: 7, scraped: 49 },
         { name: 'ACWW', total: 112, drawn: 7, scraped: 59 },
