@@ -193,7 +193,7 @@ public/data/acnh/
   sea_creatures.json        # 40 sea creatures (NH/SH months)
 icon-sources/                # 2048×2048 hand-drawn PNG originals — committed (not gitignored).
                              # Mirrors public/icons/ layout: `<category>/<id>.png`.
-                             # Run `npm run icons:export` to regenerate the 512 deploy assets.
+                             # Run `npm run icons:export` to regenerate the 768 deploy assets.
 docs/
   dev-process.md            # PR checklist and dev process rules for Claude Code sessions
   architecture.md           # Deep architectural context: store schema, migrations, multi-game types
