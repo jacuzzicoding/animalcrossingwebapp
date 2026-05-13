@@ -140,7 +140,7 @@ export const OVERRIDES: Record<string, Override> = {
   'ACNL/art/wild-painting-right-half': 'Wild painting',
 
   // ====================================================================
-  // ACNH (v0.9.6-beta) — see docs/v0.9.6-audit.md for the gap shape.
+  // ACNH (v0.9.6-beta) — see docs/v0.9.2-icon-coverage-audit.md for the gap shape.
   // ====================================================================
 
   // Multi-part fossils → parent species article. Same pattern as ACWW

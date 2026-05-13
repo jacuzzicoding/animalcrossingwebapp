@@ -1,6 +1,6 @@
 // v0.9.6 spike: resolve a representative slice of ACNH missing items against
 // the Fandom AC wiki. Resolution-only — does not download or commit binaries.
-// Threshold per audit doc: ≥90% (a/b/c/override) on this 15-item slice.
+// Threshold per audit doc: ≥90% (a/b/c/override) on this 18-item slice.
 //
 // Run: npx tsx scripts/spike-acnh-icons.ts
 
@@ -28,7 +28,7 @@ const DISAMBIG: Record<Category, string | undefined> = {
   sea_creatures: 'deep-sea creature',
 };
 
-// 18-item spike sourced from docs/v0.9.6-audit.md section 2.
+// 18-item spike sourced from docs/v0.9.2-icon-coverage-audit.md section 2.
 const SPIKE: { category: Category; id: string }[] = [
   { category: 'fish', id: 'betta' },
   { category: 'fish', id: 'golden-trout' },

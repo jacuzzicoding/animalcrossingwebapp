@@ -1,7 +1,7 @@
 // Fetch ACNH item icons from the Fandom AC wiki.
 //
-// Processes only the 103 ACNH items currently missing from the flat icon
-// manifest (audit: docs/v0.9.6-audit.md). Writes to
+// Processes ACNH items missing from the flat icon manifest (audit:
+// docs/v0.9.2-icon-coverage-audit.md). Writes to
 // public/icons/<category>/<canonicalId>.<ext> (flat, cross-game layout).
 // Canonical ids come from RENAME_OVERRIDES in itemIconUtils.
 // Does NOT wipe existing icons — add-only.
@@ -155,21 +155,77 @@ const MISSING_IDS: Record<Category, string[]> = {
 // Items intentionally excluded from MISSING_IDS above — logged as known gaps
 // so the missing log is honest about what we attempted vs. what was deferred.
 const KNOWN_GAPS: { category: Category; id: string; reason: string }[] = [
-  { category: 'fossils', id: 'coelacanth', reason: 'no Fandom AC fossil article; species page carries fish asset only' },
-  { category: 'fossils', id: 'elasmosaurus-neck', reason: 'no Fandom AC article for Elasmosaurus' },
-  { category: 'fossils', id: 'elasmosaurus-torso', reason: 'no Fandom AC article for Elasmosaurus' },
-  { category: 'fossils', id: 'fish-fossil', reason: 'no Fandom AC article for Fish fossil' },
-  { category: 'fossils', id: 'ichthyo-skull', reason: 'Ichthyosaurus page exists but has no infobox image' },
-  { category: 'fossils', id: 'ichthyo-tail', reason: 'Ichthyosaurus page exists but has no infobox image' },
-  { category: 'fossils', id: 'ichthyo-torso', reason: 'Ichthyosaurus page exists but has no infobox image' },
-  { category: 'fossils', id: 'shastasaurus-neck', reason: 'no Fandom AC article for Shastasaurus' },
-  { category: 'fossils', id: 'shastasaurus-torso', reason: 'no Fandom AC article for Shastasaurus' },
-  { category: 'fish', id: 'striped-marlin', reason: 'no Fandom AC article; only Blue marlin exists' },
-  { category: 'bugs', id: 'palm-weevil', reason: 'no Fandom AC article for Palm weevil' },
+  {
+    category: 'fossils',
+    id: 'coelacanth',
+    reason: 'no Fandom AC fossil article; species page carries fish asset only',
+  },
+  {
+    category: 'fossils',
+    id: 'elasmosaurus-neck',
+    reason: 'no Fandom AC article for Elasmosaurus',
+  },
+  {
+    category: 'fossils',
+    id: 'elasmosaurus-torso',
+    reason: 'no Fandom AC article for Elasmosaurus',
+  },
+  {
+    category: 'fossils',
+    id: 'fish-fossil',
+    reason: 'no Fandom AC article for Fish fossil',
+  },
+  {
+    category: 'fossils',
+    id: 'ichthyo-skull',
+    reason: 'Ichthyosaurus page exists but has no infobox image',
+  },
+  {
+    category: 'fossils',
+    id: 'ichthyo-tail',
+    reason: 'Ichthyosaurus page exists but has no infobox image',
+  },
+  {
+    category: 'fossils',
+    id: 'ichthyo-torso',
+    reason: 'Ichthyosaurus page exists but has no infobox image',
+  },
+  {
+    category: 'fossils',
+    id: 'shastasaurus-neck',
+    reason: 'no Fandom AC article for Shastasaurus',
+  },
+  {
+    category: 'fossils',
+    id: 'shastasaurus-torso',
+    reason: 'no Fandom AC article for Shastasaurus',
+  },
+  {
+    category: 'fish',
+    id: 'striped-marlin',
+    reason: 'no Fandom AC article; only Blue marlin exists',
+  },
+  {
+    category: 'bugs',
+    id: 'palm-weevil',
+    reason: 'no Fandom AC article for Palm weevil',
+  },
   { category: 'bugs', id: 'earwig', reason: 'no Fandom AC article for Earwig' },
-  { category: 'art', id: 'renowned-statue', reason: 'no Fandom AC article for Renowned statue' },
-  { category: 'art', id: 'stunning-statue', reason: 'no Fandom AC article for Stunning statue' },
-  { category: 'art', id: 'nice-statue', reason: 'no Fandom AC article for Nice statue' },
+  {
+    category: 'art',
+    id: 'renowned-statue',
+    reason: 'no Fandom AC article for Renowned statue',
+  },
+  {
+    category: 'art',
+    id: 'stunning-statue',
+    reason: 'no Fandom AC article for Stunning statue',
+  },
+  {
+    category: 'art',
+    id: 'nice-statue',
+    reason: 'no Fandom AC article for Nice statue',
+  },
 ];
 
 type RawItem = { id: string; name: string };
