@@ -29,11 +29,31 @@ export type ResolveInput = {
 
 export type ResolveResult = {
   found: boolean;
-  via: 'override' | 'a:bare' | 'b:disambig' | 'c:search' | 'd:html' | 'none';
+  via:
+    | 'override'
+    | 'a:bare'
+    | 'a:sentence'
+    | 'b:disambig'
+    | 'c:search'
+    | 'd:html'
+    | 'none';
   titleResolved: string | null;
   imageUrl: string | null;
   notes: string[];
 };
+
+// MediaWiki only auto-capitalizes the first character of a title. Fandom's AC
+// wiki overwhelmingly uses sentence case for species and item articles
+// ("Golden trout", "Hermit crab", "Sinking painting"), but in-game catalogs
+// are Title Case. Some pages have a Title-Case redirect, many don't. After
+// a:bare fails, retry with the rest of the title lowercased so a single probe
+// catches the common case without forcing dozens of OVERRIDES per game.
+function toSentenceCase(name: string): string {
+  if (!name) return name;
+  const head = name[0];
+  const tail = name.slice(1).toLowerCase();
+  return head + tail;
+}
 
 // Manually-curated overrides for items the algorithmic chain can't resolve.
 // Key shape: "<gameId>/<category>/<id>". Value forms:
@@ -118,6 +138,70 @@ export const OVERRIDES: Record<string, Override> = {
   // (same shape as fossil pieces sharing one whole-species image).
   'ACNL/art/wild-painting-left-half': 'Wild painting',
   'ACNL/art/wild-painting-right-half': 'Wild painting',
+
+  // ====================================================================
+  // ACNH (v0.9.6-beta) — see docs/v0.9.2-icon-coverage-audit.md for the gap shape.
+  // ====================================================================
+
+  // Multi-part fossils → parent species article. Same pattern as ACWW
+  // ankylosaur-* / ACNL megacero-*. ACNH catalog uses truncated forms
+  // (ankylo, brachio, diplo, ichthyo, megalo, ophthalmo, pachy, plesio,
+  // ptera, quetzal, shastasaurus, silo, spino, stego, styraco, tricera).
+  'ACNH/fossils/ankylo-skull': 'Ankylosaurus',
+  'ACNH/fossils/ankylo-tail': 'Ankylosaurus',
+  'ACNH/fossils/ankylo-torso': 'Ankylosaurus',
+  'ACNH/fossils/brachio-skull': 'Brachiosaurus',
+  'ACNH/fossils/brachio-chest': 'Brachiosaurus',
+  'ACNH/fossils/brachio-pelvis': 'Brachiosaurus',
+  'ACNH/fossils/brachio-tail': 'Brachiosaurus',
+  'ACNH/fossils/diplo-skull': 'Diplodocus',
+  'ACNH/fossils/diplo-neck': 'Diplodocus',
+  'ACNH/fossils/diplo-chest': 'Diplodocus',
+  'ACNH/fossils/diplo-hip': 'Diplodocus',
+  'ACNH/fossils/diplo-tail': 'Diplodocus',
+  'ACNH/fossils/diplo-tail-tip': 'Diplodocus',
+  'ACNH/fossils/diplo-torso': 'Diplodocus',
+  // Ichthyosaurus page exists but carries no pageimages.original and no
+  // portable-infobox image — genuine wiki gap; tracked in missing-acnh.txt.
+  'ACNH/fossils/left-megalo-side': 'Megaloceros',
+  'ACNH/fossils/right-megalo-side': 'Megaloceros',
+  'ACNH/fossils/ophthalmo-skull': 'Ophthalmosaurus',
+  'ACNH/fossils/ophthalmo-torso': 'Ophthalmosaurus',
+  'ACNH/fossils/pachy-skull': 'Pachycephalosaurus',
+  'ACNH/fossils/pachy-tail': 'Pachycephalosaurus',
+  'ACNH/fossils/plesio-skull': 'Plesiosaurus',
+  'ACNH/fossils/plesio-neck': 'Plesiosaurus',
+  'ACNH/fossils/plesio-body': 'Plesiosaurus',
+  'ACNH/fossils/ptera-body': 'Pteranodon',
+  'ACNH/fossils/left-ptera-wing': 'Pteranodon',
+  'ACNH/fossils/right-ptera-wing': 'Pteranodon',
+  'ACNH/fossils/quetzal-torso': 'Quetzalcoatlus',
+  'ACNH/fossils/left-quetzal-wing': 'Quetzalcoatlus',
+  'ACNH/fossils/right-quetzal-wing': 'Quetzalcoatlus',
+  // Shastasaurus has no Fandom AC article — genuine gap (logged).
+  'ACNH/fossils/silo-skull': 'Silo',
+  'ACNH/fossils/silo-tail': 'Silo',
+  'ACNH/fossils/spino-skull': 'Spinosaurus',
+  'ACNH/fossils/spino-tail': 'Spinosaurus',
+  'ACNH/fossils/spino-torso': 'Spinosaurus',
+  'ACNH/fossils/stego-skull': 'Stegosaurus',
+  'ACNH/fossils/stego-tail': 'Stegosaurus',
+  'ACNH/fossils/stego-torso': 'Stegosaurus',
+  'ACNH/fossils/styraco-skull': 'Styracosaurus',
+  'ACNH/fossils/styraco-tail': 'Styracosaurus',
+  'ACNH/fossils/styraco-torso': 'Styracosaurus',
+  'ACNH/fossils/tricera-skull': 'Triceratops',
+  'ACNH/fossils/tricera-tail': 'Triceratops',
+  'ACNH/fossils/tricera-torso': 'Triceratops',
+  // Elasmosaurus has no Fandom AC article — genuine gap (logged).
+  // Coelacanth (fossil) and Fish fossil have no Fandom AC article — genuine
+  // gaps (logged); the fish "Coelacanth" page is a different asset and not
+  // a valid stand-in for the fossil piece.
+  'ACNH/fossils/shark-tooth-pattern': 'Shark-tooth pattern',
+  // "Sabertooth tiger" is the wiki article for the multi-part sabertooth
+  // skeleton; "sabertooth-tail" is the only piece missing here because
+  // sabertooth-skull/torso already routed via ACNL canonicalization.
+  'ACNH/fossils/sabertooth-tail': 'Sabertooth tiger',
 
   // ACNL sea creatures — wiki indexes as "Pearl oyster (deep-sea creature)"
   // (lowercase second word). MediaWiki only auto-capitalizes the first
@@ -264,6 +348,25 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
   }
   let safeHtmlTarget: string | null = a.kind === 'no-image' ? a.title : null;
 
+  // (a2) sentence-case name — handles the Title-Case-vs-sentence-case gap
+  // that ACNH catalog names hit constantly (e.g. "Golden Trout" → "Golden
+  // trout"). Skipped when it would duplicate the bare probe.
+  const sentence = toSentenceCase(input.name);
+  if (sentence !== input.name) {
+    const a2 = await pageImage(sentence);
+    await sleep(DELAY_MS);
+    if (a2.kind === 'image') {
+      return {
+        found: true,
+        via: 'a:sentence',
+        titleResolved: a2.title,
+        imageUrl: a2.imageUrl,
+        notes,
+      };
+    }
+    if (!safeHtmlTarget && a2.kind === 'no-image') safeHtmlTarget = a2.title;
+  }
+
   // (b) name (category)
   if (input.disambig) {
     const b = await pageImage(`${input.name} (${input.disambig})`);
@@ -293,6 +396,13 @@ export async function resolveIcon(input: ResolveInput): Promise<ResolveResult> {
   // so the parent article wins when both exist; preserves the gallery as a
   // fallback if the parent has no pageimages.
   accepted.sort((x, y) => Number(x.includes('/')) - Number(y.includes('/')));
+  // 2026-05-12 (v0.9.6 spike): ACNH furniture "<Species> model" pages routinely
+  // outrank the species article in search (seen on golden-trout, paper-kite-
+  // butterfly, man-faced-stink-bug). Push "* model" titles to the back so the
+  // species article wins; preserves the furniture page as a last-ditch fallback.
+  accepted.sort(
+    (x, y) => Number(/\bmodel$/i.test(x)) - Number(/\bmodel$/i.test(y))
+  );
   if (rejected.length) notes.push(`search rejected: [${rejected.join(' | ')}]`);
   if (accepted.length) notes.push(`search accepted: [${accepted.join(' | ')}]`);
   for (const cand of accepted) {
