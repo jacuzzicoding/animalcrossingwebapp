@@ -7,6 +7,7 @@ All notable changes to this project are documented here.
 ### Added
 
 - Hand-drawn `fish/goldfish.png` icon (PR #136) — eighth hand-drawn piece in the library (after sea-bass, koi, ant, coelacanth, frog, robust cicada, brown cicada). 2048×2048 watercolour-and-ink source at `icon-sources/fish/goldfish.png`; exported to 768×768 (88.9 KB) via `npm run icons:export`. Replaces the scraped wiki placeholder. Cross-game routing propagates this to any game that maps to `fish/goldfish`.
+- **ACNH icon gap-fill** (PR #140) — 88 wiki-scraped items across all five ACNH categories (9 fish + 16 bugs + 47 fossils + 6 art + 10 sea creatures); ACNH icon coverage **68.8% → 95.5%** (315/330). Fifteen items remain genuine wiki gaps logged to `scripts/missing-acnh.txt`. Two general-purpose resolver improvements: `a:sentence` probe handles MediaWiki's first-char-only auto-capitalize; `c:search` deprioritizes `* model` furniture pages. Multi-part fossil pieces collapse to parent species articles via ~50 new OVERRIDES entries
 - Hand-drawn `fish/tadpole.png` icon — ninth hand-drawn piece in the library. 2048×2048 Procreate source at `icon-sources/fish/tadpole.png`; exported to 768×768 (24 KB) via `npm run icons:export`
 - Hand-drawn `bugs/agrias-butterfly.png` icon — tenth hand-drawn piece. Replaces the wiki-scraped `.jpg` placeholder. 2048×2048 source at `icon-sources/bugs/agrias-butterfly.png`; exported to 768×768 (62 KB) via `npm run icons:export`. Manifest updated from `jpg` → `png` for this entry
 
