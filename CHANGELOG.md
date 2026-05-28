@@ -4,11 +4,21 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v0.9.6-beta] — 2026-05-24
+
 ### Added
 
+- **ACNH icon gap-fill** (PR #140) — 88 wiki-scraped items added across all five ACNH categories via the Fandom MediaWiki + algorithmic-resolver-plus-`OVERRIDES` pattern. ACNH icon coverage goes from 68.8% → **95.5%** (315/330). Fifteen items remain genuine wiki gaps — logged to `scripts/missing-acnh.txt` with one-line reasons; they fall through to the existing monogram placeholder
+- ~50 new ACNH entries in `OVERRIDES` — multi-part fossil pieces collapse to their parent species article (same pattern as the ACWW `ankylosaur-*` / ACNL `megacero-*` families)
 - Hand-drawn `fish/goldfish.png` icon (PR #136) — eighth hand-drawn piece in the library (after sea-bass, koi, ant, coelacanth, frog, robust cicada, brown cicada). 2048×2048 watercolour-and-ink source at `icon-sources/fish/goldfish.png`; exported to 768×768 (88.9 KB) via `npm run icons:export`. Replaces the scraped wiki placeholder. Cross-game routing propagates this to any game that maps to `fish/goldfish`.
-- Hand-drawn `fish/tadpole.png` icon — ninth hand-drawn piece in the library. 2048×2048 Procreate source at `icon-sources/fish/tadpole.png`; exported to 768×768 (24 KB) via `npm run icons:export`
-- Hand-drawn `bugs/agrias-butterfly.png` icon — tenth hand-drawn piece. Replaces the wiki-scraped `.jpg` placeholder. 2048×2048 source at `icon-sources/bugs/agrias-butterfly.png`; exported to 768×768 (62 KB) via `npm run icons:export`. Manifest updated from `jpg` → `png` for this entry
+- Hand-drawn `fish/tadpole.png` icon (PR #144) — ninth hand-drawn piece in the library. 2048×2048 Procreate source at `icon-sources/fish/tadpole.png`; exported to 768×768 (24 KB) via `npm run icons:export`
+- Hand-drawn `bugs/agrias-butterfly.png` icon (PR #144) — tenth hand-drawn piece. Replaces the wiki-scraped `.jpg` placeholder. 2048×2048 source at `icon-sources/bugs/agrias-butterfly.png`; exported to 768×768 (62 KB) via `npm run icons:export`. Manifest updated from `jpg` → `png` for this entry
+
+### Changed
+
+- **Resolver: `a:sentence` probe** handles MediaWiki's first-character-only auto-capitalization, matching Title-Case catalog names against sentence-case article titles
+- **Resolver: `c:search` deprioritizes `* model` furniture pages**, so item lookups land the species/artwork article rather than its furniture-model namesake
+- Documentation sync (PRs #135/#137/#138) — corrected stale dates, coverage percentages, and icon counts in `version-history.html` and `CLAUDE.md`; added a visual road-to-v1.0 page with coverage charts
 
 ## [v0.9.5-beta] — 2026-05-10
 
