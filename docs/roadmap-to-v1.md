@@ -2,11 +2,11 @@
 
 This document is the canonical roadmap. It supersedes any earlier scattered planning notes.
 
-Last updated: **2026-05-07** (after v0.9.4-beta shipped).
+Last updated: **2026-05-27** (after v0.9.6-beta shipped).
 
 ## Where the project sits
 
-- **Current public release:** v0.9.5-beta — ACNL icon gap-fill (ACNL 96.5%, ACCF 100%, ACNH 68.8%), three hand-drawn icons (frog, robust cicada, brown cicada), polish nits.
+- **Current public release:** v0.9.6-beta — ACNH icon gap-fill (ACNH coverage to ~100%), two new hand-drawn icons (tadpole, agrias butterfly), doc syncs.
 - **Cadence:** roughly one focused beta every 2-4 days since v0.6 (April 2026). The path to v1.0 holds that pace.
 - **Principle:** one focused track per beta. Polish bundles ship as their own betas, not bundled with feature work.
 
@@ -19,7 +19,7 @@ Last updated: **2026-05-07** (after v0.9.4-beta shipped).
 | v0.9.3-beta | JSON save-file round-trip (export + import) + first hand-drawn bug (ant)                     | Shipped 2026-05-06 |
 | v0.9.4-beta | Silhouette rendering for un-donated items + ACWW icon gap-fill + higher-res hand-drawn icons | Shipped 2026-05-07 |
 | v0.9.5-beta | ACNL icon gap-fill + three hand-drawn icons                                                  | Shipped 2026-05-10 |
-| v0.9.6-beta | ACNH icon gap-fill (103 unique items)                                                        | Planned            |
+| v0.9.6-beta | ACNH icon gap-fill (103 unique items)                                                        | Shipped 2026-05-27 |
 | v0.9.7-beta | SEO basics (OG tags, sitemap, meta, social cards per game)                                   | Planned            |
 | v0.9.8-beta | Light monetization footer + polish bug sweep                                                 | Planned            |
 | v1.0.0      | Final polish + public ship + all hand-drawn icons                                            | Target             |
@@ -57,7 +57,7 @@ After cross-game routing, each remaining game's scrape is much smaller than v0.9
 Shipped 2026-05-10. 135 items, ACNL 96.5%, ACCF 100% via cross-game, ACNH 68.8% via cross-game. 10 genuine gaps remain. Resolver improvements (Gallery deprioritization, sea-creature disambig) apply directly to the ACNH scrape next cycle. Three hand-drawn icons (frog, robust cicada, brown cicada) bring the hand-drawn library to seven pieces total.
 
 - ACNL: 53 unique items
-- ACNH: 106 unique items (largest catalog, save for last)
+- ACNH: 103 unique items (largest catalog, save for last)
 
 ACCF has 0 unique items after cross-game routing — no release needed for that game.
 
@@ -103,7 +103,7 @@ Per-game new items (the workload added by each release):
 | ACNH      |     10 |      21 |            10 |        41 |
 | **Total** | **94** | **116** |        **45** |   **255** |
 
-**Progress as of 2026-05-07:** 4 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish).
+**Progress as of 2026-05-27:** 10 of 255 complete — ant (bug), koi (fish), sea-bass (fish), coelacanth (fish), frog (fish), robust cicada (bug), brown cicada (bug), goldfish (fish), tadpole (fish), agrias butterfly (bug).
 
 **Procreate canvas:** 2048×2048 px, transparent background, sRGB, exported as PNG. The production pipeline (sharp + pngquant) re-exports to 768×768 for deployment via `npm run icons:export`. Filename matches the canonical kebab-case item id (e.g. `sea-bass.png`, `tiger-swallowtail-butterfly.png`). Originals committed to `icon-sources/` for archival and reproduction.
 

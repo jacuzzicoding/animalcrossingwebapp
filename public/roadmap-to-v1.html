@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Road to v1.0 · Animal Crossing Web App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --bg: #f4efe3;
+        --surface: #fffdf7;
+        --surface-alt: #f8f2e2;
+        --ink: #23241f;
+        --ink-soft: #5c5848;
+        --ink-muted: #8a8470;
+        --border: #e2d9c3;
+        --border-strong: #cfc4a8;
+        --accent: oklch(0.55 0.09 150);
+        --accent-soft: oklch(0.55 0.09 150 / 0.18);
+        --accent-ink: oklch(0.32 0.06 150);
+        --warn: oklch(0.62 0.12 50);
+        --warn-soft: oklch(0.62 0.12 50 / 0.18);
+        --chip-fish: oklch(0.62 0.08 230);
+        --chip-bugs: oklch(0.6 0.1 130);
+        --chip-fossils: oklch(0.55 0.06 60);
+        --chip-art: oklch(0.58 0.08 320);
+        --chip-sea: oklch(0.58 0.09 200);
+        --display: 'Fraunces', Georgia, serif;
+        --sans: 'Inter', system-ui, sans-serif;
+        --shadow: 0 1px 2px rgba(35, 36, 31, 0.04), 0 4px 12px rgba(35, 36, 31, 0.04);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        margin: 0;
+        padding: 0;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 56px 32px 80px;
+      }
+
+      .eyebrow {
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        margin: 0 0 16px;
+      }
+
+      h1 {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: clamp(40px, 6vw, 64px);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin: 0 0 16px;
+      }
+
+      h1 em {
+        font-style: italic;
+        color: var(--accent-ink);
+      }
+
+      .lede {
+        font-family: var(--display);
+        font-weight: 400;
+        font-style: italic;
+        font-size: 20px;
+        line-height: 1.5;
+        color: var(--ink-soft);
+        margin: 0 0 32px;
+        max-width: 680px;
+      }
+
+      h2 {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 32px;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        margin: 64px 0 8px;
+        color: var(--ink);
+      }
+
+      h2 + p.sub {
+        margin: 0 0 28px;
+        color: var(--ink-soft);
+      }
+
+      h3 {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 20px;
+        margin: 0 0 12px;
+        color: var(--ink);
+      }
+
+      a {
+        color: var(--accent-ink);
+        text-decoration-color: var(--accent-soft);
+        text-underline-offset: 3px;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 40px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        border: 1px solid color-mix(in oklch, var(--accent), transparent 70%);
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .badge.warn {
+        background: var(--warn-soft);
+        color: oklch(0.4 0.12 50);
+        border-color: color-mix(in oklch, var(--warn), transparent 70%);
+      }
+
+      .badge.muted {
+        background: var(--surface-alt);
+        color: var(--ink-soft);
+        border-color: var(--border);
+      }
+
+      /* ── Stat tiles ── */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 8px 0 32px;
+      }
+
+      @media (max-width: 720px) {
+        .stat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .stat .num {
+        font-family: var(--display);
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 1;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+      }
+
+      .stat .num small {
+        font-size: 18px;
+        color: var(--ink-muted);
+        font-weight: 400;
+      }
+
+      .stat .label {
+        font-size: 12px;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 8px;
+        font-weight: 500;
+      }
+
+      /* ── Cards ── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px;
+        margin-top: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .card.alt {
+        background: var(--surface-alt);
+        border-color: var(--border);
+      }
+
+      .chart-wrap {
+        position: relative;
+        height: 320px;
+        margin-top: 8px;
+      }
+
+      .chart-wrap.tall {
+        height: 420px;
+      }
+
+      .chart-wrap.short {
+        height: 240px;
+      }
+
+      /* ── Per-game progress bars ── */
+      .gamebar {
+        margin: 14px 0;
+      }
+
+      .gamebar-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      .gamebar-name {
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .gamebar-meta {
+        color: var(--ink-muted);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .gamebar-track {
+        display: flex;
+        height: 14px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: var(--border);
+      }
+
+      .gamebar-seg {
+        height: 100%;
+      }
+
+      .gamebar-seg.drawn {
+        background: var(--accent);
+      }
+
+      .gamebar-seg.scraped {
+        background: color-mix(in oklch, var(--accent) 35%, var(--surface-alt));
+      }
+
+      .legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--ink-soft);
+        margin-top: 16px;
+      }
+
+      .legend-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+
+      /* ── Timeline ── */
+      .timeline {
+        position: relative;
+        padding-left: 28px;
+        margin-top: 16px;
+      }
+
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 9px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: var(--border-strong);
+      }
+
+      .milestone {
+        position: relative;
+        padding: 16px 0 24px;
+      }
+
+      .milestone::before {
+        content: '';
+        position: absolute;
+        left: -23px;
+        top: 22px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 2px solid var(--border-strong);
+      }
+
+      .milestone.current::before {
+        background: var(--accent);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+      }
+
+      .milestone.target::before {
+        background: var(--warn);
+        border-color: var(--warn);
+      }
+
+      .milestone-head {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+      }
+
+      .milestone-version {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 22px;
+        letter-spacing: -0.01em;
+      }
+
+      .milestone-tag {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--ink-muted);
+        font-weight: 600;
+      }
+
+      .milestone-tag.now {
+        color: var(--accent-ink);
+      }
+
+      .milestone-tag.next {
+        color: var(--ink-soft);
+      }
+
+      .milestone-tag.launch {
+        color: oklch(0.4 0.12 50);
+      }
+
+      .milestone-body {
+        color: var(--ink-soft);
+        font-size: 15px;
+      }
+
+      .milestone-body ul {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+
+      .milestone-body li {
+        margin: 3px 0;
+      }
+
+      /* ── Tables ── */
+      table.releases {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 14px;
+      }
+
+      table.releases th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ink-muted);
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border-strong);
+      }
+
+      table.releases td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--ink-soft);
+        vertical-align: top;
+      }
+
+      table.releases td.v {
+        font-family: var(--display);
+        font-weight: 500;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+
+      table.releases td.d {
+        color: var(--ink-muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      table.releases tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .pull-quote {
+        font-family: var(--display);
+        font-style: italic;
+        font-size: 18px;
+        color: var(--ink-soft);
+        border-left: 3px solid var(--accent);
+        padding: 4px 0 4px 16px;
+        margin: 16px 0;
+      }
+
+      .footer {
+        margin-top: 80px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        font-size: 12px;
+        color: var(--ink-muted);
+        text-align: center;
+      }
+
+      /* ── Two-col grid for cards ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      @media (max-width: 720px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <!-- ── Hero ── -->
+      <p class="eyebrow">Roadmap · 2026-05-27</p>
+      <h1>The road to <em>v1.0</em></h1>
+      <p class="lede">
+        Nine months in. Five games supported, ten beta releases shipped, a design system rebuilt from
+        scratch. Three remaining betas stand between today and a public launch.
+      </p>
+
+      <div class="badges">
+        <span class="badge">Today: v0.9.6-beta in flight</span>
+        <span class="badge muted">Last shipped: v0.9.6-beta · 2026-05-27</span>
+        <span class="badge warn">v1.0 target: ~3 betas out</span>
+      </div>
+
+      <!-- ── Stat tiles ── -->
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="num">275</div>
+          <div class="label">Commits to date</div>
+        </div>
+        <div class="stat">
+          <div class="num">+50<small>k</small></div>
+          <div class="label">Net LOC shipped</div>
+        </div>
+        <div class="stat">
+          <div class="num">9.8<small>k</small></div>
+          <div class="label">Lines in src/ today</div>
+        </div>
+        <div class="stat">
+          <div class="num">10 <small>/ 210</small></div>
+          <div class="label">Hand-drawn icons</div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!-- ── The Road So Far ── -->
+      <!-- ════════════════════════════════════════════ -->
+      <h2>The road so far</h2>
+      <p class="sub">
+        From the first commit on April 10 to today, growth has been steady, then explosive. The v0.9
+        beta cycle alone added more code than every alpha release combined.
+      </p>
+
+      <!-- LOC over time -->
+      <div class="card">
+        <h3>Net codebase growth, by release</h3>
+        <p style="margin: 0 0 8px; color: var(--ink-muted); font-size: 13px;">
+          Cumulative net lines (added minus deleted) at each tagged release. The hockey stick at
+          v0.9.0 is the full Meadow design system — sidebar shell, TownManager drawer, CategoryTab
+          rebuild, Settings page, GlobalSearchDropdown, and StatsTab landing in a single PR.
+        </p>
+        <div class="chart-wrap">
+          <canvas
+            id="locChart"
+            role="img"
+            aria-label="Line chart of cumulative net lines of code at each tagged release from v0.1 (12k) to v0.9.5 (50k). The curve is gradual through v0.8.2 (28k) then jumps sharply at v0.9.0 to 39k — the Meadow design system shipping in a single release."
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Commits per release + files -->
+      <div class="grid-2">
+        <div class="card">
+          <h3>Commits per release</h3>
+          <div class="chart-wrap short">
+            <canvas
+              id="commitsChart"
+              role="img"
+              aria-label="Bar chart of commits per release. v0.9.0-beta is the tallest bar at 48 commits (highlighted in clay), followed by v0.7.0-alpha at 47 and v0.8.0-alpha at 42. Most other releases sit between 1 and 26 commits."
+            ></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Code vs. assets</h3>
+          <p style="margin: 0 0 8px; color: var(--ink-muted); font-size: 13px;">
+            Total file count quadrupled at v0.9.1+ — but src/ stayed flat at ~60 files. The growth
+            is icon assets (PNG sources + 768px exports + manifests), not code bloat.
+          </p>
+          <div class="chart-wrap short">
+            <canvas
+              id="filesChart"
+              role="img"
+              aria-label="Line chart of total file count in the repo at each release. The line stays under 100 files through v0.8.2, then jumps to 131 at v0.9.0, 264 at v0.9.1, and 514 at v0.9.5 — the steep climb is icon asset additions, not code growth."
+            ></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features shipped -->
+      <div class="card" style="margin-top: 24px;">
+        <h3>Marquee features, release by release</h3>
+        <table class="releases">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Date</th>
+              <th>What landed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="v">v0.1 – v0.2</td>
+              <td class="d">Apr 10–12</td>
+              <td>4-category museum tracking · Zustand persistence · detail modal · per-tab search</td>
+            </tr>
+            <tr>
+              <td class="v">v0.3 – v0.5</td>
+              <td class="d">Apr 13</td>
+              <td>Multi-town · global search · Stats tab · CSV export · Vitest + Vercel Analytics</td>
+            </tr>
+            <tr>
+              <td class="v">v0.6.x</td>
+              <td class="d">Apr 13–15</td>
+              <td>Home screen with leaving-soon shelf, progress cards, recent activity</td>
+            </tr>
+            <tr>
+              <td class="v">v0.7.0-alpha</td>
+              <td class="d">Apr 17</td>
+              <td>Multi-game foundation: 3-level donation schema · ACWW + ACCF data · ACCanvas decomposition (2175 → 298 lines)</td>
+            </tr>
+            <tr>
+              <td class="v">v0.8.x</td>
+              <td class="d">Apr 29 – May 1</td>
+              <td>React Router · ACNL + ACNH data · hemisphere toggle · sea creatures tab · inline expand panels</td>
+            </tr>
+            <tr>
+              <td class="v">v0.9.0-beta</td>
+              <td class="d">May 4</td>
+              <td>Full Meadow redesign: sidebar, TownManager drawer, Settings page, HomeTab + StatsTab rebuild, GlobalSearchDropdown</td>
+            </tr>
+            <tr>
+              <td class="v">v0.9.1 – 0.9.2</td>
+              <td class="d">May 4–5</td>
+              <td>ACGCN icons via Fandom scrape · cross-game icon routing · first 2 hand-drawn pieces · /credits route</td>
+            </tr>
+            <tr>
+              <td class="v">v0.9.3-beta</td>
+              <td class="d">May 6</td>
+              <td>JSON save-file round-trip (export + import with Replace/Merge/Import-as-new) · onboarding affordance</td>
+            </tr>
+            <tr>
+              <td class="v">v0.9.4-beta</td>
+              <td class="d">May 7</td>
+              <td>Silhouette rendering for un-donated items · ACWW icons to 100% · 768px icon export pipeline</td>
+            </tr>
+            <tr>
+              <td class="v">v0.9.5-beta</td>
+              <td class="d">May 10</td>
+              <td>ACNL icons to 96.5% (ACCF → 100%) · 3 hand-drawn icons (frog, robust + brown cicada)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="pull-quote">
+        67 merged PRs · ~9.8k lines of TypeScript, React, and CSS · 25 active development days —
+        single contributor, working publicly.
+      </p>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!-- ── Hand-drawn icon coverage ── -->
+      <!-- ════════════════════════════════════════════ -->
+      <h2>Hand-drawn icons: the long road</h2>
+      <p class="sub">
+        Wiki-scraped placeholders cover the gap today. The end goal is a fully hand-drawn library
+        for fish and bugs — fossils, sea creatures, and art are intentionally out of scope for now.
+      </p>
+
+      <!-- Big number summary -->
+      <div class="grid-2">
+        <div class="card alt">
+          <h3>Where we are</h3>
+          <div style="display: flex; gap: 24px; align-items: baseline; margin-top: 12px;">
+            <div>
+              <div style="font-family: var(--display); font-size: 48px; font-weight: 500; line-height: 1; color: var(--accent-ink);">
+                7
+              </div>
+              <div style="font-size: 12px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px;">
+                Hand-drawn shipped
+              </div>
+            </div>
+            <div>
+              <div style="font-family: var(--display); font-size: 48px; font-weight: 500; line-height: 1; color: var(--ink-soft);">
+                203
+              </div>
+              <div style="font-size: 12px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px;">
+                Unique species remaining
+              </div>
+            </div>
+          </div>
+          <p style="margin: 16px 0 0; color: var(--ink-soft); font-size: 14px;">
+            Across all five games, deduped by item id. <strong>4 fish</strong> drawn (sea-bass,
+            koi, coelacanth, frog) · <strong>3 bugs</strong> drawn (ant, robust cicada, brown cicada).
+          </p>
+        </div>
+        <div class="card alt">
+          <h3>The leverage curve</h3>
+          <p style="margin: 0 0 12px; color: var(--ink-muted); font-size: 13px;">
+            How many games each remaining species appears in. Drawing one species in the
+            <strong>5-game tier</strong> lights up every single game at once.
+          </p>
+          <div class="chart-wrap short">
+            <canvas
+              id="overlapChart"
+              role="img"
+              aria-label="Horizontal stacked bar chart of cross-game species overlap. 5-game tier: 31 fish + 18 bugs. 4-game: 7 fish + 14 bugs. 3-game: 13 fish + 14 bugs. 2-game: 24 fish + 28 bugs. 1-game: 19 fish + 42 bugs. The 5-game tier is the highest-leverage tier for hand-drawing."
+            ></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-game horizontal bars -->
+      <div class="card" style="margin-top: 24px;">
+        <h3>Per-game coverage (fish + bugs)</h3>
+        <p style="margin: 0 0 16px; color: var(--ink-muted); font-size: 13px;">
+          Each bar is the game's full fish + bug roster. Dark green = hand-drawn original.
+          Pale green = wiki-scraped placeholder (shipped, but to be replaced). Tan = no icon yet.
+        </p>
+
+        <div id="gameBars"></div>
+
+        <div class="legend">
+          <span><span class="legend-dot" style="background: var(--accent);"></span>Hand-drawn</span>
+          <span><span class="legend-dot" style="background: color-mix(in oklch, var(--accent) 35%, var(--surface-alt));"></span>Wiki-scraped</span>
+          <span><span class="legend-dot" style="background: var(--border);"></span>No icon yet</span>
+        </div>
+      </div>
+
+      <!-- Highest-leverage callout -->
+      <div class="card" style="margin-top: 16px; border-left: 4px solid var(--accent);">
+        <h3>Highest-ROI draws (one icon → 5 games)</h3>
+        <p style="margin: 0 0 12px; color: var(--ink-soft); font-size: 14px;">
+          31 fish and 18 bugs appear in every single game; of those, 27 fish and 16 bugs are still
+          un-drawn. Knocking out this 43-icon tier alone takes ACGCN and ACCF to ~93% hand-drawn
+          coverage.
+        </p>
+        <p style="margin: 0; color: var(--ink-muted); font-size: 13px;">
+          <strong style="color: var(--ink-soft);">Fish:</strong> angelfish · arapaima · arowana · barred-knifejaw · bitterling
+          · bluegill · carp · catfish · cherry-salmon · crawfish · crucian-carp · dace · freshwater-goby · giant-snakehead ·
+          goldfish · guppy · killifish · loach · pale-chub · piranha · pond-smelt · pop-eyed-goldfish · red-snapper · salmon
+          · squid · stringfish · sweetfish
+        </p>
+        <p style="margin: 8px 0 0; color: var(--ink-muted); font-size: 13px;">
+          <strong style="color: var(--ink-soft);">Bugs:</strong> banded-dragonfly · common-butterfly · darner-dragonfly
+          · evening-cicada · firefly · grasshopper · jewel-beetle · ladybug · long-locust · mantis · migratory-locust
+          · mole-cricket · pondskater · red-dragonfly · spider · walker-cicada
+        </p>
+      </div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!-- ── The Road Ahead ── -->
+      <!-- ════════════════════════════════════════════ -->
+      <h2>The road ahead</h2>
+      <p class="sub">
+        Three planned betas and a launch. Each beta is intentionally narrow — one or two themes per
+        release, no surprise scope.
+      </p>
+
+      <div class="card">
+        <div class="timeline">
+          <div class="milestone current">
+            <div class="milestone-head">
+              <span class="milestone-version">v0.9.6-beta</span>
+              <span class="milestone-tag now">In flight today</span>
+            </div>
+            <div class="milestone-body">
+              <strong>ACNH icon gap-fill.</strong> Closing the last wiki-scrape coverage gap. ~103
+              unique items remain after cross-game routing did the easy lifting in v0.9.5. Reuses
+              the algorithmic-resolver-plus-OVERRIDES pattern. Resolver tweaks from v0.9.5
+              (Gallery deprioritization) generalize directly.
+            </div>
+          </div>
+
+          <div class="milestone">
+            <div class="milestone-head">
+              <span class="milestone-version">Hand-drawn icons</span>
+              <span class="milestone-tag next">Ongoing through v1.0</span>
+            </div>
+            <div class="milestone-body">
+              203 unique fish + bug species still need hand-drawn originals. 43 of those are the
+              5-game tier (highest ROI). If unsustainable before v1.0, the remaining tail moves
+              post-launch.
+            </div>
+          </div>
+
+          <div class="milestone">
+            <div class="milestone-head">
+              <span class="milestone-version">v0.9.7-beta</span>
+              <span class="milestone-tag next">SEO basics</span>
+            </div>
+            <div class="milestone-body">
+              <ul>
+                <li>Open Graph + Twitter card meta per game</li>
+                <li>sitemap.xml + meta descriptions</li>
+                <li>Per-game social cards</li>
+              </ul>
+              One-shot pass. No new app surface area.
+            </div>
+          </div>
+
+          <div class="milestone">
+            <div class="milestone-head">
+              <span class="milestone-version">v0.9.8-beta</span>
+              <span class="milestone-tag next">Polish + light monetization</span>
+            </div>
+            <div class="milestone-body">
+              <ul>
+                <li>Polish bug sweep (#76 a11y, #85 mobile clipping, #59 shadow size, #92 polish bundle)</li>
+                <li>Styled confirm dialog to replace native confirm() in Settings</li>
+                <li>Ko-fi / GitHub Sponsors footer link (FUNDING.yml already configured)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="milestone target">
+            <div class="milestone-head">
+              <span class="milestone-version">v1.0.0</span>
+              <span class="milestone-tag launch">Launch</span>
+            </div>
+            <div class="milestone-body">
+              Branding · final polish · accessibility audit · performance audit · Reddit launch ·
+              portfolio link goes live.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- v1.0 launch checklist -->
+      <div class="card alt" style="margin-top: 24px;">
+        <h3>v1.0 launch buckets</h3>
+        <div class="grid-2" style="margin-top: 8px;">
+          <div>
+            <h4 style="font-family: var(--display); margin: 8px 0 4px; font-size: 16px;">Branding</h4>
+            <p style="margin: 0; color: var(--ink-soft); font-size: 14px;">
+              Final logo, favicon set, README hero, social card. Decide on the public name.
+            </p>
+          </div>
+          <div>
+            <h4 style="font-family: var(--display); margin: 8px 0 4px; font-size: 16px;">SEO</h4>
+            <p style="margin: 0; color: var(--ink-soft); font-size: 14px;">
+              Meta tags, sitemap, OG cards, structured data. Mostly handled in v0.9.7-beta.
+            </p>
+          </div>
+          <div>
+            <h4 style="font-family: var(--display); margin: 8px 0 4px; font-size: 16px;">Accessibility</h4>
+            <p style="margin: 0; color: var(--ink-soft); font-size: 14px;">
+              Sweep open issues (#76 search dropdown), keyboard audit, colour contrast pass.
+            </p>
+          </div>
+          <div>
+            <h4 style="font-family: var(--display); margin: 8px 0 4px; font-size: 16px;">Performance</h4>
+            <p style="margin: 0; color: var(--ink-soft); font-size: 14px;">
+              Lighthouse pass. Icon lazy-loading already in place; verify largest contentful paint
+              with the icon library at full size.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="pull-quote">
+        v1.0 is reachable. The remaining work is well-scoped, the design is locked, and the data
+        layer hasn't needed a migration since v0.8.0.
+      </p>
+
+      <div class="footer">
+        Generated 2026-05-12 · animalcrossingwebapp ·
+        <a href="https://animalcrossingwebapp.vercel.app">live</a> ·
+        <a href="https://development-animalcrossingwebapp.vercel.app">dev preview</a>
+      </div>
+    </main>
+
+    <script>
+      // ─── Meadow palette for charts ────────────────────────────────────
+      const ink = '#23241F';
+      const inkSoft = '#5C5848';
+      const inkMuted = '#8A8470';
+      const border = '#E2D9C3';
+      const borderStrong = '#CFC4A8';
+      const accent = 'oklch(0.55 0.09 150)';
+      const accentSoft = 'oklch(0.55 0.09 150 / 0.18)';
+      const accentSofter = 'oklch(0.55 0.09 150 / 0.08)';
+      const chipFish = 'oklch(0.62 0.08 230)';
+      const chipBugs = 'oklch(0.6 0.1 130)';
+      const warn = 'oklch(0.62 0.12 50)';
+
+      Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+      Chart.defaults.color = inkSoft;
+      Chart.defaults.borderColor = border;
+
+      // ─── Releases dataset (single source of truth) ────────────────────
+      const releases = [
+        { v: 'v0.1', d: 'Apr 12', net: 12108, commits: 2, files: 31 },
+        { v: 'v0.3', d: 'Apr 13', net: 17706, commits: 23, files: 28 },
+        { v: 'v0.4', d: 'Apr 13', net: 18267, commits: 31, files: 28 },
+        { v: 'v0.5', d: 'Apr 13', net: 22085, commits: 45, files: 36 },
+        { v: 'v0.6.1', d: 'Apr 15', net: 22380, commits: 49, files: 37 },
+        { v: 'v0.7.0', d: 'Apr 17', net: 25883, commits: 96, files: 81 },
+        { v: 'v0.8.0', d: 'Apr 30', net: 27145, commits: 138, files: 93 },
+        { v: 'v0.8.1', d: 'Apr 30', net: 28152, commits: 148, files: 96 },
+        { v: 'v0.8.2', d: 'May 2', net: 28491, commits: 160, files: 97 },
+        { v: 'v0.9.0', d: 'May 4', net: 38953, commits: 208, files: 131 },
+        { v: 'v0.9.1', d: 'May 4', net: 41606, commits: 228, files: 264 },
+        { v: 'v0.9.2', d: 'May 5', net: 46036, commits: 254, files: 272 },
+        { v: 'v0.9.3', d: 'May 6', net: 48574, commits: 273, files: 283 },
+        { v: 'v0.9.4', d: 'May 8', net: 48972, commits: 274, files: 370 },
+        { v: 'v0.9.5', d: 'May 10', net: 50410, commits: 275, files: 514 },
+      ];
+
+      // ─── 1. LOC over time (area) ──────────────────────────────────────
+      new Chart(document.getElementById('locChart'), {
+        type: 'line',
+        data: {
+          labels: releases.map((r) => r.v),
+          datasets: [
+            {
+              label: 'Net LOC (cumulative)',
+              data: releases.map((r) => r.net),
+              borderColor: accent,
+              backgroundColor: accentSofter,
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.25,
+              pointRadius: 4,
+              pointBackgroundColor: accent,
+              pointBorderColor: '#FFFDF7',
+              pointBorderWidth: 1.5,
+              pointHoverRadius: 7,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: ink,
+              padding: 10,
+              titleFont: { weight: '600' },
+              callbacks: {
+                title: (items) => releases[items[0].dataIndex].v + ' · ' + releases[items[0].dataIndex].d,
+                label: (item) => 'Net LOC: ' + item.parsed.y.toLocaleString(),
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: border, drawBorder: false },
+              ticks: {
+                callback: (v) => (v / 1000).toFixed(0) + 'k',
+                color: inkMuted,
+              },
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: inkMuted, maxRotation: 0, autoSkip: false, font: { size: 10 } },
+            },
+          },
+        },
+      });
+
+      // ─── 2. Commits per release (bar) ─────────────────────────────────
+      const commitDeltas = releases.map((r, i) => (i === 0 ? r.commits : r.commits - releases[i - 1].commits));
+      new Chart(document.getElementById('commitsChart'), {
+        type: 'bar',
+        data: {
+          labels: releases.map((r) => r.v),
+          datasets: [
+            {
+              label: 'Commits',
+              data: commitDeltas,
+              backgroundColor: releases.map((r) => (r.v === 'v0.9.0' ? warn : accent)),
+              borderRadius: 4,
+              borderSkipped: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { backgroundColor: ink, padding: 10 },
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: border }, ticks: { color: inkMuted } },
+            x: { grid: { display: false }, ticks: { color: inkMuted, font: { size: 9 }, maxRotation: 60 } },
+          },
+        },
+      });
+
+      // ─── 3. Total file count (line) ───────────────────────────────────
+      new Chart(document.getElementById('filesChart'), {
+        type: 'line',
+        data: {
+          labels: releases.map((r) => r.v),
+          datasets: [
+            {
+              label: 'Total files in repo',
+              data: releases.map((r) => r.files),
+              borderColor: chipFish,
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              tension: 0.2,
+              pointRadius: 3,
+              pointBackgroundColor: chipFish,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: ink,
+              padding: 10,
+              callbacks: { label: (item) => item.parsed.y.toLocaleString() + ' files' },
+            },
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: border }, ticks: { color: inkMuted } },
+            x: { grid: { display: false }, ticks: { color: inkMuted, font: { size: 9 }, maxRotation: 60 } },
+          },
+        },
+      });
+
+      // ─── 4. Overlap pyramid (horizontal stacked bar) ──────────────────
+      const overlapTiers = ['5 games', '4 games', '3 games', '2 games', '1 game'];
+      const fishCounts = [31, 7, 13, 24, 19];
+      const bugCounts = [18, 14, 14, 28, 42];
+      new Chart(document.getElementById('overlapChart'), {
+        type: 'bar',
+        data: {
+          labels: overlapTiers,
+          datasets: [
+            {
+              label: 'Fish',
+              data: fishCounts,
+              backgroundColor: chipFish,
+              borderRadius: 3,
+            },
+            {
+              label: 'Bugs',
+              data: bugCounts,
+              backgroundColor: chipBugs,
+              borderRadius: 3,
+            },
+          ],
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, boxHeight: 10, color: inkSoft, font: { size: 12 } },
+            },
+            tooltip: { backgroundColor: ink, padding: 10 },
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { color: border },
+              ticks: { color: inkMuted, stepSize: 10 },
+            },
+            y: { stacked: true, grid: { display: false }, ticks: { color: inkSoft, font: { size: 12 } } },
+          },
+        },
+      });
+
+      // ─── 5. Per-game horizontal coverage bars ─────────────────────────
+      // For each game, counts derived directly from disk on 2026-05-12:
+      //   drawn   = item ids in icon-sources/{fish,bugs}/*.png that also appear
+      //             in public/data/<game>/{fish,bugs}.json
+      //   scraped = item ids with a file in public/icons/{fish,bugs}/*.png
+      //             (the flat cross-game layout introduced in v0.9.2) minus drawn
+      //   missing = total - drawn - scraped
+      const games = [
+        { name: 'ACGCN', total: 80, drawn: 7, scraped: 49 },
+        { name: 'ACWW', total: 112, drawn: 7, scraped: 59 },
+        { name: 'ACCF', total: 80, drawn: 7, scraped: 46 },
+        { name: 'ACNL', total: 142, drawn: 6, scraped: 83 },
+        { name: 'ACNH', total: 161, drawn: 7, scraped: 68 },
+      ];
+
+      const gameBarsEl = document.getElementById('gameBars');
+      games.forEach((g) => {
+        const remaining = g.total - g.drawn - g.scraped;
+        const drawnPct = (g.drawn / g.total) * 100;
+        const scrapedPct = (g.scraped / g.total) * 100;
+        const remainPct = (remaining / g.total) * 100;
+        const html = `
+          <div class="gamebar">
+            <div class="gamebar-head">
+              <span class="gamebar-name">${g.name}</span>
+              <span class="gamebar-meta">${g.drawn} drawn · ${g.scraped} scraped · ${remaining} missing · ${g.total} total</span>
+            </div>
+            <div class="gamebar-track" title="${g.name}: ${g.drawn} hand-drawn, ${g.scraped} scraped, ${remaining} missing">
+              <div class="gamebar-seg drawn" style="width: ${drawnPct}%"></div>
+              <div class="gamebar-seg scraped" style="width: ${scrapedPct}%"></div>
+              <div class="gamebar-seg" style="width: ${remainPct}%"></div>
+            </div>
+          </div>
+        `;
+        gameBarsEl.insertAdjacentHTML('beforeend', html);
+      });
+    </script>
+  </body>
+</html>
