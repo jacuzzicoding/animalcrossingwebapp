@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. Current release: v0.9.5-beta (2026-05-10) — ACNL icon gap-fill (96.5% coverage, ACCF to 100%), three new hand-drawn icons (frog, robust cicada, brown cicada). Previous: v0.9.4-beta (silhouette rendering + ACWW gap-fill), v0.9.3-beta (JSON save-file round-trip), v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp).
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. Current release: v0.9.6-beta (2026-05-28) — ACNH icon gap-fill (95.5% coverage), three new hand-drawn icons (goldfish, tadpole, agrias butterfly). Previous: v0.9.5-beta (ACNL icon gap-fill + three hand-drawn icons), v0.9.4-beta (silhouette rendering + ACWW gap-fill), v0.9.3-beta (JSON save-file round-trip), v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp).
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -352,10 +352,11 @@ Do not add new top-level tabs without updating the tab switch in ACCanvas, the n
 - PR #130 — Polish nits: version-history headline (29 days), useIconChecker useMemo, test-stub cleanup (closes #124, #95, addresses #92 item 4)
 - PR #131 — sixth + seventh hand-drawn icons: robust cicada + brown cicada (bugs); 68 KB each at 768px
 
-### v0.9.6-beta — ACNH icon gap-fill (next milestone)
+### v0.9.6-beta — ACNH icon gap-fill + three hand-drawn icons — **shipped 2026-05-28**
 
-- Icon scrape + manifest for ACNH (103 unique items remain after cross-game uplift from v0.9.5)
-- Uses same algorithmic-resolver-plus-OVERRIDES pattern; resolver /Gallery deprioritization from #127 generalizes directly
+- PR #136 — eighth hand-drawn icon: goldfish (fish); replaces scraped placeholder; 768px export 88.9 KB
+- PR #140 — ACNH icon gap-fill: 88 wiki-scraped items; ACNH coverage 68.8% → 95.5% (315/330); 15 genuine gaps logged to `scripts/missing-acnh.txt`; resolver improvements: `a:sentence` probe + `c:search` deprioritizes furniture model pages
+- PR #144 — ninth + tenth hand-drawn icons: tadpole (fish) and agrias butterfly (bugs); manifest updated jpg → png for agrias butterfly
 
 ### v1.0 — Launch ready
 
