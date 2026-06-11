@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **Re-encoded oversized raster icons** (#152) — the raw wiki-scraped art and fossil `.jpg` icons under `public/icons/` shipped at full wiki resolution (e.g. `art/informative-statue.jpg` at 3.8 MB / 3665×4288) but render into 48–192px slots. Downsampled all 113 oversized art + fossil JPGs in place to ≤384px (mozjpeg q80) via a new `npm run icons:reencode` script: 14.85 MB → 1.31 MB (~91% smaller); the Art tab drops from ~11.5 MB to ~1.1 MB. Filenames and extensions are unchanged, so `manifest.json` stays valid and there is no app code change. Icon coverage unchanged (verified via `npm run audit:icons`). Surfaced by the v0.9.6-beta codebase health audit (PERF-1)
+
 ### Removed
 
 - **Dead code cleanup** (#157) — deleted four files with zero importers: `src/lib/colors.ts` (the `meadow`/`colors`/`fontStacks` token mirror, fully superseded by the `@theme` block in `src/index.css`), `src/components/shared/CategoryProgress.tsx`, `src/components/shared/DonateToggle.tsx`, and `src/components/shared/HabitatChip.tsx`. Corrected stale CLAUDE.md claims (the "legacy colors retained" note, the DonateToggle/ActivityFeed consumer descriptions) and the v0.9.5→v0.9.6-beta version drift in CLAUDE.md + README. Surfaced by the v0.9.6-beta codebase health audit (CH-3)
