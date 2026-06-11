@@ -11,8 +11,20 @@ export function bootstrapLocalStorageMigration(): void {
   if (old && !localStorage.getItem(NEW_KEY)) {
     localStorage.setItem(NEW_KEY, old);
   }
-  // Remove old key once new key is confirmed present
-  if (localStorage.getItem(NEW_KEY)) {
+  // Remove the old key only once the new key is present AND parseable. A
+  // corrupted 'ac-web' value must not trigger deletion of 'ac-web:v1' — that
+  // would destroy the only remaining valid copy of the user's pre-rename data.
+  const current = localStorage.getItem(NEW_KEY);
+  if (current !== null && isParseable(current)) {
     localStorage.removeItem(OLD_KEY);
+  }
+}
+
+function isParseable(value: string): boolean {
+  try {
+    JSON.parse(value);
+    return true;
+  } catch {
+    return false;
   }
 }
