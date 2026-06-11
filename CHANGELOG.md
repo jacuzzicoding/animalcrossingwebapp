@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Import modal button contrast** (#153) — `.ac-im-cta` now uses `color: var(--surface)` instead of `var(--accent-ink)` on the moss-green background, lifting the import flow's primary CTA from ~2.7:1 to ~4.6:1 (AA). The destructive-confirm `.ac-im-cta-danger` now uses the danger-zone strong red (white-on-red ~6.4:1) instead of `--warn` (~3.8:1). Surfaced by the v0.9.6-beta codebase health audit (A11Y-1)
+
 ## [v0.9.6-beta] — 2026-05-24
 
 ### Added
