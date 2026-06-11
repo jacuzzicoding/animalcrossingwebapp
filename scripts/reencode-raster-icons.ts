@@ -94,7 +94,9 @@ async function main() {
   console.log('');
   console.log(
     `${processed} re-encoded. Total ${fmtBytes(totalSrc)} → ${fmtBytes(totalOut)}` +
-      (totalSrc ? ` (${(100 - (totalOut / totalSrc) * 100).toFixed(1)}% smaller)` : '')
+      (totalSrc
+        ? ` (${(100 - (totalOut / totalSrc) * 100).toFixed(1)}% smaller)`
+        : '')
   );
   if (DRY_RUN) console.log('(dry-run — no files written)');
 }
