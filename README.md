@@ -67,6 +67,6 @@ Museum data lives in `public/data/<game>/`:
 
 ## Version
 
-Current release: **v0.9.5-beta** (2026-05-10) — ACNL icon gap-fill (96.5% coverage, ACCF to 100%), three new hand-drawn icons (frog, robust cicada, brown cicada). Previous betas: **v0.9.4-beta** (silhouette rendering + ACWW icon gap-fill), **v0.9.3-beta** (JSON save-file round-trip + onboarding fixes), **v0.9.2-beta** (cross-game icon routing + first hand-drawn icons), **v0.9.1-beta** (ACGCN item icons), **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/roadmap-to-v1.md](docs/roadmap-to-v1.md) for the path to v1.0.
+Current release: **v0.9.6-beta** (2026-05-24) — ACNH icon gap-fill (95.5% coverage), hand-drawn goldfish/tadpole/agrias-butterfly icons. Previous betas: **v0.9.5-beta** (ACNL icon gap-fill, 96.5%; ACCF to 100%), **v0.9.4-beta** (silhouette rendering + ACWW icon gap-fill), **v0.9.3-beta** (JSON save-file round-trip + onboarding fixes), **v0.9.2-beta** (cross-game icon routing + first hand-drawn icons), **v0.9.1-beta** (ACGCN item icons), **v0.9.0-beta** (full UI revamp). Last stable on `main`: **v0.8.2-alpha**. See [CHANGELOG.md](CHANGELOG.md) for history and [docs/roadmap-to-v1.md](docs/roadmap-to-v1.md) for the path to v1.0.
 
 Significant design decisions are logged in [docs/decisions.md](docs/decisions.md).

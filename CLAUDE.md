@@ -16,7 +16,7 @@ See `docs/architecture.md` — deep architectural context (store schema, migrati
 ## Project Overview
 
 Animal Crossing multi-game companion web app. Tracks museum donations (fish, bugs, fossils, art) across multiple towns and games.
-Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. Current release: v0.9.5-beta (2026-05-10) — ACNL icon gap-fill (96.5% coverage, ACCF to 100%), three new hand-drawn icons (frog, robust cicada, brown cicada). Previous: v0.9.4-beta (silhouette rendering + ACWW gap-fill), v0.9.3-beta (JSON save-file round-trip), v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp).
+Meadow design language (Fraunces + Inter, moss-green accent) as of v0.9. Current release: v0.9.6-beta (2026-05-24) — ACNH icon gap-fill (95.5% coverage), hand-drawn goldfish/tadpole/agrias-butterfly icons. Previous: v0.9.5-beta (ACNL icon gap-fill, 96.5%; ACCF to 100%), v0.9.4-beta (silhouette rendering + ACWW gap-fill), v0.9.3-beta (JSON save-file round-trip), v0.9.2-beta (cross-game icon routing + first hand-drawn icons), v0.9.1-beta (ACGCN item icons), v0.9.0-beta (full UI revamp).
 Live at: https://animalcrossingwebapp.vercel.app | Dev preview: https://development-animalcrossingwebapp.vercel.app
 
 ## Commands
@@ -33,7 +33,7 @@ npm install       # Install dependencies
 ## Architecture
 
 **Framework:** Vite + React 19 + TypeScript  
-**Styling:** Tailwind CSS v4 + Meadow CSS custom properties (`@theme` block in `src/index.css`); design tokens mirrored as the `meadow` export in `src/lib/colors.ts`. Fraunces (display) + Inter (UI) loaded via Google Fonts. Varela Round retired in v0.9 Phase 1. Legacy `colors` export retained until all consumers are removed.  
+**Styling:** Tailwind CSS v4 + Meadow CSS custom properties (`@theme` block in `src/index.css`) — the single source of truth for design tokens. Fraunces (display) + Inter (UI) loaded via Google Fonts. Varela Round retired in v0.9 Phase 1. (The mirrored `src/lib/colors.ts` token export was deleted in #157 once its importer count reached zero.)  
 **State:** Zustand ^5 with `persist` middleware (localStorage key: `ac-web`, schema v3) for app data; non-persisted `useUIStore` (`src/lib/uiStore.ts`) for transient UI state (TownManager open/forceCreate flags).  
 **Routing:** React Router v6 (`BrowserRouter`); URL structure: `/` → redirect, `/town/:townId` → home tab, `/town/:townId/:tab` → specific tab; `vercel.json` has catch-all SPA rewrite for preview/branch deploys  
 **Tests:** Vitest  
@@ -89,14 +89,11 @@ src/
     ErrorBoundary.tsx       # Top-level React error boundary; crashes render ErrorState
     ErrorState.tsx          # Full-page error fallback UI
     shared/
-      DonateToggle.tsx      # Checkbox/button to mark item donated (used by sea-creature search rows; donate on category rows is panel-only as of Phase 5)
       EmptyState.tsx        # "Nothing here yet" placeholder
-      HabitatChip.tsx       # Fish habitat badge
       MonthGrid.tsx         # 12-cell month availability grid (Phase 5 re-skin; accepts `current` prop)
       SearchBar.tsx         # Per-tab inline search input (consumed by CategoryTab)
-      # CategoryProgress.tsx — DEAD: its only consumers (ACCanvas inline category
-      # render + AnalyticsView) were retired in Phase 7 / Phase 9. File remains
-      # in tree pending a follow-up cleanup PR.
+      # DonateToggle.tsx, HabitatChip.tsx, CategoryProgress.tsx — DELETED (dead code
+      # cleanup, #157). All had zero importers after the Phase 5/7/9 retirements.
     modals/
       # DetailModal.tsx — RETIRED in v0.9 (#81). Was the bottom-sheet for the Art
       # tab; art now uses the inline ItemExpandPanel like every other category.
@@ -112,7 +109,7 @@ src/
                             # 12-column yearly rhythm chart (fish + bugs always,
                             # sea added for ACNL/ACNH). Replaces AnalyticsView.
     views/
-      ActivityFeed.tsx      # Recent donations list (consumed by HomeTab).
+      ActivityFeed.tsx      # Recent donations list (consumed by ACCanvas).
                             # AnalyticsView + SectionCard retired in Phase 9.
     search/
       GlobalSearchDropdown.tsx # v0.9 Phase 8: unified search dropdown — anchored
@@ -145,7 +142,9 @@ src/
     categoryMeta.ts         # CATEGORY_META constant (label/Icon/file per category)
     viewTypes.ts            # ViewId and AllData types
     constants.ts            # MONTH_NAMES, CATEGORY_LABELS, CATEGORY_ORDER, SEASONS
-    colors.ts               # Design tokens — `meadow` export (v0.9 Phase 1) mirrors the CSS custom properties in `src/index.css` `@theme`. Legacy `colors` export kept until all consumers are removed. Includes `fontStacks` for Fraunces/Inter.
+                            # (colors.ts DELETED in #157 — design tokens live solely in
+                            # src/index.css `@theme`; the meadow/colors/fontStacks exports
+                            # had zero importers.)
     types.ts                # Shared TypeScript interfaces (Town, Donation, GameId, Game, etc.)
     utils.ts                # Helper functions (formatting, date math, type guards)
     csvExport.ts            # CSV export logic for donation data
@@ -206,7 +205,7 @@ docs/
 
 ### Design System (Meadow — v0.9)
 
-Tokens are CSS custom properties in `src/index.css` `@theme` block, mirrored in `src/lib/colors.ts` as the `meadow` export. The legacy `colors` export (parchment/wood) is retained for backwards-compatibility but is no longer the active palette. See section 5 of `docs/v0.9-plan.md` for the full token table and typographic scale.
+Tokens are CSS custom properties in the `src/index.css` `@theme` block — the only place they live as of #157 (the former `src/lib/colors.ts` mirror and its legacy parchment/wood `colors` export were dead and have been deleted). See section 5 of `docs/v0.9-plan.md` for the full token table and typographic scale.
 
 Key tokens:
 

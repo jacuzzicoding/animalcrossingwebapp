@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Removed
+
+- **Dead code cleanup** (#157) — deleted four files with zero importers: `src/lib/colors.ts` (the `meadow`/`colors`/`fontStacks` token mirror, fully superseded by the `@theme` block in `src/index.css`), `src/components/shared/CategoryProgress.tsx`, `src/components/shared/DonateToggle.tsx`, and `src/components/shared/HabitatChip.tsx`. Corrected stale CLAUDE.md claims (the "legacy colors retained" note, the DonateToggle/ActivityFeed consumer descriptions) and the v0.9.5→v0.9.6-beta version drift in CLAUDE.md + README. Surfaced by the v0.9.6-beta codebase health audit (CH-3)
+
 ### Fixed
 
 - **Import modal button contrast** (#153) — `.ac-im-cta` now uses `color: var(--surface)` instead of `var(--accent-ink)` on the moss-green background, lifting the import flow's primary CTA from ~2.7:1 to ~4.6:1 (AA). The destructive-confirm `.ac-im-cta-danger` now uses the danger-zone strong red (white-on-red ~6.4:1) instead of `--warn` (~3.8:1). Surfaced by the v0.9.6-beta codebase health audit (A11Y-1)
