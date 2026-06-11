@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Migration test coverage** (#151) — added `storeMigrations.test.ts` (9 tests over the v1→v2 donation lift + gameId backfill and the v2→v3 hemisphere backfill, including idempotency) and `bootstrapMigration.test.ts` (5 tests over the one-time localStorage key rename). These guard the documented zero-data-loss path for pre-v0.7 users, which previously had no tests. Surfaced by the v0.9.6-beta codebase health audit (TEST-1)
+
 ### Changed
 
 - **Re-encoded oversized raster icons** (#152) — the raw wiki-scraped art and fossil `.jpg` icons under `public/icons/` shipped at full wiki resolution (e.g. `art/informative-statue.jpg` at 3.8 MB / 3665×4288) but render into 48–192px slots. Downsampled all 113 oversized art + fossil JPGs in place to ≤384px (mozjpeg q80) via a new `npm run icons:reencode` script: 14.85 MB → 1.31 MB (~91% smaller); the Art tab drops from ~11.5 MB to ~1.1 MB. Filenames and extensions are unchanged, so `manifest.json` stays valid and there is no app code change. Icon coverage unchanged (verified via `npm run audit:icons`). Surfaced by the v0.9.6-beta codebase health audit (PERF-1)
@@ -14,6 +18,7 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- **bootstrapMigration no longer deletes the old key on a corrupt new key** (#151) — `bootstrapLocalStorageMigration` now removes `ac-web:v1` only once `ac-web` is present **and** parses as JSON. Previously a corrupted `ac-web` value would trigger deletion of the only remaining valid copy of pre-rename data. Surfaced by the v0.9.6-beta codebase health audit (DI-6)
 - **Import modal button contrast** (#153) — `.ac-im-cta` now uses `color: var(--surface)` instead of `var(--accent-ink)` on the moss-green background, lifting the import flow's primary CTA from ~2.7:1 to ~4.6:1 (AA). The destructive-confirm `.ac-im-cta-danger` now uses the danger-zone strong red (white-on-red ~6.4:1) instead of `--warn` (~3.8:1). Surfaced by the v0.9.6-beta codebase health audit (A11Y-1)
 
 ## [v0.9.6-beta] — 2026-05-24
