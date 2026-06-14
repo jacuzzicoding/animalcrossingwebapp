@@ -1,4 +1,4 @@
-# Architecture Reference (v0.9.5-beta)
+# Architecture Reference (v0.9.6-beta)
 
 ## Stack
 Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persisted UI store) + React Router v6. Meadow design tokens (CSS custom properties in `src/index.css` `@theme`); Fraunces (display) + Inter (UI).
@@ -10,7 +10,6 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persiste
 - `src/lib/uiStore.ts` — non-persisted Zustand store for transient UI state (`townManagerOpen`, `townManagerForceCreate`).
 - `src/lib/types.ts` — GameId union, `Town` (no longer has `playerName` — removed in Phase 4 / Decision 5), Game interface, GAMES registry, GAME_LIST.
 - `src/lib/constants.ts` — MONTH_NAMES, CATEGORY_LABELS, CATEGORY_ORDER, SEASONS.
-- `src/lib/colors.ts` — `meadow` token export (mirrors CSS custom properties), `fontStacks` for Fraunces/Inter, legacy `colors` retained until consumers retire.
 - `src/lib/categoryMeta.ts` — CATEGORY_META (label / Icon / file / data presence per game).
 - `src/lib/viewTypes.ts` — ViewId union and AllData shape. Phase 8 removed the `'search'` route.
 - `src/lib/storeMigrations.ts` — Zustand migrate callback v1→v2 (gameId backfill) and v2→v3 (hemisphere backfill).
@@ -39,9 +38,9 @@ Vite + React 19 + TypeScript + Tailwind CSS v4 + Zustand (persist + non-persiste
 ### Components — rows + panels
 - `src/components/CollectibleRow.tsx` — Phase 5 restyle. Monogram glyph, meta line with `·` separators, leaving/new pills, animated chevron. Stamps `data-row-id`. Donate UI lives in the expand panel only.
 - `src/components/ItemExpandPanel.tsx` — Phase 5 rebuild. Two-column grid: MonthGrid + stats stack (bells / shadow / hours / notes) + donate button.
-- `src/components/shared/` — DonateToggle, EmptyState, HabitatChip, MonthGrid (Phase 5 re-skin, accepts `current` prop), SearchBar (per-tab, used by CategoryTab). `CategoryProgress.tsx` is dead — file remains pending cleanup.
+- `src/components/shared/` — EmptyState, MonthGrid (Phase 5 re-skin, accepts `current` prop), SearchBar (per-tab, used by CategoryTab). DonateToggle, HabitatChip, and CategoryProgress.tsx deleted in #157 (zero importers after Phase 5/7/9 retirements).
 - `src/components/modals/` — DetailModal **retired in v0.9 (#81)**; file deleted. Art now uses the inline `ItemExpandPanel` like every other category.
-- `src/components/views/ActivityFeed.tsx` — recent donations list (consumed by HomeTab). `AnalyticsView` and `SectionCard` retired in Phase 9.
+- `src/components/views/ActivityFeed.tsx` — recent donations list (consumed by ACCanvas). `AnalyticsView` and `SectionCard` retired in Phase 9.
 - `src/components/search/GlobalSearchDropdown.tsx` — Phase 8 unified search dropdown (anchored under Home topbar). Grouped category results (5 groups for ACNL/ACNH, 4 elsewhere), keyboard nav (↑↓↵esc), search history at localStorage key `ac-curator-search-history` (max 8). Replaces GlobalSearchBar / GlobalSearchResults / SearchHistoryPopover.
 
 ### Data
