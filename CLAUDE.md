@@ -161,6 +161,8 @@ src/
     saveFile.test.ts        # Vitest tests for save-file schema + serialiser
     saveFileImport.test.ts  # Vitest tests for parser + validator
     saveFileReconcile.test.ts # Vitest tests for reconciler
+    storeMigrations.test.ts # Vitest tests for v1→v2 + v2→v3 store migrations (idempotency) (#151)
+    bootstrapMigration.test.ts # Vitest tests for one-time localStorage key rename (#151)
   test/
     setup.ts                # Vitest setup file
 public/data/acgcn/
