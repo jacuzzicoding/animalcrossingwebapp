@@ -94,9 +94,8 @@ src/
       SearchBar.tsx         # Per-tab inline search input (consumed by CategoryTab)
       # DonateToggle.tsx, HabitatChip.tsx, CategoryProgress.tsx — DELETED (dead code
       # cleanup, #157). All had zero importers after the Phase 5/7/9 retirements.
-    modals/
-      # DetailModal.tsx — RETIRED in v0.9 (#81). Was the bottom-sheet for the Art
-      # tab; art now uses the inline ItemExpandPanel like every other category.
+    # modals/ — directory removed. DetailModal.tsx was retired in v0.9 (#81); it
+    # was the bottom-sheet for the Art tab, replaced by the inline ItemExpandPanel.
     TownManager.tsx         # v0.9 Phase 4: right-side drawer (bottom sheet ≤720px) mounted
                             # at App layout level via useUIStore. Switch/edit/create/delete
                             # towns. Inline edit = name + (ACNH-only) hemisphere — game is
