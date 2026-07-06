@@ -6,7 +6,7 @@ Last updated: **2026-05-27** (after v0.9.6-beta shipped).
 
 ## Where the project sits
 
-- **Current public release:** v0.9.6-beta — ACNH icon gap-fill (ACNH coverage to ~100%), two new hand-drawn icons (tadpole, agrias butterfly), doc syncs.
+- **Current public release:** v0.9.6-beta — ACNH icon gap-fill (95.5% coverage, 315/330), three new hand-drawn icons (goldfish, tadpole, agrias butterfly), doc syncs.
 - **Cadence:** roughly one focused beta every 2-4 days since v0.6 (April 2026). The path to v1.0 holds that pace.
 - **Principle:** one focused track per beta. Polish bundles ship as their own betas, not bundled with feature work.
 
