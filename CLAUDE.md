@@ -251,7 +251,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **Town switcher showing active town in dropdown** — **fixed in v0.8 (PR #41)**
 - **Town switcher dropdown clipped by `overflow-hidden` header** — **fixed in v0.8 (PR #41)**; now uses `position: fixed` anchor
 - **issue #26** — Art tab persistent label — **fixed in v0.8.2 (PR #57)**; `setSelected(null)` added to tab-change `useEffect`
-- **issue #31** — Create-town edge case; low priority, open
+- **issue #31** — All floating modals positioned in the lower-left corner instead of centered — **fixed** (closed 2026-05-10, resolved as part of the v0.9 modal work)
 - **Sea creatures tab** — **shipped in v0.8.2 (PR #44, Closes #56)**; Sea tab visible for ACNL and ACNH towns
 - **Edit/new-town buttons greyed out on Fish, Bugs, Fossils tabs** — **resolved in v0.9 Phase 4**. The `TownManager` drawer mounts at the App layout level and renders correctly on every route, so the overflow/z-index issues that motivated the stopgap no longer apply.
 
