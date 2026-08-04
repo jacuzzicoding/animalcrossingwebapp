@@ -251,7 +251,7 @@ See `.claude/rules/vercel.md` for full deployment rules. Key points:
 - **Town switcher showing active town in dropdown** — **fixed in v0.8 (PR #41)**
 - **Town switcher dropdown clipped by `overflow-hidden` header** — **fixed in v0.8 (PR #41)**; now uses `position: fixed` anchor
 - **issue #26** — Art tab persistent label — **fixed in v0.8.2 (PR #57)**; `setSelected(null)` added to tab-change `useEffect`
-- **issue #31** — Create-town edge case; low priority, open
+- **issue #31** — All floating modals positioned in the lower-left corner instead of centered — **fixed** (closed 2026-05-10, resolved as part of the v0.9 modal work)
 - **Sea creatures tab** — **shipped in v0.8.2 (PR #44, Closes #56)**; Sea tab visible for ACNL and ACNH towns
 - **Edit/new-town buttons greyed out on Fish, Bugs, Fossils tabs** — **resolved in v0.9 Phase 4**. The `TownManager` drawer mounts at the App layout level and renders correctly on every route, so the overflow/z-index issues that motivated the stopgap no longer apply.
 
@@ -351,10 +351,12 @@ Do not add new top-level tabs without updating the tab switch in ACCanvas, the n
 - PR #130 — Polish nits: version-history headline (29 days), useIconChecker useMemo, test-stub cleanup (closes #124, #95, addresses #92 item 4)
 - PR #131 — sixth + seventh hand-drawn icons: robust cicada + brown cicada (bugs); 68 KB each at 768px
 
-### v0.9.6-beta — ACNH icon gap-fill (next milestone)
+### v0.9.6-beta — ACNH icon gap-fill + two hand-drawn icons — **shipped 2026-05-24**
 
-- Icon scrape + manifest for ACNH (103 unique items remain after cross-game uplift from v0.9.5)
-- Uses same algorithmic-resolver-plus-OVERRIDES pattern; resolver /Gallery deprioritization from #127 generalizes directly
+- PR #140 — ACNH icon gap-fill: 88 wiki-scraped items across all five categories; ACNH coverage 68.8% → 95.5% (315/330). ~50 new OVERRIDES entries for multi-part fossil pieces. Fifteen genuine gaps logged to `scripts/missing-acnh.txt`
+- PR #136 — eighth hand-drawn icon: goldfish (fish)
+- PR #144 — ninth + tenth hand-drawn icons: tadpole (fish) + agrias butterfly (bugs)
+- PRs #135/#137/#138 — doc syncs: stale dates/coverage/icon-count fixes + visual road-to-v1.0 page (`public/roadmap-to-v1.html`)
 
 ### v1.0 — Launch ready
 
