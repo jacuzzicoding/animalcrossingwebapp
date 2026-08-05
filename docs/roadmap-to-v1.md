@@ -19,7 +19,7 @@ Last updated: **2026-05-27** (after v0.9.6-beta shipped).
 | v0.9.3-beta | JSON save-file round-trip (export + import) + first hand-drawn bug (ant)                     | Shipped 2026-05-06 |
 | v0.9.4-beta | Silhouette rendering for un-donated items + ACWW icon gap-fill + higher-res hand-drawn icons | Shipped 2026-05-07 |
 | v0.9.5-beta | ACNL icon gap-fill + three hand-drawn icons                                                  | Shipped 2026-05-10 |
-| v0.9.6-beta | ACNH icon gap-fill (103 unique items)                                                        | Shipped 2026-05-27 |
+| v0.9.6-beta | ACNH icon gap-fill (88 items, 95.5% coverage) + three hand-drawn icons                       | Shipped 2026-05-27 |
 | v0.9.7-beta | SEO basics (OG tags, sitemap, meta, social cards per game)                                   | Planned            |
 | v0.9.8-beta | Light monetization footer + polish bug sweep                                                 | Planned            |
 | v1.0.0      | Final polish + public ship + all hand-drawn icons                                            | Target             |
