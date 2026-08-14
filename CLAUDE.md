@@ -351,10 +351,14 @@ Do not add new top-level tabs without updating the tab switch in ACCanvas, the n
 - PR #130 — Polish nits: version-history headline (29 days), useIconChecker useMemo, test-stub cleanup (closes #124, #95, addresses #92 item 4)
 - PR #131 — sixth + seventh hand-drawn icons: robust cicada + brown cicada (bugs); 68 KB each at 768px
 
-### v0.9.6-beta — ACNH icon gap-fill (next milestone)
+### v0.9.6-beta — ACNH icon gap-fill — **shipped 2026-05-24**
 
-- Icon scrape + manifest for ACNH (103 unique items remain after cross-game uplift from v0.9.5)
-- Uses same algorithmic-resolver-plus-OVERRIDES pattern; resolver /Gallery deprioritization from #127 generalizes directly
+- PR #140 — ACNH icon gap-fill: 88 wiki-scraped items across all five ACNH categories via the algorithmic-resolver-plus-OVERRIDES pattern; ACNH icon coverage rises 68.8% → 95.5% (315/330). Fifteen items remain genuine wiki gaps, logged to `scripts/missing-acnh.txt`
+- ~50 new ACNH `OVERRIDES` entries — multi-part fossil pieces collapse to their parent species article
+- Hand-drawn `fish/goldfish.png` (PR #136) — eighth hand-drawn icon in the library
+- Hand-drawn `fish/tadpole.png` and `bugs/agrias-butterfly.png` (PR #144) — ninth and tenth hand-drawn icons
+- Resolver: `a:sentence` probe for MediaWiki auto-capitalization; `c:search` deprioritizes `* model` furniture pages
+- Documentation sync (PRs #135/#137/#138) — corrected stale dates, coverage percentages, and icon counts; added a visual road-to-v1.0 page
 
 ### v1.0 — Launch ready
 
